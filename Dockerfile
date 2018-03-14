@@ -1,0 +1,8 @@
+FROM golang:latest as build
+WORKDIR /go/src/github.com/jonathanfoster/freedom/
+COPY . .
+RUN make dep-build && CGO_ENABLED=0 make build
+
+FROM alpine:latest
+COPY --from=build /go/src/github.com/jonathanfoster/freedom/bin/freedom-apiserver /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/freedom-apiserver"]

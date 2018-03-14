@@ -6,6 +6,9 @@ all: clean build
 build:
 	go build -ldflags "-X main.version=$(VERSION)" -o bin/freedom-apiserver ./cmd/apiserver
 
+build-docker:
+	docker build -t jonathanfoster/freedom-apiserver .
+
 clean:
 	rm -rf bin/
 

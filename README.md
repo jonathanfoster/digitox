@@ -12,7 +12,7 @@ third-party services like [Freedom](https://freedom.to/).
 ## Roadmap
 
 * [X] Server: Create API server
-* [ ] CI/CD: Build API server docker image
+* [X] CI/CD: Build API server docker image
 * [ ] CI/CD: Run proxy and API server containers with shared data store
 * [ ] CI/CD: Create deployment pipeline using Kubernetes
 * [ ] Server: Create session routes
