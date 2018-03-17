@@ -15,8 +15,8 @@ third-party services like [Freedom](https://freedom.to/).
 * [X] CI/CD: Build API server docker image
 * [X] CI/CD: Run proxy and API server containers with shared data store
 * [WIP] CI/CD: Create deployment pipeline using Kubernetes
-  * [ ] Configure HTTS listener on load balancer
-  * [ ] Configure load balancer to use wildcard cert
+  * [X] Configure HTTPS listener on load balancer
+  * [X] Configure load balancer to use wildcard cert
   * [ ] Push container image to ECR
   * [ ] Configure deployment to use ECR image
 * [ ] Server: Create session routes

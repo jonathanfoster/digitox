@@ -4,6 +4,10 @@ metadata:
   name: freedom
   labels:
     app: freedom
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-1:672132384976:certificate/09e95650-8ab3-49fa-a010-080fc2c954ce"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
 spec:
   type: LoadBalancer
   selector:
@@ -11,6 +15,10 @@ spec:
   ports:  
   - name: http
     port: 80
+    targetPort: 80
+  - name: https
+    port: 443
+    targetPort: 80
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
