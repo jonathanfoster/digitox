@@ -12,11 +12,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 * [X] CI/CD: Build API server docker image
 * [X] CI/CD: Run proxy and API server containers with shared data store
-* [ ] CI/CD: Create deployment pipeline using Kubernetes - **IN PROGRESS**
-  * [X] Configure HTTPS listener on load balancer
-  * [X] Configure load balancer to use wildcard cert
-  * [ ] Push container image to ECR
-  * [ ] Configure deployment to use ECR image
+* [X] CI/CD: Create deployment pipeline using Kubernetes
 
 ## Proxy Server
 

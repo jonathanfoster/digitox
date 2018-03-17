@@ -2,7 +2,7 @@ version: '3'
 services:
   apiserver:
     build: .
-    image: jonathanfoster/freedom-apiserver
+    image: freedom/freedom-apiserver
     container_name: freedom-apiserver
     ports:
       - "8080:8080"

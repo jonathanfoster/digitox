@@ -15,7 +15,7 @@ spec:
         app: freedom
     spec:
       containers:
-      - name: nginx
-        image: nginx
+      - name: freedom-apiserver
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
