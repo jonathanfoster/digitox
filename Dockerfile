@@ -4,5 +4,6 @@ COPY . .
 RUN make dep-build && CGO_ENABLED=0 make build
 
 FROM alpine:latest
+EXPOSE 8080
 COPY --from=build /go/src/github.com/jonathanfoster/freedom/bin/freedom-apiserver /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/freedom-apiserver"]

@@ -22,6 +22,9 @@ dep-dev:
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
+deploy:
+	kubectl apply -f ./deployment.yml
+
 fmt:
 	echo "[fmt] Formatting code"
 	@gofmt -s -w $(SRC)
