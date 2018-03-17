@@ -1,41 +1,37 @@
 # Freedom
 
-Freedom is a self-hosted website blocker that allows you to block websites on your laptop and mobile devices without relying upon
-third-party services like [Freedom](https://freedom.to/).
+[![Go Report Card](https://goreportcard.com/badge/github.com/jonathanfoster/freedom?style=flat-square)](https://goreportcard.com/report/github.com/jonathanfoster/freedom)
+[![Coverage](https://codecov.io/gh/jonathanfoster/freedom/branch/master/graph/badge.svg)](https://codecov.io/gh/jonathanfoster/freedom)
+[![Build Status](https://img.shields.io/travis/jonathanfoster/freedom.svg?style=flat-square&&branch=master)](https://travis-ci.org/jonathanfoster/freedom)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/jonathanfoster/freedom)
+[![Release](https://img.shields.io/github/release/jonathanfoster/freedom.svg?style=flat-square)](https://github.com/jonathanfoster/freedom/releases/latest)
+
+Freedom is a self-hosted website blocker that allows you to block websites on your laptop and mobile devices without relying upon third-party services like [Freedom](https://freedom.refersion.com/c/ddb297).
 
 ## Features
 
 * Block websites
-* Advanced scheduling
-* Customizable block lists
+* Schedule sessions
+* Customize block lists
+* Manage devices
 
-## Roadmap
+## Getting Started
 
-* [X] Server: Create API server
-* [X] CI/CD: Build API server docker image
-* [X] CI/CD: Run proxy and API server containers with shared data store
-* [WIP] CI/CD: Create deployment pipeline using Kubernetes
-  * [X] Configure HTTPS listener on load balancer
-  * [X] Configure load balancer to use wildcard cert
-  * [ ] Push container image to ECR
-  * [ ] Configure deployment to use ECR image
-* [ ] Server: Create session routes
-* [ ] Server: Create block list routes
-* [ ] Server: Create device routes
-* [ ] Session: Handle list sessions
-* [ ] Session: Handle find session
-* [ ] Session: Handle remove session
-* [ ] Session: Handle save session
-* [ ] Session: Store sessions in /etc/freedom/session/
-* [ ] Session: Start session by copy block lists to /etc/freedom/blocklist/block
-* [ ] Session: End session by removing /etc/freedom/blocklist/block
-* [ ] Block List: Handle list block lists
-* [ ] Block List: Handle find block list
-* [ ] Block List: Handle remove block list
-* [ ] Block List: Handle save block list
-* [ ] Block List: Store block lists in /etc/freedom/blocklist/
-* [ ] Device: Handle list devices
-* [ ] Device: Handle find device
-* [ ] Device: Handle remove device
-* [ ] Device: Handle save device
-* [ ] Device: Store devices in /etc/freedom/passwd
+1. Clone this repo
+
+    ```bash
+    git clone git@github.com:jonathanfoster/freedom.git $GOPATH/src/github.com/jonathanfoster/freedom
+    cd $GOPATH/src/github.com/jonathanfoster/freedom
+    ```
+
+2. Build
+
+    ```bash
+    make
+    ```
+
+3. Run
+
+    ```bash
+    ./bin/freedom-apiserver
+    ```
