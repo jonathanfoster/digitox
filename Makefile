@@ -28,7 +28,7 @@ dep-dev:
 	gometalinter --install
 
 deploy:
-	kubectl apply -f ./deployment.yml
+	kubectl apply -f ./k8s/
 
 fmt:
 	echo "[fmt] Formatting code"
