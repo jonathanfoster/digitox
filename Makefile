@@ -1,3 +1,4 @@
+SHELL=/bin/bash
 SRC=$(shell go list -f '{{ .Dir }}' ./...)
 VERSION=0.1.0
 
@@ -17,6 +18,10 @@ dep: dep-build dep-dev
 dep-build:
 	go get -u github.com/golang/dep/cmd/dep
 	dep ensure
+
+dep-deploy:
+	./install-kops.sh
+	./install-kubectl.sh
 
 dep-dev:
 	go get -u github.com/alecthomas/gometalinter
