@@ -48,12 +48,12 @@ docker-build-proxy:
 	docker build -t freedom/freedom-proxy -f ./build/proxy/Dockerfile .
 
 docker-push-apiserver: docker-build-apiserver
-	$(aws ecr get-login --region us-east-1)
+	$(shell aws ecr get-login --region us-east-1)
 	docker tag freedom/freedom-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
 
 docker-push-proxy: docker-build-proxy
-	$(aws ecr get-login --region us-east-1)
+	$(shell aws ecr get-login --region us-east-1)
 	docker tag freedom/freedom-proxy:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
 
@@ -68,6 +68,8 @@ lint:
 	gometalinter --vendor ./...
 
 precommit: fmt-check lint test
+
+release: docker-push deploy
 
 run-apiserver:
 	go run ./cmd/apiserver/main.go
