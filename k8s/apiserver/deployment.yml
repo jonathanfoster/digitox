@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: freedom-apiserver
-        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:0.1.0
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:0.1.0.1
         ports:
         - containerPort: 8080
