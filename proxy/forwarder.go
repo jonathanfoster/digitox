@@ -51,9 +51,15 @@ func (f *Forwarder) serveHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (f *Forwarder) serveTunnel(w http.ResponseWriter, r *http.Request) {
-	dst, err := net.DialTimeout("tcp", r.Host, 10*time.Second)
+	// Default to port 80 if none provided
+	addr := r.Host
+	if !strings.Contains(addr, ":") {
+		addr = addr + ":80"
+	}
+
+	dst, err := net.DialTimeout("tcp", addr, 10*time.Second)
 	if err != nil {
-		log.Errorf("error dialing host %v: %v", r.Host, err.Error())
+		log.Errorf("error dialing host %v: %v", addr, err.Error())
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
@@ -111,16 +117,15 @@ func (f *Forwarder) serveWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func transfer(dst io.WriteCloser, src io.ReadCloser) {
-	defer close(dst)
-	defer close(src)
-
 	if _, err := io.Copy(dst, src); err != nil {
 		log.Error("error copying bytes from source to destination: ", err.Error())
 	}
-}
 
-func close(c io.Closer) {
-	if err := c.Close(); err != nil {
-		log.Error("error closing closer: ", err.Error())
+	if err := dst.Close(); err != nil {
+		log.Error("error closing destination: ", err.Error())
+	}
+
+	if err := src.Close(); err != nil {
+		log.Error("error closing source: ", err.Error())
 	}
 }
