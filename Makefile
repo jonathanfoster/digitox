@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 SRC=$(shell go list -f '{{ .Dir }}' ./...)
-VERSION=0.1.0
+VERSION=0.1.0.1
 
 all: clean build
 
