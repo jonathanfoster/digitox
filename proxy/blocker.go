@@ -23,7 +23,7 @@ func NewBlocker(next http.Handler) *Blocker {
 }
 
 func (b *Blocker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Host == "news.ycombinator.com" || r.Host == "www.reddit.com" {
+	if r.Host == "www.reddit.com" || r.Host == "www.reddit.com:443" {
 		log.Warnf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusForbidden)
 		http.Error(w, fmt.Sprintf("host %s blocked", r.Host), http.StatusForbidden)
 		return

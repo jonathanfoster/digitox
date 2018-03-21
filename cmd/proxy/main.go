@@ -20,6 +20,7 @@ func main() {
 
 	if *verbose {
 		log.SetLevel(log.DebugLevel)
+		log.Debug("Debug log messages enabled")
 	}
 
 	srv, err := proxy.NewServer()

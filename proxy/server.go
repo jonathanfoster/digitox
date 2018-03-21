@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/elazarl/goproxy"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,9 +17,7 @@ type Server struct {
 
 // NewServer creates a new instance of Server.
 func NewServer() (*Server, error) {
-	// fwd := NewForwarder()
-	fwd := goproxy.NewProxyHttpServer()
-	fwd.Verbose = true
+	fwd := NewForwarder()
 	blocker := NewBlocker(fwd)
 
 	srv := &http.Server{

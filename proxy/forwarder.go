@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -23,9 +22,7 @@ func NewForwarder() *Forwarder {
 func (f *Forwarder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Infof("%v %v %v", r.Method, r.URL, r.Proto)
 
-	if r.Header.Get("Connection") == "Upgrade" && r.Header.Get("Upgrade") == "websocket" {
-		f.serveWebSocket(w, r)
-	} else if r.Method == http.MethodConnect {
+	if r.Method == http.MethodConnect {
 		f.serveTunnel(w, r)
 	} else {
 		f.serveHTTP(w, r)
@@ -57,7 +54,7 @@ func (f *Forwarder) serveTunnel(w http.ResponseWriter, r *http.Request) {
 		addr = addr + ":80"
 	}
 
-	dst, err := net.DialTimeout("tcp", addr, 10*time.Second)
+	dst, err := net.Dial("tcp", addr)
 	if err != nil {
 		log.Errorf("error dialing host %v: %v", addr, err.Error())
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
@@ -79,53 +76,18 @@ func (f *Forwarder) serveTunnel(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 	}
 
-	go transfer(dst, src)
-	go transfer(src, dst)
+	dstTCP := dst.(*net.TCPConn)
+	srcTCP := src.(*net.TCPConn)
+
+	go transfer(dstTCP, srcTCP)
+	go transfer(srcTCP, dstTCP)
 }
 
-func (f *Forwarder) serveWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Default to port 80 if none provided
-	addr := r.Host
-	if !strings.Contains(addr, ":") {
-		addr = addr + ":80"
-	}
-
-	dst, err := net.DialTimeout("tcp", addr, 10*time.Second)
-	if err != nil {
-		log.Errorf("error dialing host %v: %v", addr, err.Error())
-		http.Error(w, err.Error(), http.StatusServiceUnavailable)
-		return
-	}
-
-	w.WriteHeader(http.StatusSwitchingProtocols)
-
-	hijacker, ok := w.(http.Hijacker)
-	if !ok {
-		log.Error("error hijacking connection: hijacking not supported: ", err.Error())
-		http.Error(w, "Hijacking not supported", http.StatusInternalServerError)
-		return
-	}
-
-	src, _, err := hijacker.Hijack()
-	if err != nil {
-		log.Error("error hijacking connection: ", err.Error())
-		http.Error(w, err.Error(), http.StatusServiceUnavailable)
-	}
-
-	go transfer(dst, src)
-	go transfer(src, dst)
-}
-
-func transfer(dst io.WriteCloser, src io.ReadCloser) {
+func transfer(dst, src *net.TCPConn) {
 	if _, err := io.Copy(dst, src); err != nil {
 		log.Error("error copying bytes from source to destination: ", err.Error())
 	}
 
-	if err := dst.Close(); err != nil {
-		log.Error("error closing destination: ", err.Error())
-	}
-
-	if err := src.Close(); err != nil {
-		log.Error("error closing source: ", err.Error())
-	}
+	dst.CloseWrite() // nolint: errcheck, gas
+	src.CloseRead()  // nolint: errcheck, gas
 }
