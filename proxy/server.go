@@ -20,6 +20,7 @@ type Server struct {
 func NewServer() (*Server, error) {
 	// fwd := NewForwarder()
 	fwd := goproxy.NewProxyHttpServer()
+	fwd.Verbose = true
 	blocker := NewBlocker(fwd)
 
 	srv := &http.Server{
