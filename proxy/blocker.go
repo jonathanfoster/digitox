@@ -16,10 +16,8 @@ type Blocker struct {
 }
 
 // NewBlocker creates a new instance of Blocker.
-func NewBlocker(next http.Handler) *Blocker {
-	return &Blocker{
-		next,
-	}
+func NewBlocker() *Blocker {
+	return &Blocker{}
 }
 
 func (b *Blocker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +26,4 @@ func (b *Blocker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("host %s blocked", r.Host), http.StatusForbidden)
 		return
 	}
-
-	b.next.ServeHTTP(w, r)
 }

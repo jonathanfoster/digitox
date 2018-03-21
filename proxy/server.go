@@ -7,7 +7,9 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/elazarl/goproxy"
 	log "github.com/sirupsen/logrus"
+	"github.com/urfave/negroni"
 )
 
 // Server represents a proxy server.
@@ -17,11 +19,14 @@ type Server struct {
 
 // NewServer creates a new instance of Server.
 func NewServer() (*Server, error) {
-	fwd := NewForwarder()
-	blocker := NewBlocker(fwd)
+	n := negroni.New()
+	n.Use(negroni.NewRecovery())
+	n.Use(negroni.NewLogger())
+	n.Use(negroni.Wrap(NewBlocker()))
+	n.Use(negroni.Wrap(goproxy.NewProxyHttpServer()))
 
 	srv := &http.Server{
-		Handler: blocker,
+		Handler: n,
 	}
 
 	return &Server{

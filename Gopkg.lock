@@ -29,6 +29,12 @@
   version = "v3.2.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/elazarl/goproxy"
+  packages = ["."]
+  revision = "a96fa3a318260eab29abaf32f7128c9eb07fb073"
+
+[[projects]]
   name = "github.com/labstack/echo"
   packages = [
     ".",
@@ -67,6 +73,12 @@
   version = "v1.0.5"
 
 [[projects]]
+  name = "github.com/urfave/negroni"
+  packages = ["."]
+  revision = "5dbbc83f748fc3ad38585842b0aedab546d0ea1e"
+  version = "v0.3.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/valyala/bytebufferpool"
   packages = ["."]
@@ -100,6 +112,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3be0c96112f316db488d9945e1f4e60aaef792df79d4bcc1555fbd1a454a0253"
+  inputs-digest = "f8b14cbde687f073ef34cb67f318ddf0d2bf6a1e0613f8c50fb26fd946675e5c"
   solver-name = "gps-cdcl"
   solver-version = 1
