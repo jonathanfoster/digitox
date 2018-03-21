@@ -111,7 +111,19 @@ func (f *Forwarder) serveWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func transfer(dst io.WriteCloser, src io.ReadCloser) {
-	defer dst.Close()
-	defer src.Close()
-	io.Copy(dst, src)
+	defer func() {
+		if err := dst.Close(); err != nil {
+			log.Error("error closing destination writer: ", err.Error())
+		}
+	}()
+
+	defer func() {
+		if err := src.Close(); err != nil {
+			log.Error("error closing source reader: ", err.Error())
+		}
+	}()
+
+	if _, err := io.Copy(dst, src); err != nil {
+		log.Error("error copying bytes from source to destination: ", err.Error())
+	}
 }

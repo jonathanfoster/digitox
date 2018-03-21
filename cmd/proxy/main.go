@@ -27,5 +27,6 @@ func main() {
 		log.WithError(err).Fatal("error creating server: ", err)
 	}
 
-	srv.Start(":" + *port)
+	addr := ":" + *port
+	srv.Start(addr)
 }
