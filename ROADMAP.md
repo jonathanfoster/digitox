@@ -16,7 +16,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Proxy Server
 
-* [ ] Proxy: Replace Squid with [Oxy](https://github.com/vulcand/oxy)
+* [ ] Proxy: Replace Squid with [Oxy](https://github.com/vulcand/oxy) - **IN PROGRESS**
 
 ## API Server
 

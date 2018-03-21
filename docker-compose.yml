@@ -1,7 +1,7 @@
 version: '3'
 services:
   apiserver:
-    build: .
+    build: ./build/apiserver
     image: freedom/freedom-apiserver
     container_name: freedom-apiserver
     ports:

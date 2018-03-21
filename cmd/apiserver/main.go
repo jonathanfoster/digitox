@@ -40,7 +40,7 @@ func main() {
 
 	go func() {
 		if err := e.Start(":" + *port); err != nil {
-			e.Logger.Info("shutting down server")
+			e.Logger.Fatal("error starting server: ", err)
 		}
 	}()
 
@@ -53,6 +53,6 @@ func main() {
 	defer cancel()
 
 	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
+		e.Logger.Fatal("error shutting down server: ", err)
 	}
 }

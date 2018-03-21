@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: freedom-proxy
+  labels:
+    app: freedom-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freedom-proxy
+  template:
+    metadata:
+      labels:
+        app: freedom-proxy
+    spec:
+      containers:
+      - name: freedom-proxy
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
+        ports:
+        - containerPort: 8080

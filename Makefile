@@ -4,8 +4,13 @@ VERSION=0.1.0
 
 all: clean build
 
-build:
+build: build-apiserver build-proxy
+
+build-apiserver:
 	go build -ldflags "-X main.version=$(VERSION)" -o bin/freedom-apiserver ./cmd/apiserver
+
+build-proxy:
+	go build -ldflags "-X main.version=$(VERSION)" -o bin/freedom-proxy ./cmd/proxy
 
 clean:
 	rm -rf bin/
@@ -24,16 +29,33 @@ dep-dev:
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
-deploy:
-	kubectl apply -f ./k8s/
+deploy: deploy-apiserver deploy-proxy
 
-docker-build:
-	docker build -t freedom/freedom-apiserver .
+deploy-apiserver:
+	kubectl apply -f ./k8s/apiserver/
 
-docker-push: docker-build
+deploy-proxy:
+	kubectl apply -f ./k8s/proxy/
+
+docker-build: docker-build-apiserver docker-build-proxy
+
+docker-push: docker-push-apiserver docker-push-proxy
+
+docker-build-apiserver:
+	docker build -t freedom/freedom-apiserver -f ./build/apiserver/Dockerfile .
+
+docker-build-proxy:
+	docker build -t freedom/freedom-proxy -f ./build/proxy/Dockerfile .
+
+docker-push-apiserver: docker-build-apiserver
 	$(aws ecr get-login --region us-east-1)
 	docker tag freedom/freedom-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
+
+docker-push-proxy: docker-build-proxy
+	$(aws ecr get-login --region us-east-1)
+	docker tag freedom/freedom-proxy:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
+	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
 
 fmt:
 	echo "[fmt] Formatting code"
@@ -47,8 +69,11 @@ lint:
 
 precommit: fmt-check lint test
 
-run:
+run-apiserver:
 	go run ./cmd/apiserver/main.go
+
+run-proxy:
+	go run ./cmd/proxy/main.go
 
 test:
 	go test -v ./...
