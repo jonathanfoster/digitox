@@ -24,7 +24,7 @@ func main() {
 
 	srv, err := proxy.NewServer()
 	if err != nil {
-		log.WithError(err).Fatal("error creating server: ", err)
+		log.WithError(err).Fatal("error creating proxy server: ", err.Error())
 	}
 
 	addr := ":" + *port

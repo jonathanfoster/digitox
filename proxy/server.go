@@ -1,12 +1,9 @@
 package proxy
 
 import (
-	"context"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
 
+	"github.com/elazarl/goproxy"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -31,28 +28,33 @@ func NewServer() (*Server, error) {
 
 // Start listens on the TCP network address addr and then calls Serve to handle requests on incoming connections.
 func (srv *Server) Start(addr string) {
-	srv.Server.Addr = addr
+	p := goproxy.NewProxyHttpServer()
+	p.Verbose = true
+	log.Info("server listening on ", addr)
+	log.Fatal(http.ListenAndServe(addr, p))
 
-	go func() {
-		log.Info("server listening on ", srv.Server.Addr)
-		if err := srv.Server.ListenAndServe(); err != nil {
-			// ListentAndServe always returns ErrrServerClosed when calling shutdown.
-			if err != http.ErrServerClosed {
-				log.WithError(err).Fatal("error starting server: ", err)
-			}
-		}
-	}()
+	// srv.Server.Addr = addr
 
-	// Gracefully shutdown the server with a timeout of 10 seconds
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
+	// go func() {
+	// 	log.Info("server listening on ", srv.Server.Addr)
+	// 	if err := srv.Server.ListenAndServe(); err != nil {
+	// 		// ListentAndServe always returns ErrrServerClosed when calling shutdown.
+	// 		if err != http.ErrServerClosed {
+	// 			log.WithError(err).Fatal("error starting server: ", err)
+	// 		}
+	// 	}
+	// }()
 
-	log.Info("server shutting down...")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// // Gracefully shutdown the server with a timeout of 10 seconds
+	// quit := make(chan os.Signal, 1)
+	// signal.Notify(quit, os.Interrupt)
+	// <-quit
 
-	if err := srv.Server.Shutdown(ctx); err != nil {
-		log.WithError(err).Fatal("error shutting down server: ", err)
-	}
+	// log.Info("server shutting down...")
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// defer cancel()
+
+	// if err := srv.Server.Shutdown(ctx); err != nil {
+	// 	log.WithError(err).Fatal("error shutting down server: ", err)
+	// }
 }
