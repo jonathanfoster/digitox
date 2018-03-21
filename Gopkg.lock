@@ -29,12 +29,6 @@
   version = "v3.2.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/elazarl/goproxy"
-  packages = ["."]
-  revision = "a96fa3a318260eab29abaf32f7128c9eb07fb073"
-
-[[projects]]
   name = "github.com/labstack/echo"
   packages = [
     ".",
@@ -106,6 +100,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7b9c129369fbc13f7aa8e08dd45bfde129bc2afb0a7a173dc22e1588018c1171"
+  inputs-digest = "3be0c96112f316db488d9945e1f4e60aaef792df79d4bcc1555fbd1a454a0253"
   solver-name = "gps-cdcl"
   solver-version = 1
