@@ -49,15 +49,17 @@ docker-build-proxy:
 
 docker-push-apiserver: docker-build-apiserver
 	$(shell aws ecr get-login --region us-east-1)
-	docker tag freedom/freedom-apiserver:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:$(VERSION)
 	docker tag freedom/freedom-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
+	docker tag freedom/freedom-apiserver:latest freedom/freedom-apiserver:$(VERSION)	
+	docker tag freedom/freedom-apiserver:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:$(VERSION)
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:$(VERSION)
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
 
 docker-push-proxy: docker-build-proxy
 	$(shell aws ecr get-login --region us-east-1)
-	docker tag freedom/freedom-proxy:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:$(VERSION)
 	docker tag freedom/freedom-proxy:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
+	docker tag freedom/freedom-proxy:latest freedom/freedom-proxy:$(VERSION)
+	docker tag freedom/freedom-proxy:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:$(VERSION)
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:$(VERSION)
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
 
