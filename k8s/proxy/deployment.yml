@@ -16,7 +16,6 @@ spec:
     spec:
       containers:
       - name: freedom-proxy
-        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:latest
-        imagePullPolicy: Always
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-proxy:0.1.0.2
         ports:
         - containerPort: 8080
