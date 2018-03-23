@@ -1,15 +1,12 @@
 package main
 
 import (
-	"context"
-	"net/http"
 	"os"
-	"os/signal"
-	"time"
 
 	"github.com/alecthomas/kingpin"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/jonathanfoster/freedom/api"
 )
 
 var (
@@ -22,37 +19,11 @@ var (
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
-	e := echo.New()
-	e.Debug = *verbose
-
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
-	e.Use(middleware.RequestID())
-
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct {
-			Version string `json:"version"`
-		}{
-			version,
-		})
-	})
-
-	go func() {
-		if err := e.Start(":" + *port); err != nil {
-			e.Logger.Fatal("error starting server: ", err)
-		}
-	}()
-
-	// Gracefully shutdown the server with a timeout of 10 seconds
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal("error shutting down server: ", err)
+	if *verbose {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("debug log messages enabled")
 	}
+
+	srv := api.NewServer()
+	srv.Run(":" + *port)
 }
