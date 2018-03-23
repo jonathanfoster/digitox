@@ -14,10 +14,6 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] CI/CD: Run proxy and API server containers with shared data store
 * [X] CI/CD: Create deployment pipeline using Kubernetes
 
-## Proxy Server
-
-* [ ] Proxy: Replace Squid with [Oxy](https://github.com/vulcand/oxy) - **IN PROGRESS**
-
 ## API Server
 
 * [X] API: Create API server
