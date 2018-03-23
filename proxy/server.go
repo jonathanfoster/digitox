@@ -19,11 +19,14 @@ type Server struct {
 
 // NewServer creates a new instance of Server.
 func NewServer() (*Server, error) {
+	p := goproxy.NewProxyHttpServer()
+	p.Verbose = true
+
 	n := negroni.New()
 	n.Use(negroni.NewRecovery())
 	n.Use(negroni.NewLogger())
 	n.Use(negroni.Wrap(NewBlocker()))
-	n.Use(negroni.Wrap(goproxy.NewProxyHttpServer()))
+	n.Use(negroni.Wrap(p))
 
 	srv := &http.Server{
 		Handler: n,
