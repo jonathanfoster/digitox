@@ -7,17 +7,19 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/jonathanfoster/freedom/api/handlers"
+	"github.com/jonathanfoster/freedom/api"
 )
 
 func TestSession(t *testing.T) {
 	Convey("Session Handler", t, func() {
+		router := api.NewRouter()
+
 		Convey("ListSessions", func() {
 			Convey("Status code should be 501", func() {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("GET", "/sessions", nil)
 
-				handlers.ListSessions(w, r)
+				router.ServeHTTP(w, r)
 
 				assert.Equal(t, 501, w.Code)
 			})
@@ -28,7 +30,7 @@ func TestSession(t *testing.T) {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("GET", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
-				handlers.FindSession(w, r)
+				router.ServeHTTP(w, r)
 
 				assert.Equal(t, 501, w.Code)
 			})
@@ -38,7 +40,7 @@ func TestSession(t *testing.T) {
 					w := httptest.NewRecorder()
 					r := httptest.NewRequest("GET", "/sessions/1234567890", nil)
 
-					handlers.FindSession(w, r)
+					router.ServeHTTP(w, r)
 
 					assert.Equal(t, 400, w.Code)
 				})
@@ -50,7 +52,7 @@ func TestSession(t *testing.T) {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("POST", "/sessions", nil)
 
-				handlers.CreateSession(w, r)
+				router.ServeHTTP(w, r)
 
 				assert.Equal(t, 501, w.Code)
 			})
@@ -61,7 +63,7 @@ func TestSession(t *testing.T) {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("PUT", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
-				handlers.UpdateSession(w, r)
+				router.ServeHTTP(w, r)
 
 				assert.Equal(t, 501, w.Code)
 			})
@@ -71,7 +73,7 @@ func TestSession(t *testing.T) {
 					w := httptest.NewRecorder()
 					r := httptest.NewRequest("PUT", "/sessions/1234567890", nil)
 
-					handlers.UpdateSession(w, r)
+					router.ServeHTTP(w, r)
 
 					assert.Equal(t, 400, w.Code)
 				})
@@ -83,7 +85,7 @@ func TestSession(t *testing.T) {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("DELETE", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
-				handlers.DeleteSession(w, r)
+				router.ServeHTTP(w, r)
 
 				assert.Equal(t, 501, w.Code)
 			})
@@ -93,7 +95,7 @@ func TestSession(t *testing.T) {
 					w := httptest.NewRecorder()
 					r := httptest.NewRequest("DELETE", "/sessions/1234567890", nil)
 
-					handlers.DeleteSession(w, r)
+					router.ServeHTTP(w, r)
 
 					assert.Equal(t, 400, w.Code)
 				})
