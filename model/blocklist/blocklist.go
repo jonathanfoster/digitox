@@ -2,6 +2,8 @@ package blocklist
 
 import (
 	"io/ioutil"
+	"os"
+	"path"
 )
 
 // Dirname is the name of the blocklists directory.
@@ -13,26 +15,39 @@ type Blocklist struct {
 	Dirname string `json:"dirname"`
 }
 
-// New creates a Blocklist instance
+// New creates a Blocklist instance.
 func New() *Blocklist {
 	return &Blocklist{}
 }
 
+// NewFromFile creates a Blocklist instance from file.
+func NewFromFile(file *os.File) *Blocklist {
+	return &Blocklist{
+		Name:    file.Name(),
+		Dirname: Dirname,
+	}
+}
+
+// NewFromFileInfo creates a Blocklist instance from file info.
+func NewFromFileInfo(file os.FileInfo) *Blocklist {
+	return &Blocklist{
+		Name:    file.Name(),
+		Dirname: Dirname,
+	}
+}
+
 // All retrieves all blocklists from filesystem.
-func All() ([]Blocklist, error) {
+func All() ([]*Blocklist, error) {
 	files, err := ioutil.ReadDir(Dirname)
 	if err != nil {
 		return nil, err
 	}
 
-	list := []Blocklist{}
+	list := []*Blocklist{}
 
 	for _, file := range files {
 		if !file.IsDir() {
-			list = append(list, Blocklist{
-				Name:    file.Name(),
-				Dirname: Dirname,
-			})
+			list = append(list, NewFromFileInfo(file))
 		}
 	}
 
@@ -40,9 +55,13 @@ func All() ([]Blocklist, error) {
 }
 
 // Find finds a blocklist by name in the filesystem.
-func Find(name string) *Blocklist {
-	// Search /etc/squid/blocklists/
-	return nil
+func Find(name string) (*Blocklist, error) {
+	file, err := os.Open(path.Join(Dirname, name))
+	if err != nil {
+		return nil, err
+	}
+
+	return NewFromFile(file), nil
 }
 
 // Save writes the blocklist to the filesystem.

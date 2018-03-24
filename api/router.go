@@ -21,10 +21,10 @@ func NewRouter() *Router {
 	router.HandleFunc("/panic", handlers.Panic)
 
 	router.HandleFunc("/blocklists", handlers.ListBlocklists)
-	router.HandleFunc("/blocklists/{id}", handlers.FindBlocklist)
+	router.HandleFunc("/blocklists/{name}", handlers.FindBlocklist)
 	router.HandleFunc("/blocklists", handlers.CreateBlocklist).Methods("POST")
-	router.HandleFunc("/blocklists/{id}", handlers.UpdateBlocklist).Methods("PUT")
-	router.HandleFunc("/blocklists/{id}", handlers.DeleteBlocklist).Methods("DELETE")
+	router.HandleFunc("/blocklists/{name}", handlers.UpdateBlocklist).Methods("PUT")
+	router.HandleFunc("/blocklists/{name}", handlers.DeleteBlocklist).Methods("DELETE")
 
 	router.HandleFunc("/devices", handlers.ListDevices)
 	router.HandleFunc("/devices/{id}", handlers.FindDevice)

@@ -11,24 +11,30 @@ import (
 
 // ListBlocklists handles the GET /blocklists route.
 func ListBlocklists(w http.ResponseWriter, r *http.Request) {
-	list, err := blocklist.All()
+	lists, err := blocklist.All()
 	if err != nil {
 		log.Error("error listing blocklists: ", err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 	}
 
-	httputil.JSON(w, http.StatusOK, list)
+	httputil.JSON(w, http.StatusOK, lists)
 }
 
 // FindBlocklist handles the GET /blocklists/{name} route.
 func FindBlocklist(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseName(r)
+	name, ok := ParseName(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	httputil.Error(w, http.StatusNotImplemented)
+	list, err := blocklist.Find(name)
+	if err != nil {
+		log.Errorf("error finding blocklist %s: %s", name, err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+	}
+
+	httputil.JSON(w, http.StatusOK, list)
 }
 
 // CreateBlocklist handles the POST /blocklists/{name} route.
