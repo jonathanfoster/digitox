@@ -26,11 +26,17 @@ func NewRouter() *Router {
 	router.HandleFunc("/blocklists/{id}", handlers.UpdateBlocklist).Methods("PUT")
 	router.HandleFunc("/blocklists/{id}", handlers.DeleteBlocklist).Methods("DELETE")
 
-	router.HandleFunc("/session", handlers.ListSessions)
-	router.HandleFunc("/session/{id}", handlers.FindSession)
-	router.HandleFunc("/session", handlers.CreateSession).Methods("POST")
-	router.HandleFunc("/session/{id}", handlers.UpdateSession).Methods("PUT")
-	router.HandleFunc("/session/{id}", handlers.DeleteSession).Methods("DELETE")
+	router.HandleFunc("/devices", handlers.ListDevices)
+	router.HandleFunc("/devices/{id}", handlers.FindDevice)
+	router.HandleFunc("/devices", handlers.CreateDevice).Methods("POST")
+	router.HandleFunc("/devices/{id}", handlers.UpdateDevice).Methods("PUT")
+	router.HandleFunc("/devices/{id}", handlers.DeleteDevice).Methods("DELETE")
+
+	router.HandleFunc("/sessions", handlers.ListSessions)
+	router.HandleFunc("/sessions/{id}", handlers.FindSession)
+	router.HandleFunc("/sessions", handlers.CreateSession).Methods("POST")
+	router.HandleFunc("/sessions/{id}", handlers.UpdateSession).Methods("PUT")
+	router.HandleFunc("/sessions/{id}", handlers.DeleteSession).Methods("DELETE")
 
 	return &Router{
 		router,

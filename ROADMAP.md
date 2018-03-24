@@ -19,7 +19,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] API: Create API server
 * [X] API: Create session routes
 * [X] API: Create block list routes
-* [ ] API: Create device routes
+* [X] API: Create device routes
 
 ## Session
 
