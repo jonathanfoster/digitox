@@ -13,7 +13,7 @@ func ParseID(r *http.Request) (uuid.UUID, bool) {
 	idVar := mux.Vars(r)["id"]
 	id, err := uuid.FromString(idVar)
 	if err != nil {
-		log.Warnf("id not a valid uuid: ", idVar)
+		log.Warnf("id not a valid uuid: %s: %s", idVar, err.Error())
 	}
-	return id, err != nil
+	return id, err == nil
 }

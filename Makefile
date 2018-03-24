@@ -55,5 +55,6 @@ release: precommit docker-push deploy
 run: build
 	./bin/freedom-apiserver
 
+.PHONY: test
 test:
 	go test -v ./...
