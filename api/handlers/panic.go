@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Error handles the GET /error route.
+// Panic handles the GET /panic route.
 func Panic(w http.ResponseWriter, r *http.Request) {
 	panic(errors.New("test"))
 }

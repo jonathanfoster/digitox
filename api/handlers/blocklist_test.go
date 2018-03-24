@@ -34,6 +34,17 @@ func TestBlocklist(t *testing.T) {
 
 				assert.Equal(t, 200, w.Code)
 			})
+
+			Convey("When blocklist does not exist", func() {
+				Convey("Status code should be 400", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("GET", "/blocklists/notfound", nil)
+
+					router.ServeHTTP(w, r)
+
+					assert.Equal(t, 404, w.Code)
+				})
+			})
 		})
 	})
 }

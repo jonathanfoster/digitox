@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 
@@ -30,8 +31,15 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	list, err := blocklist.Find(name)
 	if err != nil {
+		if os.IsNotExist(err) {
+			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			httputil.Error(w, http.StatusNotFound)
+			return
+		}
+
 		log.Errorf("error finding blocklist %s: %s", name, err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
+		return
 	}
 
 	httputil.JSON(w, http.StatusOK, list)
