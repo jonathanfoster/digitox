@@ -5,7 +5,6 @@ import (
 	"runtime"
 
 	"github.com/jonathanfoster/freedom/api/httputil"
-	"github.com/jonathanfoster/freedom/model"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,12 +25,7 @@ func (rec *Recovery) ServeHTTP(w http.ResponseWriter, r *http.Request, next http
 
 			log.Errorf("recovered panic: %s: %s", err, stack)
 
-			e := &model.Error{
-				Message:    http.StatusText(http.StatusInternalServerError),
-				StatusCode: http.StatusInternalServerError,
-			}
-
-			httputil.JSON(w, http.StatusInternalServerError, e)
+			httputil.Error(w, http.StatusInternalServerError)
 		}
 	}()
 
