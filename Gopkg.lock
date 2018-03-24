@@ -23,6 +23,33 @@
   revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/facebookgo/clock"
+  packages = ["."]
+  revision = "600d898af40aa09a7a93ecb9265d87b0504b6f03"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/facebookgo/grace"
+  packages = [
+    "gracehttp",
+    "gracenet"
+  ]
+  revision = "4afe952a37a495ae4ac0c1d4ce5f66e91058d149"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/facebookgo/httpdown"
+  packages = ["."]
+  revision = "a3b1354551a26449fbe05f5d855937f6e7acbd71"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/facebookgo/stats"
+  packages = ["."]
+  revision = "1b76add642e42c6ffba7211ad7b3939ce654526e"
+
+[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -33,6 +60,12 @@
   packages = ["."]
   revision = "53c1911da2b537f792e7cafcb446b05ffe33b996"
   version = "v1.6.1"
+
+[[projects]]
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -64,6 +97,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f8ffad291f08f6cb5be30a5a49204ef697a86fb1d6f009bc2a196ee4c84ae029"
+  inputs-digest = "970f7dd84cc14c003a0efd365e7462f9dd34eb4595fa5b94981f4e647a703c35"
   solver-name = "gps-cdcl"
   solver-version = 1

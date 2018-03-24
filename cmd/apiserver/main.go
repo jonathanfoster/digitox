@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/api"
+	"github.com/jonathanfoster/freedom/model"
 )
 
 var (
@@ -22,6 +23,10 @@ func main() {
 	if *verbose {
 		log.SetLevel(log.DebugLevel)
 		log.Debug("debug log messages enabled")
+	}
+
+	model.DefaultStatus = &model.Status{
+		Version: version,
 	}
 
 	srv := api.NewServer()

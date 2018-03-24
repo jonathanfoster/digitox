@@ -52,5 +52,8 @@ precommit: fmt-check lint test
 
 release: precommit docker-push deploy
 
+run: build
+	./bin/freedom-apiserver
+
 test:
 	go test -v ./...

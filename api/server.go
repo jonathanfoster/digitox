@@ -1,32 +1,31 @@
 package api
 
 import (
-	"context"
-	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/facebookgo/grace/gracehttp"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
+
+	"github.com/jonathanfoster/freedom/api/middleware"
 )
 
-type Server struct {
-}
+// Server represents a server.
+type Server struct{}
 
+// NewServer creates a Server instance.
 func NewServer() *Server {
 	return &Server{}
 }
 
+// Run listens on the TCP network address addr and then
+// calls Serve to handle requests on incoming connections.
 func (s *Server) Run(addr string) {
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", hello)
+	router := NewRouter()
 
 	n := negroni.New()
-	n.Use(negroni.NewRecovery())
-	n.Use(negroni.NewLogger())
+	n.Use(middleware.NewRecovery())
+	n.Use(middleware.NewLogger())
 	n.UseHandler(router)
 
 	srv := &http.Server{
@@ -34,26 +33,6 @@ func (s *Server) Run(addr string) {
 		Handler: n,
 	}
 
-	go func() {
-		log.Info("server listening on ", addr)
-		if err := srv.ListenAndServe(); err != nil {
-			log.Fatal("error starting server: ", err)
-		}
-	}()
-
-	// Gracefully shutdown the server with a timeout of 10 seconds
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("error shutting down server: ", err)
-	}
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
+	log.Info("server listening on ", addr)
+	gracehttp.Serve(srv)
 }
