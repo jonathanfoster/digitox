@@ -39,22 +39,28 @@ docker-push: docker-build
 	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
 
 fmt:
-	echo "[fmt] Formatting code"
+	@echo "[fmt] Formatting code"
 	@gofmt -s -w $(SRC)
 
 fmt-check:
 	@gofmt -l -s $(SRC) | read && echo "[fmt-check] Format check failed" 1>&2 && exit 1 || exit 0
 
+imports:
+	@echo "[imports] Formatting imported packages and code"
+	@goimports -w $(SRC)
+
+imports-check:
+	@goimports -l $(SRC) | read && echo "[imports-check] Imports check failed" 1>&2 && exit 1 || exit 0
+
 lint:
 	gometalinter --vendor ./...
 
-precommit: fmt-check lint test
+precommit: fmt-check imports-check lint test
 
 release: precommit docker-push deploy
 
 run: build
 	./bin/freedom-apiserver
 
-.PHONY: test
 test:
 	go test -v ./...
