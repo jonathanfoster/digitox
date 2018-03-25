@@ -30,6 +30,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [ ] Session: Store sessions in /etc/freedom/session/
 * [ ] Session: Start session by copy block lists to /etc/freedom/blocklist/block
 * [ ] Session: End session by removing /etc/freedom/blocklist/block
+* [ ] Session: Validate model before persisting
 
 ## Block List
 
@@ -38,6 +39,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Block List: Handle remove block list
 * [X] Block List: Handle save block list
 * [X] Block List: Store block lists in /etc/squid/blocklist/
+* [X] Block List: Validate model before persisting
 
 ## Devices
 
@@ -46,3 +48,4 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [ ] Device: Handle remove device
 * [ ] Device: Handle save device
 * [ ] Device: Store devices in /etc/freedom/passwd
+* [ ] Device: Validate model before persisting

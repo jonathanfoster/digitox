@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	validator "github.com/asaskevich/govalidator"
 )
 
 // Dirname is the name of the blocklists directory.
@@ -13,8 +15,8 @@ var Dirname = "/etc/squid/blocklists/"
 
 // Blocklist represents a blocklist.
 type Blocklist struct {
-	Name    string   `json:"name"`
-	Dirname string   `json:"dirname"`
+	Name    string   `json:"name" valid:"required"`
+	Dirname string   `json:"dirname" valid:"required"`
 	Hosts   []string `json:"hosts"`
 
 	origName string
@@ -61,8 +63,17 @@ func Find(name string) (*Blocklist, error) {
 	return list, nil
 }
 
+// Remove removes the blocklist from the filesystem.
+func Remove(name string) error {
+	return os.Remove(path.Join(Dirname, name))
+}
+
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
+	if _, err := b.Validate(); err != nil {
+		return err
+	}
+
 	var buffer bytes.Buffer
 
 	for _, host := range b.Hosts {
@@ -85,7 +96,7 @@ func (b *Blocklist) Save() error {
 	return nil
 }
 
-// Remove removes the blocklist from the filesystem.
-func Remove(name string) error {
-	return os.Remove(path.Join(Dirname, name))
+// Validate validates tags for fields and returns false if there are any errors.
+func (b *Blocklist) Validate() (bool, error) {
+	return validator.ValidateStruct(b)
 }

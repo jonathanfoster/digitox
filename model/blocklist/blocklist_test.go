@@ -64,6 +64,14 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 			})
 
+			Convey("When blocklist is not valid", func() {
+				Convey("Should return validation error", func() {
+					testlist.Dirname = ""
+					err := testlist.Save()
+					So(err, ShouldNotBeNil)
+				})
+			})
+
 			Convey("When renaming list", func() {
 				Convey("Should remove original name list", func() {
 					list, err := blocklist.Find(testlist.Name)
@@ -80,6 +88,34 @@ func TestBlocklist(t *testing.T) {
 
 					err = blocklist.Remove(newName)
 					So(err, ShouldBeNil)
+				})
+			})
+		})
+
+		Convey("Validate", func() {
+			Convey("Should return true", func() {
+				list := blocklist.New("test")
+				result, err := list.Validate()
+				So(err, ShouldBeNil)
+				So(result, ShouldBeTrue)
+			})
+
+			Convey("When name is empty", func() {
+				Convey("Should return false", func() {
+					list := blocklist.New("")
+					result, err := list.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When dirname is empty", func() {
+				Convey("Should return false", func() {
+					list := blocklist.New("test")
+					list.Dirname = ""
+					result, err := list.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
 				})
 			})
 		})
