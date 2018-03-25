@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/stretchr/testify/assert"
 
 	"github.com/jonathanfoster/freedom/api"
 )
@@ -21,7 +20,7 @@ func TestSession(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				assert.Equal(t, 501, w.Code)
+				So(w.Code, ShouldEqual, 501)
 			})
 		})
 
@@ -32,7 +31,7 @@ func TestSession(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				assert.Equal(t, 501, w.Code)
+				So(w.Code, ShouldEqual, 501)
 			})
 
 			Convey("When ID is not a UUID", func() {
@@ -42,7 +41,7 @@ func TestSession(t *testing.T) {
 
 					router.ServeHTTP(w, r)
 
-					assert.Equal(t, 400, w.Code)
+					So(w.Code, ShouldEqual, 400)
 				})
 			})
 		})
@@ -54,7 +53,7 @@ func TestSession(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				assert.Equal(t, 501, w.Code)
+				So(w.Code, ShouldEqual, 501)
 			})
 		})
 
@@ -65,7 +64,7 @@ func TestSession(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				assert.Equal(t, 501, w.Code)
+				So(w.Code, ShouldEqual, 501)
 			})
 
 			Convey("When ID is not a UUID", func() {
@@ -75,7 +74,7 @@ func TestSession(t *testing.T) {
 
 					router.ServeHTTP(w, r)
 
-					assert.Equal(t, 400, w.Code)
+					So(w.Code, ShouldEqual, 400)
 				})
 			})
 		})
@@ -87,7 +86,7 @@ func TestSession(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				assert.Equal(t, 501, w.Code)
+				So(w.Code, ShouldEqual, 501)
 			})
 
 			Convey("When ID is not a UUID", func() {
@@ -97,7 +96,7 @@ func TestSession(t *testing.T) {
 
 					router.ServeHTTP(w, r)
 
-					assert.Equal(t, 400, w.Code)
+					So(w.Code, ShouldEqual, 400)
 				})
 			})
 		})
