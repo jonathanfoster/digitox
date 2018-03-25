@@ -34,5 +34,7 @@ func (s *Server) Run(addr string) {
 	}
 
 	log.Info("server listening on ", addr)
-	gracehttp.Serve(srv)
+	if err := gracehttp.Serve(srv); err != nil {
+		log.Fatal("error starting server: ", err.Error())
+	}
 }
