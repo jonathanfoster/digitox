@@ -30,6 +30,23 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(list, ShouldNotBeEmpty)
 			})
+
+			Convey("Should load hosts", func() {
+				host := "www.reddit.com"
+				list := blocklist.New("test-" + uuid.NewV4().String())
+				list.Hosts = append(list.Hosts, host)
+
+				err := list.Save()
+				So(err, ShouldBeNil)
+
+				list, err = blocklist.Find(list.Name)
+
+				So(err, ShouldBeNil)
+				So(list.Hosts[0], ShouldEqual, host)
+
+				err = blocklist.Remove(list.Name)
+				So(err, ShouldBeNil)
+			})
 		})
 
 		Convey("Remove", func() {
@@ -53,9 +70,8 @@ func TestBlocklist(t *testing.T) {
 
 				So(err, ShouldBeNil)
 
-				if err := blocklist.Remove(list.Name); err != nil {
-					So(err, ShouldBeNil)
-				}
+				err = blocklist.Remove(list.Name)
+				So(err, ShouldBeNil)
 			})
 		})
 	})

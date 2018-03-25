@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 )
 
 // Dirname is the name of the blocklists directory.
@@ -51,7 +52,15 @@ func Find(name string) (*Blocklist, error) {
 		return nil, err
 	}
 
-	return New(file.Name()), nil
+	buf, err := ioutil.ReadFile(path.Join(Dirname, name))
+	if err != nil {
+		return nil, err
+	}
+
+	list := New(file.Name())
+	list.Hosts = strings.Split(string(buf), "\n")
+
+	return list, nil
 }
 
 // Save writes the blocklist to the filesystem.
