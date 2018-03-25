@@ -34,7 +34,6 @@ func TestBlocklist(t *testing.T) {
 				r := httptest.NewRequest("GET", "/blocklists", nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 200)
 			})
 		})
@@ -45,7 +44,6 @@ func TestBlocklist(t *testing.T) {
 				r := httptest.NewRequest("GET", "/blocklists/"+testlist.Name, nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 200)
 			})
 
@@ -55,7 +53,6 @@ func TestBlocklist(t *testing.T) {
 					r := httptest.NewRequest("GET", "/blocklists/notfound", nil)
 
 					router.ServeHTTP(w, r)
-
 					So(w.Code, ShouldEqual, 404)
 				})
 			})
@@ -67,7 +64,6 @@ func TestBlocklist(t *testing.T) {
 				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.Name, nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 204)
 			})
 
@@ -77,7 +73,6 @@ func TestBlocklist(t *testing.T) {
 					r := httptest.NewRequest("DELETE", "/blocklists/notfound", nil)
 
 					router.ServeHTTP(w, r)
-
 					So(w.Code, ShouldEqual, 404)
 				})
 			})
@@ -90,18 +85,33 @@ func TestBlocklist(t *testing.T) {
 
 				buf, err := json.Marshal(list)
 				buffer := bytes.NewBuffer(buf)
-
 				So(err, ShouldBeNil)
 
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("POST", "/blocklists", buffer)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 201)
 
 				err = blocklist.Remove(list.Name)
 				So(err, ShouldBeNil)
+			})
+
+			Convey("When blocklist is not valid", func() {
+				Convey("Status code should be 422", func() {
+					list := blocklist.New("") // Name must not be empty
+					list.Hosts = append(list.Hosts, "www.reddit.com")
+
+					buf, err := json.Marshal(list)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("POST", "/blocklists", buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
 			})
 		})
 

@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/jonathanfoster/freedom/model"
+	"github.com/pkg/errors"
 )
 
 // Dirname is the name of the blocklists directory.
@@ -71,6 +73,7 @@ func Remove(name string) error {
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
 	if _, err := b.Validate(); err != nil {
+		errors.Wrap(err, "")
 		return err
 	}
 
@@ -87,7 +90,7 @@ func (b *Blocklist) Save() error {
 	}
 
 	// Handle abandoned list when name changes
-	if b.Name != b.origName {
+	if b.origName != "" && b.Name != b.origName {
 		if err := os.Remove(path.Join(Dirname, b.origName)); err != nil {
 			return err
 		}
@@ -98,5 +101,10 @@ func (b *Blocklist) Save() error {
 
 // Validate validates tags for fields and returns false if there are any errors.
 func (b *Blocklist) Validate() (bool, error) {
-	return validator.ValidateStruct(b)
+	result, err := validator.ValidateStruct(b)
+	if err != nil {
+		err = model.NewValidatorError(err.Error())
+	}
+
+	return result, err
 }

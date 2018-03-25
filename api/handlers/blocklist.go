@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/api/httputil"
+	"github.com/jonathanfoster/freedom/model"
 	"github.com/jonathanfoster/freedom/model/blocklist"
 )
 
@@ -64,7 +65,13 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := list.Save(); err != nil {
-		log.Error("error saving list: ", err.Error())
+		if model.IsValidator(err) {
+			log.Warn("blocklist not valid: ", err.Error())
+			httputil.Error(w, http.StatusUnprocessableEntity)
+			return
+		}
+
+		log.Error("error saving blocklist: ", err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
