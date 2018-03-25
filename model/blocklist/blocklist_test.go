@@ -2,6 +2,7 @@ package blocklist_test
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/satori/go.uuid"
@@ -61,6 +62,25 @@ func TestBlocklist(t *testing.T) {
 
 				err = blocklist.Remove(list.Name)
 				So(err, ShouldBeNil)
+			})
+
+			Convey("When renaming list", func() {
+				Convey("Should remove original name list", func() {
+					list, err := blocklist.Find(testlist.Name)
+					So(err, ShouldBeNil)
+
+					origName := list.Name
+					newName := "test-" + uuid.NewV4().String()
+					list.Name = newName
+					err = list.Save()
+					So(err, ShouldBeNil)
+
+					list, err = blocklist.Find(origName)
+					So(os.IsNotExist(err), ShouldBeTrue)
+
+					err = blocklist.Remove(newName)
+					So(err, ShouldBeNil)
+				})
 			})
 		})
 

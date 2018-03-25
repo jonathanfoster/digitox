@@ -16,14 +16,17 @@ type Blocklist struct {
 	Name    string   `json:"name"`
 	Dirname string   `json:"dirname"`
 	Hosts   []string `json:"hosts"`
+
+	origName string
 }
 
 // New creates a Blocklist instance.
 func New(name string) *Blocklist {
 	return &Blocklist{
-		Name:    name,
-		Dirname: Dirname,
-		Hosts:   []string{},
+		Name:     name,
+		Dirname:  Dirname,
+		Hosts:    []string{},
+		origName: name,
 	}
 }
 
@@ -68,7 +71,18 @@ func (b *Blocklist) Save() error {
 		}
 	}
 
-	return ioutil.WriteFile(path.Join(b.Dirname, b.Name), buffer.Bytes(), os.ModePerm)
+	if err := ioutil.WriteFile(path.Join(b.Dirname, b.Name), buffer.Bytes(), 0644); err != nil {
+		return err
+	}
+
+	// Handle abandoned list when name changes
+	if b.Name != b.origName {
+		if err := os.Remove(path.Join(Dirname, b.origName)); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Remove removes the blocklist from the filesystem.
