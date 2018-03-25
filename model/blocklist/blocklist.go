@@ -47,17 +47,12 @@ func All() ([]*Blocklist, error) {
 
 // Find finds a blocklist by name in the filesystem.
 func Find(name string) (*Blocklist, error) {
-	file, err := os.Open(path.Join(Dirname, name))
-	if err != nil {
-		return nil, err
-	}
-
 	buf, err := ioutil.ReadFile(path.Join(Dirname, name))
 	if err != nil {
 		return nil, err
 	}
 
-	list := New(file.Name())
+	list := New(name)
 	list.Hosts = strings.Split(string(buf), "\n")
 
 	return list, nil
