@@ -1,6 +1,7 @@
 package blocklist
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
@@ -11,28 +12,17 @@ var Dirname = "/etc/squid/blocklists/"
 
 // Blocklist represents a blocklist.
 type Blocklist struct {
-	Name    string `json:"name"`
-	Dirname string `json:"dirname"`
+	Name    string   `json:"name"`
+	Dirname string   `json:"dirname"`
+	Hosts   []string `json:"hosts"`
 }
 
 // New creates a Blocklist instance.
-func New() *Blocklist {
-	return &Blocklist{}
-}
-
-// NewFromFile creates a Blocklist instance from file.
-func NewFromFile(file *os.File) *Blocklist {
+func New(name string) *Blocklist {
 	return &Blocklist{
-		Name:    file.Name(),
+		Name:    name,
 		Dirname: Dirname,
-	}
-}
-
-// NewFromFileInfo creates a Blocklist instance from file info.
-func NewFromFileInfo(file os.FileInfo) *Blocklist {
-	return &Blocklist{
-		Name:    file.Name(),
-		Dirname: Dirname,
+		Hosts:   []string{},
 	}
 }
 
@@ -43,15 +33,15 @@ func All() ([]*Blocklist, error) {
 		return nil, err
 	}
 
-	list := []*Blocklist{}
+	lists := []*Blocklist{}
 
 	for _, file := range files {
 		if !file.IsDir() {
-			list = append(list, NewFromFileInfo(file))
+			lists = append(lists, New(file.Name()))
 		}
 	}
 
-	return list, nil
+	return lists, nil
 }
 
 // Find finds a blocklist by name in the filesystem.
@@ -61,12 +51,20 @@ func Find(name string) (*Blocklist, error) {
 		return nil, err
 	}
 
-	return NewFromFile(file), nil
+	return New(file.Name()), nil
 }
 
 // Save writes the blocklist to the filesystem.
-func (b *Blocklist) Save() {
-	// Write /etc/squid/blocklists/{id}
+func (b *Blocklist) Save() error {
+	var buffer bytes.Buffer
+
+	for _, host := range b.Hosts {
+		if _, err := buffer.WriteString(host + "\n"); err != nil {
+			return err
+		}
+	}
+
+	return ioutil.WriteFile(path.Join(b.Dirname, b.Name), buffer.Bytes(), os.ModePerm)
 }
 
 // Remove removes the blocklist from the filesystem.

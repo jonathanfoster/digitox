@@ -1,6 +1,8 @@
 package handlers_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http/httptest"
 	"os"
@@ -52,7 +54,7 @@ func TestBlocklist(t *testing.T) {
 		})
 
 		Convey("DeleteBlocklist", func() {
-			Convey("Status code should be 200", func() {
+			Convey("Status code should be 204", func() {
 				name := "test-" + uuid.NewV4().String()
 				err := ioutil.WriteFile(path.Join(blocklist.Dirname, name), nil, os.ModePerm)
 				So(err, ShouldBeNil)
@@ -62,7 +64,7 @@ func TestBlocklist(t *testing.T) {
 
 				router.ServeHTTP(w, r)
 
-				So(w.Code, ShouldEqual, 200)
+				So(w.Code, ShouldEqual, 204)
 			})
 
 			Convey("When blocklist does not exist", func() {
@@ -74,6 +76,25 @@ func TestBlocklist(t *testing.T) {
 
 					So(w.Code, ShouldEqual, 404)
 				})
+			})
+		})
+
+		Convey("CreateBlocklist", func() {
+			Convey("Status code should be 201", func() {
+				list := blocklist.New("test-" + uuid.NewV4().String())
+				list.Hosts = append(list.Hosts, "www.reddit.com")
+
+				buf, err := json.Marshal(list)
+				buffer := bytes.NewBuffer(buf)
+
+				So(err, ShouldBeNil)
+
+				w := httptest.NewRecorder()
+				r := httptest.NewRequest("POST", "/blocklists", buffer)
+
+				router.ServeHTTP(w, r)
+
+				So(w.Code, ShouldEqual, 201)
 			})
 		})
 	})

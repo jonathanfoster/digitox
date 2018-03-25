@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -45,9 +47,29 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, list)
 }
 
-// CreateBlocklist handles the POST /blocklists/{name} route.
+// CreateBlocklist handles the POST /blocklists route.
 func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
-	httputil.Error(w, http.StatusNotImplemented)
+	buf, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Error("error reading body: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	var list blocklist.Blocklist
+	if err := json.Unmarshal(buf, &list); err != nil {
+		log.Error("error unmarshalling body: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if err := list.Save(); err != nil {
+		log.Error("error saving list: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	httputil.JSON(w, http.StatusCreated, list)
 }
 
 // DeleteBlocklist handles the DELETE /blocklists/{name} route.

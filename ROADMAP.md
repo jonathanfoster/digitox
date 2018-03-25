@@ -36,8 +36,8 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Block List: Handle list block lists
 * [X] Block List: Handle find block list
 * [X] Block List: Handle remove block list
-* [ ] Block List: Handle save block list
-* [ ] Block List: Store block lists in /etc/squid/blocklist/ - **IN PROGRESS**
+* [X] Block List: Handle save block list
+* [X] Block List: Store block lists in /etc/squid/blocklist/
 
 ## Devices
 

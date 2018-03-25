@@ -43,5 +43,20 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 			})
 		})
+
+		Convey("Save", func() {
+			Convey("Should not return error", func() {
+				list := blocklist.New("test-" + uuid.NewV4().String())
+				list.Hosts = append(list.Hosts, "www.reddit.com")
+
+				err := list.Save()
+
+				So(err, ShouldBeNil)
+
+				if err := blocklist.Remove(list.Name); err != nil {
+					So(err, ShouldBeNil)
+				}
+			})
+		})
 	})
 }
