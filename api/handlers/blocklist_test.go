@@ -115,6 +115,54 @@ func TestBlocklist(t *testing.T) {
 			})
 		})
 
+		Convey("UpdateBlocklist", func() {
+			Convey("Status code should be 200", func() {
+				testlist.Hosts = append(testlist.Hosts, "news.ycombinator.com")
+
+				buf, err := json.Marshal(testlist)
+				buffer := bytes.NewBuffer(buf)
+				So(err, ShouldBeNil)
+
+				w := httptest.NewRecorder()
+				r := httptest.NewRequest("PUT", "/blocklists/"+testlist.Name, buffer)
+
+				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 200)
+			})
+
+			Convey("When blocklist is not valid", func() {
+				Convey("Status code should be 422", func() {
+					testlist.Dirname = "" // Dirname must not be empty
+
+					buf, err := json.Marshal(testlist)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/blocklists/"+testlist.Name, buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
+			})
+
+			Convey("When blocklist does not exist", func() {
+				Convey("Status code should be 404", func() {
+					list := blocklist.New("test-" + uuid.NewV4().String())
+
+					buf, err := json.Marshal(list)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/blocklists/"+list.Name, buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
+			})
+		})
+
 		Reset(func() {
 			blocklist.Remove(testlist.Name)
 		})

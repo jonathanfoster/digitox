@@ -104,11 +104,49 @@ func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
 
 // UpdateBlocklist handles the PUT /blocklists/{name} route.
 func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseName(r)
+	name, ok := ParseName(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	httputil.Error(w, http.StatusNotImplemented)
+	list, err := blocklist.Find(name)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			httputil.Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error finding blocklist %s: %s", name, err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	buf, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Error("error reading body: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.Unmarshal(buf, &list); err != nil {
+		log.Error("error unmarshalling body: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if err := list.Save(); err != nil {
+		if model.IsValidator(err) {
+			log.Warn("blocklist not valid: ", err.Error())
+			httputil.Error(w, http.StatusUnprocessableEntity)
+			return
+		}
+
+		log.Error("error saving blocklist: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	httputil.JSON(w, http.StatusOK, list)
 }
