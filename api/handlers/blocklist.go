@@ -52,13 +52,25 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 
 // DeleteBlocklist handles the DELETE /blocklists/{name} route.
 func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseName(r)
+	name, ok := ParseName(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	httputil.Error(w, http.StatusNotImplemented)
+	if err := blocklist.Remove(name); err != nil {
+		if os.IsNotExist(err) {
+			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			httputil.Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error removing blocklist %s: %s", name, err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // UpdateBlocklist handles the PUT /blocklists/{name} route.

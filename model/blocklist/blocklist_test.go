@@ -1,10 +1,13 @@
 package blocklist_test
 
 import (
+	"io/ioutil"
+	"os"
+	"path"
 	"testing"
 
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
-	"github.com/stretchr/testify/assert"
 
 	"github.com/jonathanfoster/freedom/model/blocklist"
 )
@@ -14,22 +17,30 @@ func TestBlocklist(t *testing.T) {
 		Convey("All", func() {
 			Convey("Should return blocklists", func() {
 				lists, err := blocklist.All()
-				if err != nil {
-					assert.Error(t, err)
-				}
 
-				assert.NotEmpty(t, lists)
+				So(err, ShouldBeNil)
+				So(lists, ShouldNotBeEmpty)
 			})
 		})
 
 		Convey("Find", func() {
 			Convey("Should return blocklist", func() {
 				list, err := blocklist.Find("default")
-				if err != nil {
-					assert.Error(t, err)
-				}
 
-				assert.NotEmpty(t, list)
+				So(err, ShouldBeNil)
+				So(list, ShouldNotBeEmpty)
+			})
+		})
+
+		Convey("Remove", func() {
+			Convey("Should not return error", func() {
+				name := "test-" + uuid.NewV4().String()
+				err := ioutil.WriteFile(path.Join(blocklist.Dirname, name), nil, os.ModePerm)
+				So(err, ShouldBeNil)
+
+				err = blocklist.Remove(name)
+
+				So(err, ShouldBeNil)
 			})
 		})
 	})

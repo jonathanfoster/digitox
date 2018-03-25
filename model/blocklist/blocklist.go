@@ -69,8 +69,7 @@ func (b *Blocklist) Save() {
 	// Write /etc/squid/blocklists/{id}
 }
 
-// Remove deletes the blocklist by name from the filesystem.
-func Remove(name string) *Blocklist {
-	// Delete /etc/squid/blocklists/{id}
-	return nil
+// Remove removes the blocklist from the filesystem.
+func Remove(name string) error {
+	return os.Remove(path.Join(Dirname, name))
 }
