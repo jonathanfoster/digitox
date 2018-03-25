@@ -9,7 +9,8 @@ import (
 	"path"
 	"testing"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/api"
@@ -17,6 +18,8 @@ import (
 )
 
 func TestBlocklist(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	Convey("Blocklist Handler", t, func() {
 		router := api.NewRouter()
 

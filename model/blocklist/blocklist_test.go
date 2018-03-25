@@ -7,17 +7,19 @@ import (
 	"testing"
 
 	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/model/blocklist"
 )
 
 func TestBlocklist(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	Convey("Blocklist", t, func() {
 		Convey("All", func() {
 			Convey("Should return blocklists", func() {
 				lists, err := blocklist.All()
-
 				So(err, ShouldBeNil)
 				So(lists, ShouldNotBeEmpty)
 			})
@@ -26,7 +28,6 @@ func TestBlocklist(t *testing.T) {
 		Convey("Find", func() {
 			Convey("Should return blocklist", func() {
 				list, err := blocklist.Find("default")
-
 				So(err, ShouldBeNil)
 				So(list, ShouldNotBeEmpty)
 			})
@@ -40,7 +41,6 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				list, err = blocklist.Find(list.Name)
-
 				So(err, ShouldBeNil)
 				So(list.Hosts[0], ShouldEqual, host)
 
@@ -56,7 +56,6 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				err = blocklist.Remove(name)
-
 				So(err, ShouldBeNil)
 			})
 		})
@@ -67,7 +66,6 @@ func TestBlocklist(t *testing.T) {
 				list.Hosts = append(list.Hosts, "www.reddit.com")
 
 				err := list.Save()
-
 				So(err, ShouldBeNil)
 
 				err = blocklist.Remove(list.Name)
