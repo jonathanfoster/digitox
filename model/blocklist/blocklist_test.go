@@ -2,8 +2,6 @@ package blocklist_test
 
 import (
 	"io/ioutil"
-	"os"
-	"path"
 	"testing"
 
 	"github.com/satori/go.uuid"
@@ -17,6 +15,13 @@ func TestBlocklist(t *testing.T) {
 	log.SetOutput(ioutil.Discard)
 
 	Convey("Blocklist", t, func() {
+		// Create a test blocklist before each test
+		testlist := blocklist.New("test-" + uuid.NewV4().String())
+		testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
+		if err := testlist.Save(); err != nil {
+			panic(err)
+		}
+
 		Convey("All", func() {
 			Convey("Should return blocklists", func() {
 				lists, err := blocklist.All()
@@ -27,35 +32,21 @@ func TestBlocklist(t *testing.T) {
 
 		Convey("Find", func() {
 			Convey("Should return blocklist", func() {
-				list, err := blocklist.Find("default")
+				list, err := blocklist.Find(testlist.Name)
 				So(err, ShouldBeNil)
 				So(list, ShouldNotBeEmpty)
 			})
 
 			Convey("Should load hosts", func() {
-				host := "www.reddit.com"
-				list := blocklist.New("test-" + uuid.NewV4().String())
-				list.Hosts = append(list.Hosts, host)
-
-				err := list.Save()
+				list, err := blocklist.Find(testlist.Name)
 				So(err, ShouldBeNil)
-
-				list, err = blocklist.Find(list.Name)
-				So(err, ShouldBeNil)
-				So(list.Hosts[0], ShouldEqual, host)
-
-				err = blocklist.Remove(list.Name)
-				So(err, ShouldBeNil)
+				So(list.Hosts[0], ShouldEqual, testlist.Hosts[0])
 			})
 		})
 
 		Convey("Remove", func() {
 			Convey("Should not return error", func() {
-				name := "test-" + uuid.NewV4().String()
-				err := ioutil.WriteFile(path.Join(blocklist.Dirname, name), nil, os.ModePerm)
-				So(err, ShouldBeNil)
-
-				err = blocklist.Remove(name)
+				err := blocklist.Remove(testlist.Name)
 				So(err, ShouldBeNil)
 			})
 		})
@@ -71,6 +62,10 @@ func TestBlocklist(t *testing.T) {
 				err = blocklist.Remove(list.Name)
 				So(err, ShouldBeNil)
 			})
+		})
+
+		Reset(func() {
+			blocklist.Remove(testlist.Name)
 		})
 	})
 }

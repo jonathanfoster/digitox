@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http/httptest"
-	"os"
-	"path"
 	"testing"
 
 	"github.com/satori/go.uuid"
@@ -23,6 +21,13 @@ func TestBlocklist(t *testing.T) {
 	Convey("Blocklist Handler", t, func() {
 		router := api.NewRouter()
 
+		// Create a test blocklist before each test
+		testlist := blocklist.New("test-" + uuid.NewV4().String())
+		testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
+		if err := testlist.Save(); err != nil {
+			panic(err)
+		}
+
 		Convey("ListBlocklists", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
@@ -37,7 +42,7 @@ func TestBlocklist(t *testing.T) {
 		Convey("FindBlocklist", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/blocklists/default", nil)
+				r := httptest.NewRequest("GET", "/blocklists/"+testlist.Name, nil)
 
 				router.ServeHTTP(w, r)
 
@@ -58,12 +63,8 @@ func TestBlocklist(t *testing.T) {
 
 		Convey("DeleteBlocklist", func() {
 			Convey("Status code should be 204", func() {
-				name := "test-" + uuid.NewV4().String()
-				err := ioutil.WriteFile(path.Join(blocklist.Dirname, name), nil, os.ModePerm)
-				So(err, ShouldBeNil)
-
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/blocklists/"+name, nil)
+				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.Name, nil)
 
 				router.ServeHTTP(w, r)
 
@@ -98,7 +99,14 @@ func TestBlocklist(t *testing.T) {
 				router.ServeHTTP(w, r)
 
 				So(w.Code, ShouldEqual, 201)
+
+				err = blocklist.Remove(list.Name)
+				So(err, ShouldBeNil)
 			})
+		})
+
+		Reset(func() {
+			blocklist.Remove(testlist.Name)
 		})
 	})
 }
