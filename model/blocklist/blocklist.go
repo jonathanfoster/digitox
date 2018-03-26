@@ -2,6 +2,7 @@ package blocklist
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,8 +11,8 @@ import (
 	"strings"
 
 	validator "github.com/asaskevich/govalidator"
+
 	"github.com/jonathanfoster/freedom/model"
-	"github.com/pkg/errors"
 )
 
 var (

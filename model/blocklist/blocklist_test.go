@@ -119,14 +119,22 @@ func TestBlocklist(t *testing.T) {
 				})
 			})
 
-			Convey("When no lines provided", func() {
-				Convey("Should unmarshal blocklist without name", func() {
+			Convey("When no data provided", func() {
+				Convey("Should unmarshal blocklist without data", func() {
 					list := &blocklist.Blocklist{}
 					data := []byte{}
 
 					err := blocklist.Unmarshal(data, list)
 					So(err, ShouldNotBeNil)
 				})
+			})
+		})
+
+		Convey("Marshal", func() {
+			Convey("Should return bytes", func() {
+				buf, err := blocklist.Marshal(testlist)
+				So(err, ShouldBeNil)
+				So(buf, ShouldNotBeEmpty)
 			})
 		})
 
