@@ -1,13 +1,11 @@
 package blocklist
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
-	"regexp"
-	"strings"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
@@ -17,11 +15,9 @@ import (
 
 var (
 	// Dirname is the name of the blocklists directory.
-	Dirname = "/etc/squid/blocklists/"
+	Dirname = "/etc/freedom/blocklists/"
 	// ErrNotExist is the error returned when a blocklist does not exist.
 	ErrNotExist = errors.New("blocklist does not exist")
-
-	nameRegexp = regexp.MustCompile(`^#\s*name\s*:\s*(.*)\s*$`)
 )
 
 // Blocklist represents a blocklist.
@@ -74,7 +70,7 @@ func Find(id string) (*Blocklist, error) {
 	}
 
 	list := &Blocklist{}
-	if err := Unmarshal(buf, list); err != nil {
+	if err := json.Unmarshal(buf, list); err != nil {
 		return nil, errors.Wrap(err, "error unmarshaling blocklist")
 	}
 
@@ -101,7 +97,7 @@ func (b *Blocklist) Save() error {
 		return model.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
 	}
 
-	buf, err := Marshal(b)
+	buf, err := json.Marshal(b)
 	if err != nil {
 		return errors.Wrapf(err, "error marshaling blocklist %s", b.ID)
 	}
@@ -122,46 +118,4 @@ func (b *Blocklist) Validate() (bool, error) {
 	}
 
 	return result, err
-}
-
-// Marshal returns encoding of v.
-func Marshal(v *Blocklist) ([]byte, error) {
-	var buffer bytes.Buffer
-
-	if v.Name != "" {
-		buffer.WriteString(fmt.Sprintf("# name: %s\n", v.Name))
-	}
-
-	for _, host := range v.Hosts {
-		if _, err := buffer.WriteString(host + "\n"); err != nil {
-			return nil, errors.Wrapf(err, "error marshaling blocklist: error writing host %s to buffer", host)
-		}
-	}
-
-	return buffer.Bytes(), nil
-}
-
-// Unmarshal parses the encoded data and stores the result in the value pointed to by v.
-func Unmarshal(data []byte, v *Blocklist) error {
-	s := string(data)
-	lines := strings.Split(s, "\n")
-	if len(lines) == 1 && lines[0] == "" {
-		return errors.New("error unmarshaling blocklist: data is empty")
-	}
-
-	// nil is no match
-	// match[0] is full match
-	// match[1] is group 1 match which contains name value
-	match := nameRegexp.FindStringSubmatch(lines[0])
-	if len(match) == 2 {
-		// Name match found, first line is name and all other lines are hosts
-		v.Name = match[1]
-		v.Hosts = lines[1:]
-	} else {
-		// No name match found, all lines are hosts
-		v.Name = ""
-		v.Hosts = lines
-	}
-
-	return nil
 }

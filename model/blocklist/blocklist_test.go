@@ -1,7 +1,6 @@
 package blocklist_test
 
 import (
-	"io/ioutil"
 	"testing"
 
 	"github.com/satori/go.uuid"
@@ -9,17 +8,19 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/model/blocklist"
+	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
 func TestBlocklist(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist", t, func() {
-		// Create a test blocklist before each test
-		testlist := blocklist.New(uuid.NewV4().String())
-		testlist.Name = "test"
-		testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
-		if err := testlist.Save(); err != nil {
+		if err := testutil.SetTestBlocklistDirname(); err != nil {
+			panic(err)
+		}
+
+		testlist, err := testutil.CreateTestBlocklist()
+		if err != nil {
 			panic(err)
 		}
 
@@ -88,53 +89,6 @@ func TestBlocklist(t *testing.T) {
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)
 				})
-			})
-		})
-
-		Convey("Unmarshal", func() {
-			Convey("Should unmarshal blocklist from data", func() {
-				list := &blocklist.Blocklist{}
-				data := []byte("# name: Social Distractions\n" +
-					"www.reddit.com\n" +
-					"news.ycombinator.com\n")
-
-				err := blocklist.Unmarshal(data, list)
-				So(err, ShouldBeNil)
-				So(list.Name, ShouldEqual, "Social Distractions")
-				So(list.Hosts[0], ShouldEqual, "www.reddit.com")
-				So(list.Hosts[1], ShouldEqual, "news.ycombinator.com")
-			})
-
-			Convey("When name not provided", func() {
-				Convey("Should unmarshal blocklist without name", func() {
-					list := &blocklist.Blocklist{}
-					data := []byte("www.reddit.com\n" +
-						"news.ycombinator.com\n")
-
-					err := blocklist.Unmarshal(data, list)
-					So(err, ShouldBeNil)
-					So(list.Name, ShouldEqual, "")
-					So(list.Hosts[0], ShouldEqual, "www.reddit.com")
-					So(list.Hosts[1], ShouldEqual, "news.ycombinator.com")
-				})
-			})
-
-			Convey("When no data provided", func() {
-				Convey("Should unmarshal blocklist without data", func() {
-					list := &blocklist.Blocklist{}
-					data := []byte{}
-
-					err := blocklist.Unmarshal(data, list)
-					So(err, ShouldNotBeNil)
-				})
-			})
-		})
-
-		Convey("Marshal", func() {
-			Convey("Should return bytes", func() {
-				buf, err := blocklist.Marshal(testlist)
-				So(err, ShouldBeNil)
-				So(buf, ShouldNotBeEmpty)
 			})
 		})
 

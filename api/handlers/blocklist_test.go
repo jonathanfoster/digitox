@@ -12,22 +12,23 @@ import (
 
 	"github.com/jonathanfoster/freedom/api"
 	"github.com/jonathanfoster/freedom/model/blocklist"
+	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
 func TestBlocklist(t *testing.T) {
-	//log.SetOutput(ioutil.Discard)
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist Handler", t, func() {
-		router := api.NewRouter()
-
-		// Create a test blocklist before each test
-		testlist := blocklist.New(uuid.NewV4().String())
-		testlist.Name = "test"
-		testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
-		if err := testlist.Save(); err != nil {
+		if err := testutil.SetTestBlocklistDirname(); err != nil {
 			panic(err)
 		}
+
+		testlist, err := testutil.CreateTestBlocklist()
+		if err != nil {
+			panic(err)
+		}
+
+		router := api.NewRouter()
 
 		Convey("ListBlocklists", func() {
 			Convey("Status code should be 200", func() {
