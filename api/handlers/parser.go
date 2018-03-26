@@ -4,14 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 )
 
 // ParseID parses ID from route variables.
-func ParseID(r *http.Request) (uuid.UUID, bool) {
+func ParseID(r *http.Request) (string, bool) {
 	rv := mux.Vars(r)["id"]
-	id, err := uuid.FromString(rv)
-	return id, err == nil
+	return rv, rv != ""
 }
 
 // ParseName parses name from route variables.

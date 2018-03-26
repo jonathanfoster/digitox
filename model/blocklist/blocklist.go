@@ -2,9 +2,11 @@ package blocklist
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	validator "github.com/asaskevich/govalidator"
@@ -12,25 +14,23 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Dirname is the name of the blocklists directory.
-var Dirname = "/etc/squid/blocklists/"
+var (
+	// Dirname is the name of the blocklists directory.
+	Dirname = "/etc/squid/blocklists/"
+)
 
 // Blocklist represents a blocklist.
 type Blocklist struct {
-	Name    string   `json:"name" valid:"required"`
-	Dirname string   `json:"dirname" valid:"required"`
-	Hosts   []string `json:"hosts"`
-
-	origName string
+	ID    string   `json:"id" valid:"required, uuidv4"`
+	Name  string   `json:"name"`
+	Hosts []string `json:"hosts"`
 }
 
 // New creates a Blocklist instance.
-func New(name string) *Blocklist {
+func New(id string) *Blocklist {
 	return &Blocklist{
-		Name:     name,
-		Dirname:  Dirname,
-		Hosts:    []string{},
-		origName: name,
+		ID:    id,
+		Hosts: []string{},
 	}
 }
 
@@ -38,6 +38,7 @@ func New(name string) *Blocklist {
 func All() ([]*Blocklist, error) {
 	files, err := ioutil.ReadDir(Dirname)
 	if err != nil {
+		// Don't wrap error so caller can check for is not exist error
 		return nil, err
 	}
 
@@ -52,48 +53,43 @@ func All() ([]*Blocklist, error) {
 	return lists, nil
 }
 
-// Find finds a blocklist by name in the filesystem.
-func Find(name string) (*Blocklist, error) {
-	buf, err := ioutil.ReadFile(path.Join(Dirname, name))
+// Find finds a blocklist by ID in the filesystem.
+func Find(id string) (*Blocklist, error) {
+	filename := path.Join(Dirname, id)
+	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
+		// Don't wrap error so caller can check for is not exist error
 		return nil, err
 	}
 
-	list := New(name)
-	list.Hosts = strings.Split(string(buf), "\n")
+	list := &Blocklist{}
+	if err := Unmarshal(buf, list); err != nil {
+		return nil, errors.Wrap(err, "error unmarshaling blocklist")
+	}
 
 	return list, nil
 }
 
 // Remove removes the blocklist from the filesystem.
-func Remove(name string) error {
-	return os.Remove(path.Join(Dirname, name))
+func Remove(id string) error {
+	// Don't wrap error so caller can check for is not exist error
+	return os.Remove(path.Join(Dirname, id))
 }
 
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
 	if _, err := b.Validate(); err != nil {
-		errors.Wrap(err, "")
-		return err
+		return model.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
 	}
 
-	var buffer bytes.Buffer
-
-	for _, host := range b.Hosts {
-		if _, err := buffer.WriteString(host + "\n"); err != nil {
-			return err
-		}
+	buf, err := Marshal(b)
+	if err != nil {
+		return errors.Wrapf(err, "error marshaling blocklist %s", b.ID)
 	}
 
-	if err := ioutil.WriteFile(path.Join(b.Dirname, b.Name), buffer.Bytes(), 0644); err != nil {
-		return err
-	}
-
-	// Handle abandoned list when name changes
-	if b.origName != "" && b.Name != b.origName {
-		if err := os.Remove(path.Join(Dirname, b.origName)); err != nil {
-			return err
-		}
+	filename := path.Join(Dirname, b.ID)
+	if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
+		return errors.Wrapf(err, "error writing blocklist file %s", filename)
 	}
 
 	return nil
@@ -107,4 +103,51 @@ func (b *Blocklist) Validate() (bool, error) {
 	}
 
 	return result, err
+}
+
+// Marshal returns encoding of v.
+func Marshal(v *Blocklist) ([]byte, error) {
+	var buffer bytes.Buffer
+
+	if v.Name != "" {
+		buffer.WriteString(fmt.Sprintf("# name: %s\n", v.Name))
+	}
+
+	for _, host := range v.Hosts {
+		if _, err := buffer.WriteString(host + "\n"); err != nil {
+			return nil, errors.Wrapf(err, "error marshaling blocklist: error writing host %s to buffer", host)
+		}
+	}
+
+	return buffer.Bytes(), nil
+}
+
+// Unmarshal parses the encoded data and stores the result in the value pointed to by v.
+func Unmarshal(data []byte, v *Blocklist) error {
+	s := string(data)
+	lines := strings.Split(s, "\n")
+	if len(lines) == 1 && lines[0] == "" {
+		return errors.New("error unmarshaling blocklist: no data provided")
+	}
+
+	re, err := regexp.Compile(`^#\s*name\s*:\s*(.*)\s*$`)
+	if err != nil {
+		return errors.Wrap(err, "error compiling blocklist name regular expression")
+	}
+
+	// nil is no match
+	// match[0] is full match
+	// match[1] is group 1 match which contains name value
+	match := re.FindStringSubmatch(lines[0])
+	if match != nil && len(match) == 2 {
+		// Name match found, first line is name and all other lines are hosts
+		v.Name = match[1]
+		v.Hosts = lines[1:]
+	} else {
+		// No name match found, all lines are hosts
+		v.Name = ""
+		v.Hosts = lines
+	}
+
+	return nil
 }

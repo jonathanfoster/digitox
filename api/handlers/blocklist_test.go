@@ -3,7 +3,6 @@ package handlers_test
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http/httptest"
 	"testing"
 
@@ -16,13 +15,15 @@ import (
 )
 
 func TestBlocklist(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	//log.SetOutput(ioutil.Discard)
+	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist Handler", t, func() {
 		router := api.NewRouter()
 
 		// Create a test blocklist before each test
-		testlist := blocklist.New("test-" + uuid.NewV4().String())
+		testlist := blocklist.New(uuid.NewV4().String())
+		testlist.Name = "test"
 		testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
 		if err := testlist.Save(); err != nil {
 			panic(err)
@@ -41,14 +42,14 @@ func TestBlocklist(t *testing.T) {
 		Convey("FindBlocklist", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/blocklists/"+testlist.Name, nil)
+				r := httptest.NewRequest("GET", "/blocklists/"+testlist.ID, nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
 			})
 
 			Convey("When blocklist does not exist", func() {
-				Convey("Status code should be 400", func() {
+				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
 					r := httptest.NewRequest("GET", "/blocklists/notfound", nil)
 
@@ -61,14 +62,14 @@ func TestBlocklist(t *testing.T) {
 		Convey("DeleteBlocklist", func() {
 			Convey("Status code should be 204", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.Name, nil)
+				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.ID, nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 204)
 			})
 
 			Convey("When blocklist does not exist", func() {
-				Convey("Status code should be 400", func() {
+				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
 					r := httptest.NewRequest("DELETE", "/blocklists/notfound", nil)
 
@@ -80,7 +81,8 @@ func TestBlocklist(t *testing.T) {
 
 		Convey("CreateBlocklist", func() {
 			Convey("Status code should be 201", func() {
-				list := blocklist.New("test-" + uuid.NewV4().String())
+				list := blocklist.New(uuid.NewV4().String())
+				list.Name = "test"
 				list.Hosts = append(list.Hosts, "www.reddit.com")
 
 				buf, err := json.Marshal(list)
@@ -93,13 +95,14 @@ func TestBlocklist(t *testing.T) {
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
 
-				err = blocklist.Remove(list.Name)
+				err = blocklist.Remove(list.ID)
 				So(err, ShouldBeNil)
 			})
 
 			Convey("When blocklist is not valid", func() {
 				Convey("Status code should be 422", func() {
-					list := blocklist.New("") // Name must not be empty
+					list := blocklist.New("test") // ID must be a valid UUIDv4
+					list.Name = "test"
 					list.Hosts = append(list.Hosts, "www.reddit.com")
 
 					buf, err := json.Marshal(list)
@@ -124,7 +127,7 @@ func TestBlocklist(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("PUT", "/blocklists/"+testlist.Name, buffer)
+				r := httptest.NewRequest("PUT", "/blocklists/"+testlist.ID, buffer)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
@@ -132,14 +135,15 @@ func TestBlocklist(t *testing.T) {
 
 			Convey("When blocklist is not valid", func() {
 				Convey("Status code should be 422", func() {
-					testlist.Dirname = "" // Dirname must not be empty
+					origID := testlist.ID
+					testlist.ID = "test" // ID must be a valid UUIDv4
 
 					buf, err := json.Marshal(testlist)
 					buffer := bytes.NewBuffer(buf)
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/blocklists/"+testlist.Name, buffer)
+					r := httptest.NewRequest("PUT", "/blocklists/"+origID, buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 422)
@@ -148,14 +152,14 @@ func TestBlocklist(t *testing.T) {
 
 			Convey("When blocklist does not exist", func() {
 				Convey("Status code should be 404", func() {
-					list := blocklist.New("test-" + uuid.NewV4().String())
+					list := blocklist.New(uuid.NewV4().String())
 
 					buf, err := json.Marshal(list)
 					buffer := bytes.NewBuffer(buf)
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/blocklists/"+list.Name, buffer)
+					r := httptest.NewRequest("PUT", "/blocklists/"+list.ID, buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -164,7 +168,7 @@ func TestBlocklist(t *testing.T) {
 		})
 
 		Reset(func() {
-			blocklist.Remove(testlist.Name)
+			blocklist.Remove(testlist.ID)
 		})
 	})
 }

@@ -33,17 +33,6 @@ func TestSession(t *testing.T) {
 
 				So(w.Code, ShouldEqual, 501)
 			})
-
-			Convey("When ID is not a UUID", func() {
-				Convey("Status code should be 400", func() {
-					w := httptest.NewRecorder()
-					r := httptest.NewRequest("GET", "/sessions/1234567890", nil)
-
-					router.ServeHTTP(w, r)
-
-					So(w.Code, ShouldEqual, 400)
-				})
-			})
 		})
 
 		Convey("CreateSession", func() {
@@ -66,17 +55,6 @@ func TestSession(t *testing.T) {
 
 				So(w.Code, ShouldEqual, 501)
 			})
-
-			Convey("When ID is not a UUID", func() {
-				Convey("Status code should be 400", func() {
-					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/sessions/1234567890", nil)
-
-					router.ServeHTTP(w, r)
-
-					So(w.Code, ShouldEqual, 400)
-				})
-			})
 		})
 
 		Convey("DeleteSession", func() {
@@ -87,17 +65,6 @@ func TestSession(t *testing.T) {
 				router.ServeHTTP(w, r)
 
 				So(w.Code, ShouldEqual, 501)
-			})
-
-			Convey("When ID is not a UUID", func() {
-				Convey("Status code should be 400", func() {
-					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/sessions/1234567890", nil)
-
-					router.ServeHTTP(w, r)
-
-					So(w.Code, ShouldEqual, 400)
-				})
 			})
 		})
 	})

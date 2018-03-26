@@ -24,23 +24,23 @@ func ListBlocklists(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusOK, lists)
 }
 
-// FindBlocklist handles the GET /blocklists/{name} route.
+// FindBlocklist handles the GET /blocklists/{id} route.
 func FindBlocklist(w http.ResponseWriter, r *http.Request) {
-	name, ok := ParseName(r)
+	id, ok := ParseID(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	list, err := blocklist.Find(name)
+	list, err := blocklist.Find(id)
 	if err != nil {
 		if os.IsNotExist(err) {
-			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error finding blocklist %s: %s", name, err.Error())
+		log.Errorf("error finding blocklist %s: %s", id, err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
@@ -52,14 +52,14 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Error("error reading body: ", err.Error())
+		log.Error("error reading blocklist body: ", err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
 
 	var list blocklist.Blocklist
 	if err := json.Unmarshal(buf, &list); err != nil {
-		log.Error("error unmarshalling body: ", err.Error())
+		log.Error("error unmarshaling blocklist body: ", err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
@@ -79,22 +79,22 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	httputil.JSON(w, http.StatusCreated, list)
 }
 
-// DeleteBlocklist handles the DELETE /blocklists/{name} route.
+// DeleteBlocklist handles the DELETE /blocklists/{id} route.
 func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
-	name, ok := ParseName(r)
+	id, ok := ParseID(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	if err := blocklist.Remove(name); err != nil {
+	if err := blocklist.Remove(id); err != nil {
 		if os.IsNotExist(err) {
-			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error removing blocklist %s: %s", name, err.Error())
+		log.Errorf("error removing blocklist %s: %s", id, err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
@@ -102,23 +102,23 @@ func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// UpdateBlocklist handles the PUT /blocklists/{name} route.
+// UpdateBlocklist handles the PUT /blocklists/{id} route.
 func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
-	name, ok := ParseName(r)
+	id, ok := ParseID(r)
 	if !ok {
 		httputil.Error(w, http.StatusBadRequest)
 		return
 	}
 
-	list, err := blocklist.Find(name)
+	list, err := blocklist.Find(id)
 	if err != nil {
 		if os.IsNotExist(err) {
-			log.Warnf("blocklist does not exist: %s: %s", name, err.Error())
+			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error finding blocklist %s: %s", name, err.Error())
+		log.Errorf("error finding blocklist %s: %s", id, err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
