@@ -63,4 +63,6 @@ run: build
 	./bin/freedom-apiserver
 
 test:
-	go test -v ./...
+	go test -coverprofile=./bin/coverage.out -v ./...
+	go tool cover -func=./bin/coverage.out
+	go tool cover -html=./bin/coverage.out
