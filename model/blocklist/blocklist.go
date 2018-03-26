@@ -2,7 +2,6 @@ package blocklist
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,6 +10,7 @@ import (
 	"strings"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/pkg/errors"
 
 	"github.com/jonathanfoster/freedom/model"
 )
@@ -153,7 +153,7 @@ func Unmarshal(data []byte, v *Blocklist) error {
 	// match[0] is full match
 	// match[1] is group 1 match which contains name value
 	match := nameRegexp.FindStringSubmatch(lines[0])
-	if match != nil && len(match) == 2 {
+	if len(match) == 2 {
 		// Name match found, first line is name and all other lines are hosts
 		v.Name = match[1]
 		v.Hosts = lines[1:]
