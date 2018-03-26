@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	log "github.com/sirupsen/logrus"
 
@@ -34,7 +33,7 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	list, err := blocklist.Find(id)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if err == blocklist.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
@@ -88,7 +87,7 @@ func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := blocklist.Remove(id); err != nil {
-		if os.IsNotExist(err) {
+		if err == blocklist.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
@@ -112,7 +111,7 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	list, err := blocklist.Find(id)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if err == blocklist.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return

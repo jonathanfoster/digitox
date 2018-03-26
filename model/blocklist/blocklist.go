@@ -17,6 +17,10 @@ import (
 var (
 	// Dirname is the name of the blocklists directory.
 	Dirname = "/etc/squid/blocklists/"
+	// ErrNotExist is the error returned when a blocklist does not exist.
+	ErrNotExist = errors.New("blocklist does not exist")
+
+	nameRegexp = regexp.MustCompile(`^#\s*name\s*:\s*(.*)\s*$`)
 )
 
 // Blocklist represents a blocklist.
@@ -38,8 +42,11 @@ func New(id string) *Blocklist {
 func All() ([]*Blocklist, error) {
 	files, err := ioutil.ReadDir(Dirname)
 	if err != nil {
-		// Don't wrap error so caller can check for is not exist error
-		return nil, err
+		if os.IsNotExist(err) {
+			return nil, ErrNotExist
+		}
+
+		return nil, errors.Wrap(err, "error retrieving all blocklists")
 	}
 
 	lists := []*Blocklist{}
@@ -58,8 +65,11 @@ func Find(id string) (*Blocklist, error) {
 	filename := path.Join(Dirname, id)
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
-		// Don't wrap error so caller can check for is not exist error
-		return nil, err
+		if os.IsNotExist(err) {
+			return nil, ErrNotExist
+		}
+
+		return nil, errors.Wrapf(err, "error reading blocklist file %s", filename)
 	}
 
 	list := &Blocklist{}
@@ -72,8 +82,16 @@ func Find(id string) (*Blocklist, error) {
 
 // Remove removes the blocklist from the filesystem.
 func Remove(id string) error {
-	// Don't wrap error so caller can check for is not exist error
-	return os.Remove(path.Join(Dirname, id))
+	filename := path.Join(Dirname, id)
+	if err := os.Remove(filename); err != nil {
+		if os.IsNotExist(err) {
+			return ErrNotExist
+		}
+
+		return errors.Wrapf(err, "error removing blocklist file %s", filename)
+	}
+
+	return nil
 }
 
 // Save writes the blocklist to the filesystem.
@@ -127,18 +145,13 @@ func Unmarshal(data []byte, v *Blocklist) error {
 	s := string(data)
 	lines := strings.Split(s, "\n")
 	if len(lines) == 1 && lines[0] == "" {
-		return errors.New("error unmarshaling blocklist: no data provided")
-	}
-
-	re, err := regexp.Compile(`^#\s*name\s*:\s*(.*)\s*$`)
-	if err != nil {
-		return errors.Wrap(err, "error compiling blocklist name regular expression")
+		return errors.New("error unmarshaling blocklist: data is empty")
 	}
 
 	// nil is no match
 	// match[0] is full match
 	// match[1] is group 1 match which contains name value
-	match := re.FindStringSubmatch(lines[0])
+	match := nameRegexp.FindStringSubmatch(lines[0])
 	if match != nil && len(match) == 2 {
 		// Name match found, first line is name and all other lines are hosts
 		v.Name = match[1]
