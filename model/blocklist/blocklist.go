@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
@@ -57,9 +58,35 @@ func All() ([]*Blocklist, error) {
 	return lists, nil
 }
 
+// FileName sanitizes ID and joins with blocklist directory path to create a
+// file path. The file path is then checked to ensure its directory is the
+// blocklist directory to prevent directory traversal using relative paths.
+func FileName(id string) (string, error) {
+	filename := path.Join(Dirname, validator.SafeFileName(id))
+	filename, err := filepath.Abs(filename)
+	if err != nil {
+		return "", errors.Wrapf(err, "error returning absolute blocklist file path %s", filename)
+	}
+
+	dirname, err := filepath.Abs(Dirname)
+	if err != nil {
+		return "", errors.Wrapf(err, "error returning absolute blocklist directory path %s", Dirname)
+	}
+
+	if filepath.Dir(filename) != dirname {
+		return "", fmt.Errorf("blocklist file path %s not in blocklist directory %s", filename, dirname)
+	}
+
+	return filename, nil
+}
+
 // Find finds a blocklist by ID in the filesystem.
 func Find(id string) (*Blocklist, error) {
-	filename := path.Join(Dirname, id)
+	filename, err := FileName(id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error creating blocklist file name to find ID  %s", id)
+	}
+
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -79,7 +106,11 @@ func Find(id string) (*Blocklist, error) {
 
 // Remove removes the blocklist from the filesystem.
 func Remove(id string) error {
-	filename := path.Join(Dirname, id)
+	filename, err := FileName(id)
+	if err != nil {
+		return errors.Wrapf(err, "error creating blocklist file name to remove ID  %s", id)
+	}
+
 	if err := os.Remove(filename); err != nil {
 		if os.IsNotExist(err) {
 			return ErrNotExist
@@ -102,7 +133,11 @@ func (b *Blocklist) Save() error {
 		return errors.Wrapf(err, "error marshaling blocklist %s", b.ID)
 	}
 
-	filename := path.Join(Dirname, b.ID)
+	filename, err := FileName(b.ID)
+	if err != nil {
+		return errors.Wrapf(err, "error creating blocklist file name to save ID  %s", b.ID)
+	}
+
 	if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
 		return errors.Wrapf(err, "error writing blocklist file %s", filename)
 	}

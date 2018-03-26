@@ -62,6 +62,7 @@ release: precommit docker-push deploy
 run: build
 	./bin/freedom-apiserver
 
+.PHONY: test
 test:
 	mkdir -p bin/
 	go test -coverprofile=./bin/coverage.out -v ./...
