@@ -49,3 +49,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [ ] Device: Handle save device
 * [ ] Device: Store devices in /etc/freedom/passwd
 * [ ] Device: Validate model before persisting
+
+## Authorization
+
+* [ ] Auth: Restrict access using auth token
