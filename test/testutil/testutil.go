@@ -9,6 +9,7 @@ import (
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // SetTestBlocklistDirname creates and sets the test blocklist directory.
@@ -21,6 +22,7 @@ func SetTestBlocklistDirname() error {
 	}
 
 	blocklist.Dirname = dirname
+	store.Blocklist.SetDirname(dirname)
 
 	return nil
 }
@@ -35,6 +37,7 @@ func SetTestSessionDirname() error {
 	}
 
 	session.Dirname = dirname
+	store.Session.SetDirname(dirname)
 
 	return nil
 }
@@ -58,7 +61,15 @@ func CreateTestSession() (*session.Session, error) {
 	testsess.Name = "test"
 	testsess.Starts = time.Now()
 	testsess.Ends = testsess.Starts.Add(time.Hour * 1)
-	testsess.Repeats = []session.RepeatSchedule{session.EveryMonday}
+	testsess.Repeats = []session.RepeatSchedule{
+		session.EverySunday,
+		session.EveryMonday,
+		session.EveryTuesday,
+		session.EveryWednesday,
+		session.EveryThursday,
+		session.EveryFriday,
+		session.EverySaturday,
+	}
 	testsess.Blocklists = []string{uuid.NewV4().String()}
 	testsess.Devices = []string{uuid.NewV4().String()}
 

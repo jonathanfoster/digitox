@@ -1,17 +1,14 @@
 package session
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 
 	"github.com/jonathanfoster/freedom/models"
-	"github.com/jonathanfoster/freedom/models/pathutil"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // RepeatSchedule represents a scheduled repetition of a session.
@@ -31,8 +28,6 @@ const (
 var (
 	// Dirname is the name of the sessions directory.
 	Dirname = "/etc/freedom/sessions/"
-	// ErrNotExist is the error returned when a session does not exist.
-	ErrNotExist = errors.New("session does not exist")
 )
 
 // Session represents a timeframe in which websites are blocked
@@ -56,64 +51,50 @@ func New(id string) *Session {
 	}
 }
 
-// All retrieves all blocklists from filesystem.
+// All retrieves all sessions from file system.
 func All() ([]*Session, error) {
-	files, err := ioutil.ReadDir(Dirname)
+	filesnames, err := store.Session.All()
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, ErrNotExist
-		}
-
-		return nil, errors.Wrap(err, "error retrieving all sessions")
+		return nil, err
 	}
 
-	sessions := []*Session{}
+	var list []*Session
 
-	for _, file := range files {
-		if !file.IsDir() {
-			sessions = append(sessions, New(file.Name()))
-		}
+	for _, filename := range filesnames {
+		list = append(list, New(filename))
 	}
 
-	return sessions, nil
+	return list, nil
 }
 
-// Remove removes the session from the filesystem.
-func Remove(id string) error {
-	filename, err := pathutil.FileName(id, Dirname)
-	if err != nil {
-		return errors.Wrapf(err, "error creating session file name to remove ID  %s", id)
+// Find finds a session by ID.
+func Find(id string) (*Session, error) {
+	var sess Session
+
+	if err := store.Session.Find(id, &sess); err != nil {
+		return nil, errors.Wrapf(err, "error finding session %s", id)
 	}
 
-	if err := os.Remove(filename); err != nil {
-		if os.IsNotExist(err) {
-			return ErrNotExist
-		}
+	return &sess, nil
+}
 
-		return errors.Wrapf(err, "error removing session file %s", filename)
+// Remove removes the session from the file system.
+func Remove(id string) error {
+	if err := store.Session.Remove(id); err != nil {
+		return errors.Wrapf(err, "error removing session %s", id)
 	}
 
 	return nil
 }
 
-// Save writes the session to the filesystem.
+// Save writes the session to the file system.
 func (s *Session) Save() error {
 	if _, err := s.Validate(); err != nil {
 		return models.NewValidatorError(fmt.Sprintf("error validating session before save: %s", err.Error()))
 	}
 
-	buf, err := json.Marshal(s)
-	if err != nil {
-		return errors.Wrapf(err, "error marshaling session %s", s.ID)
-	}
-
-	filename, err := pathutil.FileName(s.ID, Dirname)
-	if err != nil {
-		return errors.Wrapf(err, "error creating session file name to save ID  %s", s.ID)
-	}
-
-	if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
-		return errors.Wrapf(err, "error writing session file %s", filename)
+	if err := store.Session.Save(s.ID, s); err != nil {
+		return errors.Wrapf(err, "error saving session %s", s.ID)
 	}
 
 	return nil

@@ -1,26 +1,21 @@
 package blocklist
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 
 	"github.com/jonathanfoster/freedom/models"
-	"github.com/jonathanfoster/freedom/models/pathutil"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 var (
 	// Dirname is the name of the blocklists directory.
 	Dirname = "/etc/freedom/blocklists/"
-	// ErrNotExist is the error returned when a blocklist does not exist.
-	ErrNotExist = errors.New("blocklist does not exist")
 )
 
-// Blocklist represents a blocklist.
+// Blocklist represents a list of websites to block.
 type Blocklist struct {
 	ID    string   `json:"id" valid:"required, uuidv4"`
 	Name  string   `json:"name"`
@@ -35,65 +30,37 @@ func New(id string) *Blocklist {
 	}
 }
 
-// All retrieves all blocklists from filesystem.
+// All retrieves all blocklists.
 func All() ([]*Blocklist, error) {
-	files, err := ioutil.ReadDir(Dirname)
+	filesnames, err := store.Blocklist.All()
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, ErrNotExist
-		}
-
-		return nil, errors.Wrap(err, "error retrieving all blocklists")
+		return nil, err
 	}
 
-	lists := []*Blocklist{}
+	var list []*Blocklist
 
-	for _, file := range files {
-		if !file.IsDir() {
-			lists = append(lists, New(file.Name()))
-		}
-	}
-
-	return lists, nil
-}
-
-// Find finds a blocklist by ID in the filesystem.
-func Find(id string) (*Blocklist, error) {
-	filename, err := pathutil.FileName(id, Dirname)
-	if err != nil {
-		return nil, errors.Wrapf(err, "error creating blocklist file name to find ID  %s", id)
-	}
-
-	buf, err := ioutil.ReadFile(filename)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, ErrNotExist
-		}
-
-		return nil, errors.Wrapf(err, "error reading blocklist file %s", filename)
-	}
-
-	list := &Blocklist{}
-	if err := json.Unmarshal(buf, list); err != nil {
-		return nil, errors.Wrap(err, "error unmarshaling blocklist")
+	for _, filename := range filesnames {
+		list = append(list, New(filename))
 	}
 
 	return list, nil
 }
 
-// Remove removes the blocklist from the filesystem.
-func Remove(id string) error {
-	filename, err := pathutil.FileName(id, Dirname)
-	if err != nil {
-		return errors.Wrapf(err, "error creating blocklist file name to remove ID  %s", id)
+// Find finds a blocklist by ID.
+func Find(id string) (*Blocklist, error) {
+	var list Blocklist
+
+	if err := store.Blocklist.Find(id, &list); err != nil {
+		return nil, errors.Wrapf(err, "error finding blocklist %s", id)
 	}
 
-	if err := os.Remove(filename); err != nil {
-		if os.IsNotExist(err) {
-			return ErrNotExist
-		}
+	return &list, nil
+}
 
-		return errors.Wrapf(err, "error removing blocklist file %s", filename)
+// Remove removes the blocklist.
+func Remove(id string) error {
+	if err := store.Blocklist.Remove(id); err != nil {
+		return errors.Wrapf(err, "error removing blocklist %s", id)
 	}
 
 	return nil
@@ -105,18 +72,8 @@ func (b *Blocklist) Save() error {
 		return models.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
 	}
 
-	buf, err := json.Marshal(b)
-	if err != nil {
-		return errors.Wrapf(err, "error marshaling blocklist %s", b.ID)
-	}
-
-	filename, err := pathutil.FileName(b.ID, Dirname)
-	if err != nil {
-		return errors.Wrapf(err, "error creating blocklist file name to save ID  %s", b.ID)
-	}
-
-	if err := ioutil.WriteFile(filename, buf, 0644); err != nil {
-		return errors.Wrapf(err, "error writing blocklist file %s", filename)
+	if err := store.Blocklist.Save(b.ID, b); err != nil {
+		return errors.Wrapf(err, "error saving blocklist %s", b.ID)
 	}
 
 	return nil

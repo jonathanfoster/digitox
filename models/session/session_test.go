@@ -3,7 +3,7 @@ package session_test
 import (
 	"testing"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -29,6 +29,20 @@ func TestSession(t *testing.T) {
 				sess, err := session.All()
 				So(err, ShouldBeNil)
 				So(sess, ShouldNotBeEmpty)
+			})
+		})
+
+		Convey("Find", func() {
+			Convey("Should return session", func() {
+				sess, err := session.Find(testsess.ID)
+				So(err, ShouldBeNil)
+				So(sess, ShouldNotBeEmpty)
+			})
+
+			Convey("Should load blocklists", func() {
+				sess, err := session.Find(testsess.ID)
+				So(err, ShouldBeNil)
+				So(sess.Blocklists[0], ShouldEqual, testsess.Blocklists[0])
 			})
 		})
 

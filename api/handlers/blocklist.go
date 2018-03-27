@@ -5,11 +5,13 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/api/httputil"
 	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/models/blocklist"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // ListBlocklists handles the GET /blocklists route.
@@ -33,7 +35,7 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	list, err := blocklist.Find(id)
 	if err != nil {
-		if err == blocklist.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
@@ -87,7 +89,7 @@ func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := blocklist.Remove(id); err != nil {
-		if err == blocklist.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
@@ -111,7 +113,7 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	list, err := blocklist.Find(id)
 	if err != nil {
-		if err == blocklist.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotExist {
 			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
 			httputil.Error(w, http.StatusNotFound)
 			return
@@ -130,7 +132,7 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.Unmarshal(buf, &list); err != nil {
-		log.Error("error unmarshalling body: ", err.Error())
+		log.Error("error unmarshaling body: ", err.Error())
 		httputil.Error(w, http.StatusInternalServerError)
 		return
 	}
