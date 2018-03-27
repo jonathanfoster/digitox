@@ -11,7 +11,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/api"
-	"github.com/jonathanfoster/freedom/model/blocklist"
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/test/testutil"
 )
 

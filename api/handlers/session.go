@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/api/httputil"
-	"github.com/jonathanfoster/freedom/model/session"
+	"github.com/jonathanfoster/freedom/models/session"
 )
 
 // ListSessions handles the GET /sessions route.

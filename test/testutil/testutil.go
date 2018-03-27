@@ -7,8 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
-	"github.com/jonathanfoster/freedom/model/blocklist"
-	"github.com/jonathanfoster/freedom/model/session"
+	"github.com/jonathanfoster/freedom/models/blocklist"
+	"github.com/jonathanfoster/freedom/models/session"
 )
 
 // SetTestBlocklistDirname creates and sets the test blocklist directory.

@@ -1,4 +1,4 @@
-package model
+package models
 
 // ValidatorError represents a model validation error.
 type ValidatorError struct {

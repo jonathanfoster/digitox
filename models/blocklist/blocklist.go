@@ -9,8 +9,8 @@ import (
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 
-	"github.com/jonathanfoster/freedom/model"
-	"github.com/jonathanfoster/freedom/model/pathutil"
+	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models/pathutil"
 )
 
 var (
@@ -102,7 +102,7 @@ func Remove(id string) error {
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
 	if _, err := b.Validate(); err != nil {
-		return model.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
+		return models.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
 	}
 
 	buf, err := json.Marshal(b)
@@ -126,7 +126,7 @@ func (b *Blocklist) Save() error {
 func (b *Blocklist) Validate() (bool, error) {
 	result, err := validator.ValidateStruct(b)
 	if err != nil {
-		err = model.NewValidatorError(err.Error())
+		err = models.NewValidatorError(err.Error())
 	}
 
 	return result, err

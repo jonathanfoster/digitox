@@ -10,8 +10,8 @@ import (
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 
-	"github.com/jonathanfoster/freedom/model"
-	"github.com/jonathanfoster/freedom/model/pathutil"
+	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models/pathutil"
 )
 
 // RepeatSchedule represents a scheduled repetition of a session.
@@ -99,7 +99,7 @@ func Remove(id string) error {
 // Save writes the session to the filesystem.
 func (s *Session) Save() error {
 	if _, err := s.Validate(); err != nil {
-		return model.NewValidatorError(fmt.Sprintf("error validating session before save: %s", err.Error()))
+		return models.NewValidatorError(fmt.Sprintf("error validating session before save: %s", err.Error()))
 	}
 
 	buf, err := json.Marshal(s)
@@ -123,7 +123,7 @@ func (s *Session) Save() error {
 func (s *Session) Validate() (bool, error) {
 	result, err := validator.ValidateStruct(s)
 	if err != nil {
-		err = model.NewValidatorError(err.Error())
+		err = models.NewValidatorError(err.Error())
 	}
 
 	return result, err

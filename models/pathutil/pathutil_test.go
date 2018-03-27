@@ -4,7 +4,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jonathanfoster/freedom/model/pathutil"
+	"github.com/jonathanfoster/freedom/models/pathutil"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )

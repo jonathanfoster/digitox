@@ -1,4 +1,4 @@
-package model
+package models
 
 // DefaultStatus is the current API status.
 var DefaultStatus *Status

@@ -8,8 +8,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/api/httputil"
-	"github.com/jonathanfoster/freedom/model"
-	"github.com/jonathanfoster/freedom/model/blocklist"
+	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models/blocklist"
 )
 
 // ListBlocklists handles the GET /blocklists route.
@@ -64,7 +64,7 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := list.Save(); err != nil {
-		if model.IsValidator(err) {
+		if models.IsValidator(err) {
 			log.Warn("blocklist not valid: ", err.Error())
 			httputil.Error(w, http.StatusUnprocessableEntity)
 			return
@@ -136,7 +136,7 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := list.Save(); err != nil {
-		if model.IsValidator(err) {
+		if models.IsValidator(err) {
 			log.Warn("blocklist not valid: ", err.Error())
 			httputil.Error(w, http.StatusUnprocessableEntity)
 			return

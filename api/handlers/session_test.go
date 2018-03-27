@@ -7,7 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/api"
-	"github.com/jonathanfoster/freedom/model/session"
+	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
