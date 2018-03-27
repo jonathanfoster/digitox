@@ -2,26 +2,39 @@ package testutil
 
 import (
 	"os"
-	"path/filepath"
+	"time"
+
+	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/freedom/model/blocklist"
-	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
+	"github.com/jonathanfoster/freedom/model/session"
 )
 
 // SetTestBlocklistDirname creates and sets the test blocklist directory.
 func SetTestBlocklistDirname() error {
-	path := "../../bin/test/blocklists/"
-	dirname, err := filepath.Abs(path)
-	if err != nil {
-		return errors.Wrapf(err, "error returning absolute test blocklist directory %s", path)
-	}
+	gopath := os.Getenv("GOPATH")
+	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
-	if err := os.MkdirAll(path, 0644); err != nil {
-		return errors.Wrapf(err, "error creating test blocklist directory %s", path)
+	if err := os.MkdirAll(dirname, 0700); err != nil {
+		return errors.Wrapf(err, "error creating test blocklist directory %s", dirname)
 	}
 
 	blocklist.Dirname = dirname
+
+	return nil
+}
+
+// SetTestSessionDirname creates and sets the test session directory.
+func SetTestSessionDirname() error {
+	gopath := os.Getenv("GOPATH")
+	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
+
+	if err := os.MkdirAll(dirname, 0700); err != nil {
+		return errors.Wrapf(err, "error creating test session directory %s", dirname)
+	}
+
+	session.Dirname = dirname
 
 	return nil
 }
@@ -37,4 +50,21 @@ func CreateTestBlocklist() (*blocklist.Blocklist, error) {
 	}
 
 	return testlist, nil
+}
+
+// CreateTestSession creates a test session.
+func CreateTestSession() (*session.Session, error) {
+	testsess := session.New(uuid.NewV4().String())
+	testsess.Name = "test"
+	testsess.Starts = time.Now()
+	testsess.Ends = testsess.Starts.Add(time.Hour * 1)
+	testsess.Repeats = []session.RepeatSchedule{session.EveryMonday}
+	testsess.Blocklists = []string{uuid.NewV4().String()}
+	testsess.Devices = []string{uuid.NewV4().String()}
+
+	if err := testsess.Save(); err != nil {
+		return nil, err
+	}
+
+	return testsess, nil
 }

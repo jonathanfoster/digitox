@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
-	"path/filepath"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 
 	"github.com/jonathanfoster/freedom/model"
+	"github.com/jonathanfoster/freedom/model/pathutil"
 )
 
 var (
@@ -58,31 +57,9 @@ func All() ([]*Blocklist, error) {
 	return lists, nil
 }
 
-// FileName sanitizes ID and joins with blocklist directory path to create a
-// file path. The file path is then checked to ensure its directory is the
-// blocklist directory to prevent directory traversal using relative paths.
-func FileName(id string) (string, error) {
-	filename := path.Join(Dirname, validator.SafeFileName(id))
-	filename, err := filepath.Abs(filename)
-	if err != nil {
-		return "", errors.Wrapf(err, "error returning absolute blocklist file path %s", filename)
-	}
-
-	dirname, err := filepath.Abs(Dirname)
-	if err != nil {
-		return "", errors.Wrapf(err, "error returning absolute blocklist directory path %s", Dirname)
-	}
-
-	if filepath.Dir(filename) != dirname {
-		return "", fmt.Errorf("blocklist file path %s not in blocklist directory %s", filename, dirname)
-	}
-
-	return filename, nil
-}
-
 // Find finds a blocklist by ID in the filesystem.
 func Find(id string) (*Blocklist, error) {
-	filename, err := FileName(id)
+	filename, err := pathutil.FileName(id, Dirname)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error creating blocklist file name to find ID  %s", id)
 	}
@@ -106,7 +83,7 @@ func Find(id string) (*Blocklist, error) {
 
 // Remove removes the blocklist from the filesystem.
 func Remove(id string) error {
-	filename, err := FileName(id)
+	filename, err := pathutil.FileName(id, Dirname)
 	if err != nil {
 		return errors.Wrapf(err, "error creating blocklist file name to remove ID  %s", id)
 	}
@@ -133,7 +110,7 @@ func (b *Blocklist) Save() error {
 		return errors.Wrapf(err, "error marshaling blocklist %s", b.ID)
 	}
 
-	filename, err := FileName(b.ID)
+	filename, err := pathutil.FileName(b.ID, Dirname)
 	if err != nil {
 		return errors.Wrapf(err, "error creating blocklist file name to save ID  %s", b.ID)
 	}

@@ -1,7 +1,6 @@
 package blocklist_test
 
 import (
-	"path"
 	"testing"
 
 	"github.com/satori/go.uuid"
@@ -30,31 +29,6 @@ func TestBlocklist(t *testing.T) {
 				lists, err := blocklist.All()
 				So(err, ShouldBeNil)
 				So(lists, ShouldNotBeEmpty)
-			})
-		})
-
-		Convey("FileName", func() {
-			Convey("Should join blocklist directory and ID", func() {
-				id := uuid.NewV4().String()
-				filename, err := blocklist.FileName(id)
-				So(err, ShouldBeNil)
-				So(filename, ShouldEqual, path.Join(blocklist.Dirname, id))
-			})
-
-			Convey("Should sanitize ID", func() {
-				id := "test=test"
-				filename, err := blocklist.FileName(id)
-				So(err, ShouldBeNil)
-				So(filename, ShouldEqual, path.Join(blocklist.Dirname, "test-test"))
-			})
-
-			Convey("When ID contains a relative path", func() {
-				Convey("Should clean dot dot", func() {
-					id := "../etc/passwd"
-					filename, err := blocklist.FileName(id)
-					So(err, ShouldBeNil)
-					So(filename, ShouldEqual, path.Join(blocklist.Dirname, "passwd"))
-				})
 			})
 		})
 
@@ -119,7 +93,7 @@ func TestBlocklist(t *testing.T) {
 		})
 
 		Reset(func() {
-			blocklist.Remove(testlist.Name)
+			blocklist.Remove(testlist.ID)
 		})
 	})
 }

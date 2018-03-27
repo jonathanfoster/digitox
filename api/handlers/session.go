@@ -3,12 +3,21 @@ package handlers
 import (
 	"net/http"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/jonathanfoster/freedom/api/httputil"
+	"github.com/jonathanfoster/freedom/model/session"
 )
 
 // ListSessions handles the GET /sessions route.
 func ListSessions(w http.ResponseWriter, r *http.Request) {
-	httputil.Error(w, http.StatusNotImplemented)
+	sessions, err := session.All()
+	if err != nil {
+		log.Error("error listing sessions: ", err.Error())
+		httputil.Error(w, http.StatusInternalServerError)
+	}
+
+	httputil.JSON(w, http.StatusOK, sessions)
 }
 
 // FindSession handles the GET /session/{id} route.
