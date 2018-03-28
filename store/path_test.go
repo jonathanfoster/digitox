@@ -4,13 +4,13 @@ import (
 	"path"
 	"testing"
 
-	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/store"
+	"github.com/satori/go.uuid"
 )
 
-func TestPathutil(t *testing.T) {
+func TestPath(t *testing.T) {
 	Convey("JoinPath", t, func() {
 		dirname := "/etc/freedom/test/"
 

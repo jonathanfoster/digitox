@@ -1,9 +1,12 @@
 package handlers_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/models/session"
@@ -64,13 +67,52 @@ func TestSession(t *testing.T) {
 			})
 		})
 
-		Convey("UpdateSession", func() {
-			Convey("Status code should be 501", func() {
+		Convey("UpdateBlocklist", func() {
+			Convey("Status code should be 200", func() {
+				testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4().String())
+
+				buf, err := json.Marshal(testsess)
+				buffer := bytes.NewBuffer(buf)
+				So(err, ShouldBeNil)
+
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("PUT", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
+				r := httptest.NewRequest("PUT", "/sessions/"+testsess.ID, buffer)
 
 				router.ServeHTTP(w, r)
-				So(w.Code, ShouldEqual, 501)
+				So(w.Code, ShouldEqual, 200)
+			})
+
+			Convey("When session is not valid", func() {
+				Convey("Status code should be 422", func() {
+					origID := testsess.ID
+					testsess.ID = "test" // ID must be a valid UUIDv4
+
+					buf, err := json.Marshal(testsess)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/sessions/"+origID, buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
+			})
+
+			Convey("When session does not exist", func() {
+				Convey("Status code should be 404", func() {
+					list := session.New(uuid.NewV4().String())
+
+					buf, err := json.Marshal(list)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/sessions/"+list.ID, buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
 			})
 		})
 
