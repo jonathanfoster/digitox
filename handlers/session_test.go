@@ -22,7 +22,7 @@ func TestSession(t *testing.T) {
 			panic(err)
 		}
 
-		testsess, err := testutil.CreateTestSession()
+		testsess, err := testutil.SaveTestSession()
 		if err != nil {
 			panic(err)
 		}
@@ -59,7 +59,7 @@ func TestSession(t *testing.T) {
 
 		Convey("CreateSession", func() {
 			Convey("Status code should be 201", func() {
-				sess := session.New(uuid.NewV4().String())
+				sess := testutil.NewTestSession()
 				sess.Name = "test"
 				sess.Blocklists = append(sess.Blocklists, uuid.NewV4().String())
 

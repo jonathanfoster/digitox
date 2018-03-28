@@ -25,20 +25,15 @@ const (
 	EverySaturday
 )
 
-var (
-	// Dirname is the name of the sessions directory.
-	Dirname = "/etc/freedom/sessions/"
-)
-
-// Session represents a timeframe in which websites are blocked
+// Session represents a time frame in which websites are blocked
 type Session struct {
 	ID         string           `json:"id" valid:"required, uuidv4"`
 	Name       string           `json:"name"`
-	Starts     time.Time        `json:"starts"`
-	Ends       time.Time        `json:"ends"`
+	Starts     time.Time        `json:"starts" valid:"required"`
+	Ends       time.Time        `json:"ends" valid:"required"`
 	Repeats    []RepeatSchedule `json:"repeats"`
-	Blocklists []string         `json:"blocklists"`
-	Devices    []string         `json:"devices"`
+	Blocklists []string         `json:"blocklists" valid:"required"`
+	Devices    []string         `json:"devices" valid:"required"`
 }
 
 // New creates a Session instance.

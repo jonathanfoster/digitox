@@ -19,7 +19,7 @@ func TestBlocklist(t *testing.T) {
 			panic(err)
 		}
 
-		testlist, err := testutil.CreateTestBlocklist()
+		testlist, err := testutil.SaveTestBlocklist()
 		if err != nil {
 			panic(err)
 		}

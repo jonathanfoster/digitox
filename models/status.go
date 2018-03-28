@@ -7,8 +7,3 @@ var DefaultStatus *Status
 type Status struct {
 	Version string `json:"version"`
 }
-
-// NewStatus creates a Status instance.
-func NewStatus() *Status {
-	return &Status{}
-}

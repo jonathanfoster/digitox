@@ -21,7 +21,6 @@ func SetTestBlocklistDirname() error {
 		return errors.Wrapf(err, "error creating test blocklist directory %s", dirname)
 	}
 
-	blocklist.Dirname = dirname
 	store.Blocklist.SetDirname(dirname)
 
 	return nil
@@ -36,14 +35,13 @@ func SetTestSessionDirname() error {
 		return errors.Wrapf(err, "error creating test session directory %s", dirname)
 	}
 
-	session.Dirname = dirname
 	store.Session.SetDirname(dirname)
 
 	return nil
 }
 
-// CreateTestBlocklist creates a test blocklist.
-func CreateTestBlocklist() (*blocklist.Blocklist, error) {
+// SaveTestBlocklist creates a test blocklist.
+func SaveTestBlocklist() (*blocklist.Blocklist, error) {
 	testlist := blocklist.New(uuid.NewV4().String())
 	testlist.Name = "test"
 	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
@@ -55,8 +53,8 @@ func CreateTestBlocklist() (*blocklist.Blocklist, error) {
 	return testlist, nil
 }
 
-// CreateTestSession creates a test session.
-func CreateTestSession() (*session.Session, error) {
+// NewTestSession creates a test session instance
+func NewTestSession() *session.Session {
 	testsess := session.New(uuid.NewV4().String())
 	testsess.Name = "test"
 	testsess.Starts = time.Now()
@@ -72,6 +70,13 @@ func CreateTestSession() (*session.Session, error) {
 	}
 	testsess.Blocklists = []string{uuid.NewV4().String()}
 	testsess.Devices = []string{uuid.NewV4().String()}
+
+	return testsess
+}
+
+// SaveTestSession creates and saves a test session.
+func SaveTestSession() (*session.Session, error) {
+	testsess := NewTestSession()
 
 	if err := testsess.Save(); err != nil {
 		return nil, err

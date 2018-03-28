@@ -2,8 +2,8 @@ package session_test
 
 import (
 	"testing"
+	"time"
 
-	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -19,7 +19,7 @@ func TestSession(t *testing.T) {
 			panic(err)
 		}
 
-		testsess, err := testutil.CreateTestSession()
+		testsess, err := testutil.SaveTestSession()
 		if err != nil {
 			panic(err)
 		}
@@ -55,7 +55,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
-				sess := session.New(uuid.NewV4().String())
+				sess := testutil.NewTestSession()
 				sess.Name = "test-2"
 
 				err := sess.Save()
@@ -76,7 +76,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Validate", func() {
 			Convey("Should return true", func() {
-				sess := session.New(uuid.NewV4().String())
+				sess := testutil.NewTestSession()
 				result, err := sess.Validate()
 				So(err, ShouldBeNil)
 				So(result, ShouldBeTrue)
@@ -84,7 +84,58 @@ func TestSession(t *testing.T) {
 
 			Convey("When ID not a valid UUIDv4", func() {
 				Convey("Should return false", func() {
-					sess := session.New("test")
+					sess := testutil.NewTestSession()
+					sess.ID = "test"
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When ID not provided", func() {
+				Convey("Should return false", func() {
+					sess := testutil.NewTestSession()
+					sess.ID = ""
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When starts not provided", func() {
+				Convey("Should return false", func() {
+					sess := testutil.NewTestSession()
+					sess.Starts = time.Time{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When ends not provided", func() {
+				Convey("Should return false", func() {
+					sess := testutil.NewTestSession()
+					sess.Ends = time.Time{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When blocklists not provided", func() {
+				Convey("Should return false", func() {
+					sess := testutil.NewTestSession()
+					sess.Blocklists = []string{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When devices not provided", func() {
+				Convey("Should return false", func() {
+					sess := testutil.NewTestSession()
+					sess.Devices = []string{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)

@@ -10,11 +10,6 @@ import (
 	"github.com/jonathanfoster/freedom/store"
 )
 
-var (
-	// Dirname is the name of the blocklists directory.
-	Dirname = "/etc/freedom/blocklists/"
-)
-
 // Blocklist represents a list of websites to block.
 type Blocklist struct {
 	ID    string   `json:"id" valid:"required, uuidv4"`
