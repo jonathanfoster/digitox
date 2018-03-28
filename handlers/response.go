@@ -1,11 +1,18 @@
-package httputil
+package handlers
 
 import (
 	"encoding/json"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
+
+	"github.com/jonathanfoster/freedom/models"
 )
+
+// Error writes application/json error to response writer.
+func Error(w http.ResponseWriter, statusCode int) {
+	JSON(w, statusCode, models.NewError(statusCode))
+}
 
 // JSON writes application/json to response writer.
 func JSON(w http.ResponseWriter, statusCode int, v interface{}) {

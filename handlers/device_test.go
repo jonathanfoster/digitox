@@ -6,12 +6,12 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/api"
+	"github.com/jonathanfoster/freedom/server"
 )
 
 func TestDevice(t *testing.T) {
 	Convey("Device Handler", t, func() {
-		router := api.NewRouter()
+		router := server.NewRouter()
 
 		Convey("ListDevices", func() {
 			Convey("Status code should be 501", func() {

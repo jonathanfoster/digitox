@@ -1,6 +1,8 @@
 package store
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 var (
 	// Blocklist is the default blocklist store.

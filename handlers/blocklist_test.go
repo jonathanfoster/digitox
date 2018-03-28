@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/api"
 	"github.com/jonathanfoster/freedom/models/blocklist"
+	"github.com/jonathanfoster/freedom/server"
 	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
@@ -19,7 +19,7 @@ func TestBlocklist(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist Handler", t, func() {
-		router := api.NewRouter()
+		router := server.NewRouter()
 
 		if err := testutil.SetTestBlocklistDirname(); err != nil {
 			panic(err)

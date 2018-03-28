@@ -6,8 +6,6 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-
-	"github.com/jonathanfoster/freedom/models/pathutil"
 )
 
 // File represents a file store.
@@ -46,7 +44,7 @@ func (f *File) All() ([]string, error) {
 
 // Find finds a blocklist by ID in the filesystem.
 func (f *File) Find(id string, out interface{}) error {
-	filename, err := pathutil.FileName(id, f.Dirname)
+	filename, err := JoinPath(id, f.Dirname)
 	if err != nil {
 		return errors.Wrapf(err, "error creating file name to find %s", id)
 	}
@@ -69,7 +67,7 @@ func (f *File) Find(id string, out interface{}) error {
 
 // Remove removes the session from the filesystem.
 func (f *File) Remove(id string) error {
-	filename, err := pathutil.FileName(id, f.Dirname)
+	filename, err := JoinPath(id, f.Dirname)
 	if err != nil {
 		return errors.Wrapf(err, "error creating file name to remove %s", id)
 	}
@@ -92,7 +90,7 @@ func (f *File) Save(id string, v interface{}) error {
 		return errors.Wrapf(err, "error marshaling value %s", id)
 	}
 
-	filename, err := pathutil.FileName(id, f.Dirname)
+	filename, err := JoinPath(id, f.Dirname)
 	if err != nil {
 		return errors.Wrapf(err, "error creating file name for value %s", id)
 	}

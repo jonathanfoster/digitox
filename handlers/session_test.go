@@ -6,14 +6,14 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/api"
 	"github.com/jonathanfoster/freedom/models/session"
+	"github.com/jonathanfoster/freedom/server"
 	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
 func TestSession(t *testing.T) {
 	Convey("Session Handler", t, func() {
-		router := api.NewRouter()
+		router := server.NewRouter()
 
 		if err := testutil.SetTestSessionDirname(); err != nil {
 			panic(err)

@@ -6,8 +6,8 @@ import (
 	"github.com/alecthomas/kingpin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/api"
-	models "github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/server"
 )
 
 var (
@@ -29,6 +29,6 @@ func main() {
 		Version: version,
 	}
 
-	srv := api.NewServer()
+	srv := server.New()
 	srv.Run(":" + *port)
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/jonathanfoster/freedom/api/httputil"
+	"github.com/jonathanfoster/freedom/handlers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,7 +25,7 @@ func (rec *Recovery) ServeHTTP(w http.ResponseWriter, r *http.Request, next http
 
 			log.Errorf("recovered panic: %s: %s", err, stack)
 
-			httputil.Error(w, http.StatusInternalServerError)
+			handlers.Error(w, http.StatusInternalServerError)
 		}
 	}()
 

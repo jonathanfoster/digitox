@@ -1,4 +1,4 @@
-package api
+package server
 
 import (
 	"net/http"
@@ -7,14 +7,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 
-	"github.com/jonathanfoster/freedom/api/middleware"
+	"github.com/jonathanfoster/freedom/middleware"
 )
 
 // Server represents a server.
 type Server struct{}
 
-// NewServer creates a Server instance.
-func NewServer() *Server {
+// New creates a Server instance.
+func New() *Server {
 	return &Server{}
 }
 

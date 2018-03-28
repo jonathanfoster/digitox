@@ -1,11 +1,11 @@
-package api
+package server
 
 import (
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"github.com/jonathanfoster/freedom/api/handlers"
+	"github.com/jonathanfoster/freedom/handlers"
 )
 
 // Router represents a gorilla/mux router with preconfigured routes.
