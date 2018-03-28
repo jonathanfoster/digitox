@@ -75,12 +75,22 @@ func TestSession(t *testing.T) {
 		})
 
 		Convey("DeleteSession", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 204", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
+				r := httptest.NewRequest("DELETE", "/sessions/"+testsess.ID, nil)
 
 				router.ServeHTTP(w, r)
-				So(w.Code, ShouldEqual, 501)
+				So(w.Code, ShouldEqual, 204)
+			})
+
+			Convey("When session does not exist", func() {
+				Convey("Status code should be 404", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("DELETE", "/sessions/notfound", nil)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
 			})
 		})
 

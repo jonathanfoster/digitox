@@ -25,7 +25,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 * [X] Session: Handle list sessions
 * [X] Session: Handle find session
-* [ ] Session: Handle remove session
+* [X] Session: Handle remove session
 * [ ] Session: Handle save session
 * [ ] Session: Store sessions in /etc/freedom/session/
 * [ ] Session: Start session by copy block lists to /etc/squid/blocklist/block

@@ -52,13 +52,25 @@ func CreateSession(w http.ResponseWriter, r *http.Request) {
 
 // DeleteSession handles the DELETE /sessions/{id} route.
 func DeleteSession(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseID(r)
+	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	Error(w, http.StatusNotImplemented)
+	if err := session.Remove(id); err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warnf("session %s does not exist: %s", id, err.Error())
+			Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error removing session %s: %s", id, err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // UpdateSession handles the PUT /sessions/{id} route.
