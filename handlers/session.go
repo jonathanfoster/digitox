@@ -3,9 +3,11 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/session"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // ListSessions handles the GET /sessions route.
@@ -19,15 +21,28 @@ func ListSessions(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, sessions)
 }
 
-// FindSession handles the GET /session/{id} route.
+// FindSession handles the GET /sessions/{id} route.
 func FindSession(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseID(r)
+	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	Error(w, http.StatusNotImplemented)
+	sess, err := session.Find(id)
+	if err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warnf("session %s does not exist: %s", id, err.Error())
+			Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error finding session %s: %s", id, err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	JSON(w, http.StatusOK, sess)
 }
 
 // CreateSession handles the POST /sessions/{id} route.

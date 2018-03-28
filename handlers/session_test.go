@@ -19,7 +19,7 @@ func TestSession(t *testing.T) {
 			panic(err)
 		}
 
-		testsession, err := testutil.CreateTestSession()
+		testsess, err := testutil.CreateTestSession()
 		if err != nil {
 			panic(err)
 		}
@@ -30,19 +30,27 @@ func TestSession(t *testing.T) {
 				r := httptest.NewRequest("GET", "/sessions", nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 200)
 			})
 		})
 
 		Convey("FindSession", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
+				r := httptest.NewRequest("GET", "/sessions/"+testsess.ID, nil)
 
 				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 200)
+			})
 
-				So(w.Code, ShouldEqual, 501)
+			Convey("When session does not exist", func() {
+				Convey("Status code should be 404", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("GET", "/sessions/notfound", nil)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
 			})
 		})
 
@@ -52,7 +60,6 @@ func TestSession(t *testing.T) {
 				r := httptest.NewRequest("POST", "/sessions", nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 501)
 			})
 		})
@@ -63,7 +70,6 @@ func TestSession(t *testing.T) {
 				r := httptest.NewRequest("PUT", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 501)
 			})
 		})
@@ -74,13 +80,12 @@ func TestSession(t *testing.T) {
 				r := httptest.NewRequest("DELETE", "/sessions/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
 				router.ServeHTTP(w, r)
-
 				So(w.Code, ShouldEqual, 501)
 			})
 		})
 
 		Reset(func() {
-			session.Remove(testsession.ID)
+			session.Remove(testsess.ID)
 		})
 	})
 }

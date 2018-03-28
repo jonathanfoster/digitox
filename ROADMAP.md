@@ -24,7 +24,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 ## Session
 
 * [X] Session: Handle list sessions
-* [ ] Session: Handle find session
+* [X] Session: Handle find session
 * [ ] Session: Handle remove session
 * [ ] Session: Handle save session
 * [ ] Session: Store sessions in /etc/freedom/session/
