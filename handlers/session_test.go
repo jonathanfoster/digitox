@@ -58,16 +58,45 @@ func TestSession(t *testing.T) {
 		})
 
 		Convey("CreateSession", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 201", func() {
+				sess := session.New(uuid.NewV4().String())
+				sess.Name = "test"
+				sess.Blocklists = append(sess.Blocklists, uuid.NewV4().String())
+
+				buf, err := json.Marshal(sess)
+				buffer := bytes.NewBuffer(buf)
+				So(err, ShouldBeNil)
+
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("POST", "/sessions", nil)
+				r := httptest.NewRequest("POST", "/sessions", buffer)
 
 				router.ServeHTTP(w, r)
-				So(w.Code, ShouldEqual, 501)
+				So(w.Code, ShouldEqual, 201)
+
+				err = session.Remove(sess.ID)
+				So(err, ShouldBeNil)
+			})
+
+			Convey("When session is not valid", func() {
+				Convey("Status code should be 422", func() {
+					sess := session.New("test") // ID must be a valid UUIDv4
+					sess.Name = "test"
+					sess.Blocklists = append(sess.Blocklists, uuid.NewV4().String())
+
+					buf, err := json.Marshal(sess)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("POST", "/sessions", buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
 			})
 		})
 
-		Convey("UpdateBlocklist", func() {
+		Convey("UpdateSession", func() {
 			Convey("Status code should be 200", func() {
 				testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4().String())
 

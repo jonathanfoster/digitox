@@ -50,7 +50,33 @@ func FindSession(w http.ResponseWriter, r *http.Request) {
 
 // CreateSession handles the POST /sessions/{id} route.
 func CreateSession(w http.ResponseWriter, r *http.Request) {
-	Error(w, http.StatusNotImplemented)
+	buf, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Error("error reading session body: ", err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	var sess session.Session
+	if err := json.Unmarshal(buf, &sess); err != nil {
+		log.Error("error unmarshaling session body: ", err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if err := sess.Save(); err != nil {
+		if models.IsValidator(err) {
+			log.Warn("session not valid: ", err.Error())
+			Error(w, http.StatusUnprocessableEntity)
+			return
+		}
+
+		log.Error("error saving session: ", err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	JSON(w, http.StatusCreated, sess)
 }
 
 // DeleteSession handles the DELETE /sessions/{id} route.
