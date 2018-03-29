@@ -6,7 +6,7 @@ import (
 	"github.com/alecthomas/kingpin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models/status"
 	"github.com/jonathanfoster/freedom/server"
 )
 
@@ -25,7 +25,7 @@ func main() {
 		log.Debug("debug log messages enabled")
 	}
 
-	models.DefaultStatus = &models.Status{
+	status.Current = &status.Status{
 		Version: version,
 	}
 

@@ -1,7 +1,7 @@
-package models
+package status
 
-// DefaultStatus is the current API status.
-var DefaultStatus *Status
+// Current is the current API status.
+var Current *Status
 
 // Status represents the API status.
 type Status struct {
