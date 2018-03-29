@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/jonathanfoster/freedom/store/fs"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
@@ -21,7 +22,7 @@ func SetTestBlocklistDirname() error {
 		return errors.Wrapf(err, "error creating test blocklist directory %s", dirname)
 	}
 
-	store.Blocklist.SetDirname(dirname)
+	store.Blocklist = fs.NewFileStore(dirname)
 
 	return nil
 }
@@ -35,7 +36,7 @@ func SetTestSessionDirname() error {
 		return errors.Wrapf(err, "error creating test session directory %s", dirname)
 	}
 
-	store.Session.SetDirname(dirname)
+	store.Session = fs.NewFileStore(dirname)
 
 	return nil
 }

@@ -5,25 +5,27 @@ import (
 )
 
 var (
-	// Blocklist is the default blocklist store.
-	Blocklist Interface
-	// Session is the default session store.
-	Session Interface
+	// Blocklist is the blocklist storage implementation.
+	Blocklist BlocklistStore
+	// Session is the session storage implementation.
+	Session SessionStore
 
 	// ErrNotExist is the error returned when a record does not exist.
 	ErrNotExist = errors.New("record does not exist")
 )
 
-func init() {
-	Blocklist = NewFile("/etc/freedom/blocklists/")
-	Session = NewFile("/etc/freedom/sessions/")
-}
-
-// Interface represents the store interface.
-type Interface interface {
+// BlocklistStore is the blocklist storage interface.
+type BlocklistStore interface {
 	All() ([]string, error)
 	Find(id string, out interface{}) error
 	Remove(id string) error
 	Save(id string, v interface{}) error
-	SetDirname(dirname string)
+}
+
+// SessionStore is the session storage interface.
+type SessionStore interface {
+	All() ([]string, error)
+	Find(id string, out interface{}) error
+	Remove(id string) error
+	Save(id string, v interface{}) error
 }
