@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/jonathanfoster/freedom/handlers"
+	"github.com/jonathanfoster/freedom/server/handlers"
 	log "github.com/sirupsen/logrus"
 )
 

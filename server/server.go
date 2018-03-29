@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 
-	"github.com/jonathanfoster/freedom/middleware"
+	"github.com/jonathanfoster/freedom/server/middleware"
 )
 
 // Server represents a server.

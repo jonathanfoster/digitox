@@ -7,14 +7,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type error struct {
+type errorResponse struct {
 	Message    string `json:"message"`
 	StatusCode int    `json:"status_code"`
 }
 
 // Error writes application/json error to response writer.
 func Error(w http.ResponseWriter, statusCode int) {
-	JSON(w, statusCode, &error{
+	JSON(w, statusCode, &errorResponse{
 		Message:    http.StatusText(statusCode),
 		StatusCode: statusCode,
 	})

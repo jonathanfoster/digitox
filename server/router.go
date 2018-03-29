@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/jonathanfoster/freedom/handlers"
+	"github.com/jonathanfoster/freedom/server/handlers"
 )
 
 // Router represents a gorilla/mux router with preconfigured routes.
