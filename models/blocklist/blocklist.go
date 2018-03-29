@@ -27,18 +27,23 @@ func New(id string) *Blocklist {
 
 // All retrieves all blocklists.
 func All() ([]*Blocklist, error) {
-	filesnames, err := store.Blocklist.All()
+	ff, err := store.Blocklist.All()
 	if err != nil {
 		return nil, err
 	}
 
-	var list []*Blocklist
+	var bb []*Blocklist
 
-	for _, filename := range filesnames {
-		list = append(list, New(filename))
+	for _, f := range ff {
+		b, err := Find(f)
+		if err != nil {
+			return nil, err
+		}
+
+		bb = append(bb, b)
 	}
 
-	return list, nil
+	return bb, nil
 }
 
 // Find finds a blocklist by ID.

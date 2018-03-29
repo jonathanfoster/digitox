@@ -48,18 +48,23 @@ func New(id string) *Session {
 
 // All retrieves all sessions from file system.
 func All() ([]*Session, error) {
-	filesnames, err := store.Session.All()
+	ff, err := store.Session.All()
 	if err != nil {
 		return nil, err
 	}
 
-	var list []*Session
+	var ss []*Session
 
-	for _, filename := range filesnames {
-		list = append(list, New(filename))
+	for _, f := range ff {
+		s, err := Find(f)
+		if err != nil {
+			return nil, err
+		}
+
+		ss = append(ss, s)
 	}
 
-	return list, nil
+	return ss, nil
 }
 
 // Find finds a session by ID.
