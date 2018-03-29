@@ -5,13 +5,19 @@ import (
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/jonathanfoster/freedom/models"
 )
+
+type error struct {
+	Message    string `json:"message"`
+	StatusCode int    `json:"status_code"`
+}
 
 // Error writes application/json error to response writer.
 func Error(w http.ResponseWriter, statusCode int) {
-	JSON(w, statusCode, models.NewError(statusCode))
+	JSON(w, statusCode, &error{
+		Message:    http.StatusText(statusCode),
+		StatusCode: statusCode,
+	})
 }
 
 // JSON writes application/json to response writer.
