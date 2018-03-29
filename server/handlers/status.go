@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/jonathanfoster/freedom/models/status"
+	"github.com/jonathanfoster/freedom/server/status"
 )
 
 // Status handles the GET / route.

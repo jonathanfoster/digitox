@@ -6,8 +6,8 @@ import (
 	"github.com/alecthomas/kingpin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models/status"
 	"github.com/jonathanfoster/freedom/server"
+	"github.com/jonathanfoster/freedom/server/status"
 )
 
 var (
