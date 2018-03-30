@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/test/testutil"
 )
@@ -42,7 +43,7 @@ func TestSession(t *testing.T) {
 			Convey("Should load blocklists", func() {
 				sess, err := session.Find(testsess.ID)
 				So(err, ShouldBeNil)
-				So(sess.Blocklists[0], ShouldEqual, testsess.Blocklists[0])
+				So(sess.Blocklists[0].ID, ShouldEqual, testsess.Blocklists[0].ID)
 			})
 		})
 
@@ -125,17 +126,7 @@ func TestSession(t *testing.T) {
 			Convey("When blocklists not provided", func() {
 				Convey("Should return false", func() {
 					sess := testutil.NewTestSession()
-					sess.Blocklists = []string{}
-					result, err := sess.Validate()
-					So(err, ShouldNotBeNil)
-					So(result, ShouldBeFalse)
-				})
-			})
-
-			Convey("When devices not provided", func() {
-				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
-					sess.Devices = []string{}
+					sess.Blocklists = []blocklist.Blocklist{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)

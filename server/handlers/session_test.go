@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -61,7 +62,7 @@ func TestSession(t *testing.T) {
 			Convey("Status code should be 201", func() {
 				sess := testutil.NewTestSession()
 				sess.Name = "test"
-				sess.Blocklists = append(sess.Blocklists, uuid.NewV4().String())
+				sess.Blocklists = append(sess.Blocklists, *blocklist.New(uuid.NewV4().String()))
 
 				buf, err := json.Marshal(sess)
 				buffer := bytes.NewBuffer(buf)
@@ -81,7 +82,7 @@ func TestSession(t *testing.T) {
 				Convey("Status code should be 422", func() {
 					sess := session.New("test") // ID must be a valid UUIDv4
 					sess.Name = "test"
-					sess.Blocklists = append(sess.Blocklists, uuid.NewV4().String())
+					sess.Blocklists = append(sess.Blocklists, *blocklist.New(uuid.NewV4().String()))
 
 					buf, err := json.Marshal(sess)
 					buffer := bytes.NewBuffer(buf)
@@ -98,7 +99,7 @@ func TestSession(t *testing.T) {
 
 		Convey("UpdateSession", func() {
 			Convey("Status code should be 200", func() {
-				testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4().String())
+				testsess.Blocklists = append(testsess.Blocklists, *blocklist.New(uuid.NewV4().String()))
 
 				buf, err := json.Marshal(testsess)
 				buffer := bytes.NewBuffer(buf)

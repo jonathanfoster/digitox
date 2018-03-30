@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/jonathanfoster/freedom/models"
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/store"
 )
 
@@ -27,13 +28,12 @@ const (
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID         string           `json:"id" valid:"required, uuidv4"`
-	Name       string           `json:"name"`
-	Starts     time.Time        `json:"starts" valid:"required"`
-	Ends       time.Time        `json:"ends" valid:"required"`
-	Repeats    []RepeatSchedule `json:"repeats"`
-	Blocklists []string         `json:"blocklists" valid:"required"`
-	Devices    []string         `json:"devices" valid:"required"`
+	ID         string                `json:"id" valid:"required, uuidv4"`
+	Name       string                `json:"name"`
+	Starts     time.Time             `json:"starts" valid:"required"`
+	Ends       time.Time             `json:"ends" valid:"required"`
+	Repeats    []RepeatSchedule      `json:"repeats"`
+	Blocklists []blocklist.Blocklist `json:"blocklists" valid:"required"`
 }
 
 // New creates a Session instance.
@@ -41,8 +41,7 @@ func New(id string) *Session {
 	return &Session{
 		ID:         id,
 		Repeats:    []RepeatSchedule{},
-		Blocklists: []string{},
-		Devices:    []string{},
+		Blocklists: []blocklist.Blocklist{},
 	}
 }
 

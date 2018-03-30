@@ -4,13 +4,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/jonathanfoster/freedom/store/fs"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/freedom/store/fs"
 )
 
 // SetTestBlocklistDirname creates and sets the test blocklist directory.
@@ -69,8 +69,9 @@ func NewTestSession() *session.Session {
 		session.EveryFriday,
 		session.EverySaturday,
 	}
-	testsess.Blocklists = []string{uuid.NewV4().String()}
-	testsess.Devices = []string{uuid.NewV4().String()}
+	testsess.Blocklists = []blocklist.Blocklist{
+		*blocklist.New(uuid.NewV4().String()),
+	}
 
 	return testsess
 }

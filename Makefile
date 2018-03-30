@@ -60,7 +60,8 @@ precommit: fmt-check imports-check lint test
 release: precommit docker-push deploy
 
 run: build
-	./bin/freedom-apiserver
+	mkdir -p bin/test/
+	./bin/freedom-apiserver --database ./bin/test/freedom.db
 
 .PHONY: test
 test:
