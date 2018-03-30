@@ -20,15 +20,8 @@ func TestBlocklist(t *testing.T) {
 
 	Convey("Blocklist Handler", t, func() {
 		router := server.NewRouter()
-
-		if err := setup.TestBlocklistDirname(); err != nil {
-			panic(err)
-		}
-
-		testlist, err := setup.TestBlocklist()
-		if err != nil {
-			panic(err)
-		}
+		setup.TestBlocklistDirname()
+		testlist := setup.TestBlocklist()
 
 		Convey("ListBlocklists", func() {
 			Convey("Status code should be 200", func() {

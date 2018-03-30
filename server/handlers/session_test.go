@@ -18,15 +18,8 @@ import (
 func TestSession(t *testing.T) {
 	Convey("Session Handler", t, func() {
 		router := server.NewRouter()
-
-		if err := setup.TestSessionDirname(); err != nil {
-			panic(err)
-		}
-
-		testsess, err := setup.TestSession()
-		if err != nil {
-			panic(err)
-		}
+		setup.TestSessionDirname()
+		testsess := setup.TestSession()
 
 		Convey("ListSessions", func() {
 			Convey("Status code should be 200", func() {

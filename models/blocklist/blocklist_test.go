@@ -15,14 +15,8 @@ func TestBlocklist(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist", t, func() {
-		if err := setup.TestBlocklistDirname(); err != nil {
-			panic(err)
-		}
-
-		testlist, err := setup.TestBlocklist()
-		if err != nil {
-			panic(err)
-		}
+		setup.TestBlocklistDirname()
+		testlist := setup.TestBlocklist()
 
 		Convey("All", func() {
 			Convey("Should return blocklists", func() {

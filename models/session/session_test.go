@@ -16,14 +16,8 @@ func TestSession(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Session", t, func() {
-		if err := setup.TestSessionDirname(); err != nil {
-			panic(err)
-		}
-
-		testsess, err := setup.TestSession()
-		if err != nil {
-			panic(err)
-		}
+		setup.TestSessionDirname()
+		testsess := setup.TestSession()
 
 		Convey("All", func() {
 			Convey("Should return sessions", func() {

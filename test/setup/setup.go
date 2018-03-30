@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
@@ -14,44 +14,38 @@ import (
 )
 
 // TestBlocklistDirname creates and sets the test blocklist directory.
-func TestBlocklistDirname() error {
-	gopath := os.Getenv("GOPATH")
-	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
+func TestBlocklistDirname() {
+	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
-		return errors.Wrapf(err, "error creating test blocklist directory %s", dirname)
+		log.Fatalf("error creating test blocklist directory %s: %s", dirname, err.Error())
 	}
 
 	store.Blocklist = fs.NewFileStore(dirname)
-
-	return nil
 }
 
 // TestSessionDirname creates and sets the test session directory.
-func TestSessionDirname() error {
-	gopath := os.Getenv("GOPATH")
-	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
+func TestSessionDirname() {
+	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
-		return errors.Wrapf(err, "error creating test session directory %s", dirname)
+		log.Fatalf("error creating test session directory %s: %s", dirname, err.Error())
 	}
 
 	store.Session = fs.NewFileStore(dirname)
-
-	return nil
 }
 
 // TestBlocklist creates a test blocklist.
-func TestBlocklist() (*blocklist.Blocklist, error) {
+func TestBlocklist() *blocklist.Blocklist {
 	testlist := blocklist.New(uuid.NewV4().String())
 	testlist.Name = "test"
 	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
 
 	if err := testlist.Save(); err != nil {
-		return nil, err
+		log.Fatal("error saving test blocklist: ", err.Error())
 	}
 
-	return testlist, nil
+	return testlist
 }
 
 // NewTestSession creates a test session instance
@@ -77,12 +71,12 @@ func NewTestSession() *session.Session {
 }
 
 // TestSession creates and saves a test session.
-func TestSession() (*session.Session, error) {
+func TestSession() *session.Session {
 	testsess := NewTestSession()
 
 	if err := testsess.Save(); err != nil {
-		return nil, err
+		log.Fatal("error saving test session: ", err.Error())
 	}
 
-	return testsess, nil
+	return testsess
 }
