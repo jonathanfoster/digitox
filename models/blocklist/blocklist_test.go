@@ -8,18 +8,18 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/test/testutil"
+	"github.com/jonathanfoster/freedom/test/setup"
 )
 
 func TestBlocklist(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist", t, func() {
-		if err := testutil.SetTestBlocklistDirname(); err != nil {
+		if err := setup.TestBlocklistDirname(); err != nil {
 			panic(err)
 		}
 
-		testlist, err := testutil.SaveTestBlocklist()
+		testlist, err := setup.TestBlocklist()
 		if err != nil {
 			panic(err)
 		}

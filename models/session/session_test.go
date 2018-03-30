@@ -9,18 +9,18 @@ import (
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
-	"github.com/jonathanfoster/freedom/test/testutil"
+	"github.com/jonathanfoster/freedom/test/setup"
 )
 
 func TestSession(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Session", t, func() {
-		if err := testutil.SetTestSessionDirname(); err != nil {
+		if err := setup.TestSessionDirname(); err != nil {
 			panic(err)
 		}
 
-		testsess, err := testutil.SaveTestSession()
+		testsess, err := setup.TestSession()
 		if err != nil {
 			panic(err)
 		}
@@ -56,7 +56,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
-				sess := testutil.NewTestSession()
+				sess := setup.NewTestSession()
 				sess.Name = "test-2"
 
 				err := sess.Save()
@@ -77,7 +77,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Validate", func() {
 			Convey("Should return true", func() {
-				sess := testutil.NewTestSession()
+				sess := setup.NewTestSession()
 				result, err := sess.Validate()
 				So(err, ShouldBeNil)
 				So(result, ShouldBeTrue)
@@ -85,7 +85,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When ID not a valid UUIDv4", func() {
 				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
+					sess := setup.NewTestSession()
 					sess.ID = "test"
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
@@ -95,7 +95,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When ID not provided", func() {
 				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
+					sess := setup.NewTestSession()
 					sess.ID = ""
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
@@ -105,7 +105,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When starts not provided", func() {
 				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
+					sess := setup.NewTestSession()
 					sess.Starts = time.Time{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
@@ -115,7 +115,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When ends not provided", func() {
 				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
+					sess := setup.NewTestSession()
 					sess.Ends = time.Time{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
@@ -125,7 +125,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When blocklists not provided", func() {
 				Convey("Should return false", func() {
-					sess := testutil.NewTestSession()
+					sess := setup.NewTestSession()
 					sess.Blocklists = []blocklist.Blocklist{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)

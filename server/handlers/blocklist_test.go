@@ -12,7 +12,7 @@ import (
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/server"
-	"github.com/jonathanfoster/freedom/test/testutil"
+	"github.com/jonathanfoster/freedom/test/setup"
 )
 
 func TestBlocklist(t *testing.T) {
@@ -21,11 +21,11 @@ func TestBlocklist(t *testing.T) {
 	Convey("Blocklist Handler", t, func() {
 		router := server.NewRouter()
 
-		if err := testutil.SetTestBlocklistDirname(); err != nil {
+		if err := setup.TestBlocklistDirname(); err != nil {
 			panic(err)
 		}
 
-		testlist, err := testutil.SaveTestBlocklist()
+		testlist, err := setup.TestBlocklist()
 		if err != nil {
 			panic(err)
 		}

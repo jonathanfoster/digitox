@@ -7,23 +7,23 @@ import (
 	"testing"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
+	"github.com/jonathanfoster/freedom/test/setup"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/server"
-	"github.com/jonathanfoster/freedom/test/testutil"
 )
 
 func TestSession(t *testing.T) {
 	Convey("Session Handler", t, func() {
 		router := server.NewRouter()
 
-		if err := testutil.SetTestSessionDirname(); err != nil {
+		if err := setup.TestSessionDirname(); err != nil {
 			panic(err)
 		}
 
-		testsess, err := testutil.SaveTestSession()
+		testsess, err := setup.TestSession()
 		if err != nil {
 			panic(err)
 		}
@@ -60,7 +60,7 @@ func TestSession(t *testing.T) {
 
 		Convey("CreateSession", func() {
 			Convey("Status code should be 201", func() {
-				sess := testutil.NewTestSession()
+				sess := setup.NewTestSession()
 				sess.Name = "test"
 				sess.Blocklists = append(sess.Blocklists, *blocklist.New(uuid.NewV4().String()))
 

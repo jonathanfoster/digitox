@@ -1,4 +1,4 @@
-package testutil
+package setup
 
 import (
 	"os"
@@ -13,8 +13,8 @@ import (
 	"github.com/jonathanfoster/freedom/store/fs"
 )
 
-// SetTestBlocklistDirname creates and sets the test blocklist directory.
-func SetTestBlocklistDirname() error {
+// TestBlocklistDirname creates and sets the test blocklist directory.
+func TestBlocklistDirname() error {
 	gopath := os.Getenv("GOPATH")
 	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
@@ -27,8 +27,8 @@ func SetTestBlocklistDirname() error {
 	return nil
 }
 
-// SetTestSessionDirname creates and sets the test session directory.
-func SetTestSessionDirname() error {
+// TestSessionDirname creates and sets the test session directory.
+func TestSessionDirname() error {
 	gopath := os.Getenv("GOPATH")
 	dirname := gopath + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
@@ -41,8 +41,8 @@ func SetTestSessionDirname() error {
 	return nil
 }
 
-// SaveTestBlocklist creates a test blocklist.
-func SaveTestBlocklist() (*blocklist.Blocklist, error) {
+// TestBlocklist creates a test blocklist.
+func TestBlocklist() (*blocklist.Blocklist, error) {
 	testlist := blocklist.New(uuid.NewV4().String())
 	testlist.Name = "test"
 	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
@@ -76,8 +76,8 @@ func NewTestSession() *session.Session {
 	return testsess
 }
 
-// SaveTestSession creates and saves a test session.
-func SaveTestSession() (*session.Session, error) {
+// TestSession creates and saves a test session.
+func TestSession() (*session.Session, error) {
 	testsess := NewTestSession()
 
 	if err := testsess.Save(); err != nil {
