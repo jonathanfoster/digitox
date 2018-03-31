@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -29,13 +30,13 @@ func TestSession(t *testing.T) {
 
 		Convey("Find", func() {
 			Convey("Should return session", func() {
-				sess, err := session.Find(testsess.ID)
+				sess, err := session.Find(testsess.ID.String())
 				So(err, ShouldBeNil)
 				So(sess, ShouldNotBeEmpty)
 			})
 
 			Convey("Should load blocklists", func() {
-				sess, err := session.Find(testsess.ID)
+				sess, err := session.Find(testsess.ID.String())
 				So(err, ShouldBeNil)
 				So(sess.Blocklists[0].ID, ShouldEqual, testsess.Blocklists[0].ID)
 			})
@@ -43,7 +44,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Remove", func() {
 			Convey("Should not return error", func() {
-				err := session.Remove(testsess.ID)
+				err := session.Remove(testsess.ID.String())
 				So(err, ShouldBeNil)
 			})
 		})
@@ -56,13 +57,13 @@ func TestSession(t *testing.T) {
 				err := sess.Save()
 				So(err, ShouldBeNil)
 
-				err = session.Remove(sess.ID)
+				err = session.Remove(sess.ID.String())
 				So(err, ShouldBeNil)
 			})
 
-			Convey("When blocklist is not valid", func() {
+			Convey("When sesssion is not valid", func() {
 				Convey("Should return validation error", func() {
-					testsess.ID = "test" // ID must be UUIDv4
+					testsess.ID = uuid.UUID{}
 					err := testsess.Save()
 					So(err, ShouldNotBeNil)
 				})
@@ -80,7 +81,7 @@ func TestSession(t *testing.T) {
 			Convey("When ID not a valid UUIDv4", func() {
 				Convey("Should return false", func() {
 					sess := setup.NewTestSession()
-					sess.ID = "test"
+					sess.ID = uuid.UUID{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)
@@ -90,7 +91,7 @@ func TestSession(t *testing.T) {
 			Convey("When ID not provided", func() {
 				Convey("Should return false", func() {
 					sess := setup.NewTestSession()
-					sess.ID = ""
+					sess.ID = uuid.UUID{}
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)
@@ -129,7 +130,7 @@ func TestSession(t *testing.T) {
 		})
 
 		Reset(func() {
-			session.Remove(testsess.ID)
+			session.Remove(testsess.ID.String())
 		})
 	})
 }

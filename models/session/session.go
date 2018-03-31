@@ -6,6 +6,7 @@ import (
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/models/blocklist"
@@ -28,7 +29,7 @@ const (
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID         string                `json:"id" valid:"required, uuidv4"`
+	ID         uuid.UUID             `json:"id" valid:"required"`
 	Name       string                `json:"name"`
 	Starts     time.Time             `json:"starts" valid:"required"`
 	Ends       time.Time             `json:"ends" valid:"required"`
@@ -37,9 +38,9 @@ type Session struct {
 }
 
 // New creates a Session instance.
-func New(id string) *Session {
+func New() *Session {
 	return &Session{
-		ID:         id,
+		ID:         uuid.NewV4(),
 		Repeats:    []RepeatSchedule{},
 		Blocklists: []blocklist.Blocklist{},
 	}
@@ -92,7 +93,7 @@ func (s *Session) Save() error {
 		return models.NewValidatorError(fmt.Sprintf("error validating session before save: %s", err.Error()))
 	}
 
-	if err := store.Session.Save(s.ID, s); err != nil {
+	if err := store.Session.Save(s.ID.String(), s); err != nil {
 		return errors.Wrapf(err, "error saving session %s", s.ID)
 	}
 

@@ -50,7 +50,7 @@ func TestBlocklist() *blocklist.Blocklist {
 
 // NewTestSession creates a test session instance
 func NewTestSession() *session.Session {
-	testsess := session.New(uuid.NewV4().String())
+	testsess := session.New()
 	testsess.Name = "test"
 	testsess.Starts = time.Now()
 	testsess.Ends = testsess.Starts.Add(time.Hour * 1)

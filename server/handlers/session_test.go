@@ -34,7 +34,7 @@ func TestSession(t *testing.T) {
 		Convey("FindSession", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/sessions/"+testsess.ID, nil)
+				r := httptest.NewRequest("GET", "/sessions/"+testsess.ID.String(), nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
@@ -67,13 +67,14 @@ func TestSession(t *testing.T) {
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
 
-				err = session.Remove(sess.ID)
+				err = session.Remove(sess.ID.String())
 				So(err, ShouldBeNil)
 			})
 
 			Convey("When session is not valid", func() {
 				Convey("Status code should be 422", func() {
-					sess := session.New("test") // ID must be a valid UUIDv4
+					sess := session.New() // ID must be a valid UUIDv4
+					sess.ID = uuid.UUID{}
 					sess.Name = "test"
 					sess.Blocklists = append(sess.Blocklists, *blocklist.New(uuid.NewV4().String()))
 
@@ -99,7 +100,7 @@ func TestSession(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("PUT", "/sessions/"+testsess.ID, buffer)
+				r := httptest.NewRequest("PUT", "/sessions/"+testsess.ID.String(), buffer)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
@@ -108,14 +109,14 @@ func TestSession(t *testing.T) {
 			Convey("When session is not valid", func() {
 				Convey("Status code should be 422", func() {
 					origID := testsess.ID
-					testsess.ID = "test" // ID must be a valid UUIDv4
+					testsess.ID = uuid.UUID{} // ID must be a valid UUIDv4
 
 					buf, err := json.Marshal(testsess)
 					buffer := bytes.NewBuffer(buf)
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/sessions/"+origID, buffer)
+					r := httptest.NewRequest("PUT", "/sessions/"+origID.String(), buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 422)
@@ -124,14 +125,14 @@ func TestSession(t *testing.T) {
 
 			Convey("When session does not exist", func() {
 				Convey("Status code should be 404", func() {
-					list := session.New(uuid.NewV4().String())
+					list := session.New()
 
 					buf, err := json.Marshal(list)
 					buffer := bytes.NewBuffer(buf)
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/sessions/"+list.ID, buffer)
+					r := httptest.NewRequest("PUT", "/sessions/"+list.ID.String(), buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -142,7 +143,7 @@ func TestSession(t *testing.T) {
 		Convey("DeleteSession", func() {
 			Convey("Status code should be 204", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/sessions/"+testsess.ID, nil)
+				r := httptest.NewRequest("DELETE", "/sessions/"+testsess.ID.String(), nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 204)
@@ -160,7 +161,7 @@ func TestSession(t *testing.T) {
 		})
 
 		Reset(func() {
-			session.Remove(testsess.ID)
+			session.Remove(testsess.ID.String())
 		})
 	})
 }
