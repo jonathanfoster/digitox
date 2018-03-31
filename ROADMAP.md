@@ -13,6 +13,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] CI/CD: Build API server docker image
 * [X] CI/CD: Run proxy and API server containers with shared data store
 * [X] CI/CD: Create deployment pipeline using Kubernetes
+* [ ] CI/CD: Run unit tests during CI build
 
 ## API Server
 
@@ -27,19 +28,23 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Session: Handle find session
 * [X] Session: Handle remove session
 * [X] Session: Handle save session
-* [X] Session: Store sessions in /etc/freedom/session/
-* [ ] Session: Start session by copying active session blocklists to /etc/squid/blocklist
-* [ ] Session: End session by removing /etc/squid/blocklist
-* [X] Session: Validate model before persisting
+* [ ] Session: Store sessions in database - **IN PROGRESS**
+* [ ] Session: Validate model before persisting - **IN PROGRESS**
 
-## Block List
+## Blocklist
 
-* [X] Block List: Handle list block lists
-* [X] Block List: Handle find block list
-* [X] Block List: Handle remove block list
-* [X] Block List: Handle save block list
-* [X] Block List: Store block lists in /etc/freedom/blocklist/
-* [X] Block List: Validate model before persisting
+* [X] Blocklist: Handle list blocklists
+* [X] Blocklist: Handle find blocklist
+* [X] Blocklist: Handle remove blocklist
+* [X] Blocklist: Handle save blocklist
+* [ ] Blocklist: Store block lists in database - **IN PROGRESS**
+* [ ] Blocklist: Validate model before persisting - **IN PROGRESS**
+
+## Proxy
+
+* [ ] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist
+* [ ] Proxy: End session by removing /etc/squid/blocklist
+* [ ] Proxy: Restrict proxy access to devices
 
 ## Devices
 
@@ -47,7 +52,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [ ] Device: Handle find device
 * [ ] Device: Handle remove device
 * [ ] Device: Handle save device
-* [ ] Device: Store devices in /etc/freedom/passwd
+* [ ] Device: Store devices in database
 * [ ] Device: Validate model before persisting
 
 ## Authorization
