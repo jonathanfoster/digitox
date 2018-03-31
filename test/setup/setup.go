@@ -61,15 +61,13 @@ func NewTestSession() *session.Session {
 	sess.Name = "test"
 	sess.Starts = time.Now()
 	sess.Ends = sess.Starts.Add(time.Hour * 1)
-	sess.Repeats = []session.RepeatSchedule{
-		session.EverySunday,
-		session.EveryMonday,
-		session.EveryTuesday,
-		session.EveryWednesday,
-		session.EveryThursday,
-		session.EveryFriday,
-		session.EverySaturday,
-	}
+	sess.EverySunday = true
+	sess.EveryMonday = true
+	sess.EveryTuesday = true
+	sess.EveryWednesday = true
+	sess.EveryThursday = true
+	sess.EveryFriday = true
+	sess.EverySaturday = true
 	sess.Blocklists = []blocklist.Blocklist{
 		*NewTestBlocklist(),
 	}

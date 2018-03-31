@@ -13,35 +13,26 @@ import (
 	"github.com/jonathanfoster/freedom/store"
 )
 
-// RepeatSchedule represents a scheduled repetition of a session.
-type RepeatSchedule int
-
-// Repeat schedule for each day of the week.
-const (
-	EverySunday RepeatSchedule = iota
-	EveryMonday
-	EveryTuesday
-	EveryWednesday
-	EveryThursday
-	EveryFriday
-	EverySaturday
-)
-
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID         uuid.UUID             `json:"id"`
-	Name       string                `json:"name"`
-	Starts     time.Time             `json:"starts" valid:"required"`
-	Ends       time.Time             `json:"ends" valid:"required"`
-	Repeats    []RepeatSchedule      `json:"repeats"`
-	Blocklists []blocklist.Blocklist `json:"blocklists" valid:"required"`
+	ID             uuid.UUID             `json:"id"`
+	Name           string                `json:"name"`
+	Starts         time.Time             `json:"starts" valid:"required"`
+	Ends           time.Time             `json:"ends" valid:"required"`
+	Blocklists     []blocklist.Blocklist `json:"blocklists" valid:"required" gorm:"many2many:session_blocklists;"`
+	EverySunday    bool                  `json:"every_sunday"`
+	EveryMonday    bool                  `json:"every_monday"`
+	EveryTuesday   bool                  `json:"every_tuesday"`
+	EveryWednesday bool                  `json:"every_wednesday"`
+	EveryThursday  bool                  `json:"every_thursday"`
+	EveryFriday    bool                  `json:"every_friday"`
+	EverySaturday  bool                  `json:"every_saturday"`
 }
 
 // New creates a Session instance.
 func New() *Session {
 	return &Session{
 		ID:         uuid.NewV4(),
-		Repeats:    []RepeatSchedule{},
 		Blocklists: []blocklist.Blocklist{},
 	}
 }

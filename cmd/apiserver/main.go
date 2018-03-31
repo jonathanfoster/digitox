@@ -6,10 +6,10 @@ import (
 	"github.com/alecthomas/kingpin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/jonathanfoster/freedom/server"
 	"github.com/jonathanfoster/freedom/server/status"
 	"github.com/jonathanfoster/freedom/store"
@@ -39,7 +39,6 @@ func main() {
 	defer db.Close()
 
 	db.AutoMigrate(&blocklist.Blocklist{}, &session.Session{})
-
 	store.DB = db
 
 	status.Current = &status.Status{
