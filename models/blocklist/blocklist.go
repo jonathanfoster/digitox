@@ -5,6 +5,7 @@ import (
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/store"
@@ -12,15 +13,15 @@ import (
 
 // Blocklist represents a list of websites to block.
 type Blocklist struct {
-	ID    string   `json:"id" valid:"required, uuidv4"`
-	Name  string   `json:"name"`
-	Hosts []string `json:"hosts"`
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Hosts []string  `json:"hosts"`
 }
 
 // New creates a Blocklist instance.
-func New(id string) *Blocklist {
+func New() *Blocklist {
 	return &Blocklist{
-		ID:    id,
+		ID:    uuid.NewV4(),
 		Hosts: []string{},
 	}
 }
@@ -72,7 +73,7 @@ func (b *Blocklist) Save() error {
 		return models.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
 	}
 
-	if err := store.Blocklist.Save(b.ID, b); err != nil {
+	if err := store.Blocklist.Save(b.ID.String(), b); err != nil {
 		return errors.Wrapf(err, "error saving blocklist %s", b.ID)
 	}
 

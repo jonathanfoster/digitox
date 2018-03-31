@@ -29,12 +29,12 @@ const (
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID         uuid.UUID             `json:"id" valid:"required"`
+	ID         uuid.UUID             `json:"id"`
 	Name       string                `json:"name"`
-	Starts     time.Time             `json:"starts" valid:"required"`
-	Ends       time.Time             `json:"ends" valid:"required"`
+	Starts     time.Time             `json:"starts"`
+	Ends       time.Time             `json:"ends"`
 	Repeats    []RepeatSchedule      `json:"repeats"`
-	Blocklists []blocklist.Blocklist `json:"blocklists" valid:"required"`
+	Blocklists []blocklist.Blocklist `json:"blocklists"`
 }
 
 // New creates a Session instance.

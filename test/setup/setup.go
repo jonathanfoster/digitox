@@ -4,7 +4,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
@@ -37,7 +36,7 @@ func TestSessionDirname() {
 
 // TestBlocklist creates a test blocklist.
 func TestBlocklist() *blocklist.Blocklist {
-	testlist := blocklist.New(uuid.NewV4().String())
+	testlist := blocklist.New()
 	testlist.Name = "test"
 	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
 
@@ -48,7 +47,7 @@ func TestBlocklist() *blocklist.Blocklist {
 	return testlist
 }
 
-// NewTestSession creates a test session instance
+// NewTestSession creates a test session instance.
 func NewTestSession() *session.Session {
 	testsess := session.New()
 	testsess.Name = "test"
@@ -64,7 +63,7 @@ func NewTestSession() *session.Session {
 		session.EverySaturday,
 	}
 	testsess.Blocklists = []blocklist.Blocklist{
-		*blocklist.New(uuid.NewV4().String()),
+		*blocklist.New(),
 	}
 
 	return testsess
