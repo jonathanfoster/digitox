@@ -14,7 +14,7 @@ import (
 	"github.com/jonathanfoster/freedom/test/setup"
 )
 
-func TestBlocklist(t *testing.T) {
+func TestBlocklistHandler(t *testing.T) {
 	log.SetLevel(log.FatalLevel)
 
 	Convey("Blocklist Handler", t, func() {

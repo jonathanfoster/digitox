@@ -15,7 +15,7 @@ import (
 	"github.com/jonathanfoster/freedom/server"
 )
 
-func TestSession(t *testing.T) {
+func TestSessionHandler(t *testing.T) {
 	logrus.SetLevel(logrus.FatalLevel)
 
 	Convey("Session Handler", t, func() {

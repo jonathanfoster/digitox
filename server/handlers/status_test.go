@@ -9,7 +9,7 @@ import (
 	"github.com/jonathanfoster/freedom/server"
 )
 
-func TestStatus(t *testing.T) {
+func TestStatusHandler(t *testing.T) {
 	Convey("Status Handler", t, func() {
 		router := server.NewRouter()
 

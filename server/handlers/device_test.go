@@ -9,7 +9,7 @@ import (
 	"github.com/jonathanfoster/freedom/server"
 )
 
-func TestDevice(t *testing.T) {
+func TestDeviceHandler(t *testing.T) {
 	Convey("Device Handler", t, func() {
 		router := server.NewRouter()
 
