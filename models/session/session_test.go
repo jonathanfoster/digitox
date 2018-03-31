@@ -2,7 +2,9 @@ package session_test
 
 import (
 	"testing"
+	"time"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -11,7 +13,7 @@ import (
 )
 
 func TestSession(t *testing.T) {
-	log.SetLevel(log.FatalLevel)
+	log.SetLevel(log.DebugLevel)
 
 	Convey("Session", t, func() {
 		setup.TestSessionDirname()
@@ -58,63 +60,53 @@ func TestSession(t *testing.T) {
 				So(err, ShouldBeNil)
 			})
 
-			//Convey("When sesssion is not valid", func() {
-			//	Convey("Should return validation error", func() {
-			//		testsess.ID = uuid.UUID{}
-			//		err := testsess.Save()
-			//		So(err, ShouldNotBeNil)
-			//	})
-			//})
+			Convey("When session is not valid", func() {
+				Convey("Should return validation error", func() {
+					testsess.Starts = time.Time{}
+					err := testsess.Save()
+					So(err, ShouldNotBeNil)
+				})
+			})
 		})
 
-		//Convey("Validate", func() {
-		//	Convey("Should return true", func() {
-		//		sess := setup.NewTestSession()
-		//		result, err := sess.Validate()
-		//		So(err, ShouldBeNil)
-		//		So(result, ShouldBeTrue)
-		//	})
-		//
-		//	Convey("When ID not provided", func() {
-		//		Convey("Should return false", func() {
-		//			sess := setup.NewTestSession()
-		//			sess.ID = uuid.UUID{}
-		//			result, err := sess.Validate()
-		//			So(err, ShouldNotBeNil)
-		//			So(result, ShouldBeFalse)
-		//		})
-		//	})
-		//
-		//	Convey("When starts not provided", func() {
-		//		Convey("Should return false", func() {
-		//			sess := setup.NewTestSession()
-		//			sess.Starts = time.Time{}
-		//			result, err := sess.Validate()
-		//			So(err, ShouldNotBeNil)
-		//			So(result, ShouldBeFalse)
-		//		})
-		//	})
-		//
-		//	Convey("When ends not provided", func() {
-		//		Convey("Should return false", func() {
-		//			sess := setup.NewTestSession()
-		//			sess.Ends = time.Time{}
-		//			result, err := sess.Validate()
-		//			So(err, ShouldNotBeNil)
-		//			So(result, ShouldBeFalse)
-		//		})
-		//	})
-		//
-		//	Convey("When blocklists not provided", func() {
-		//		Convey("Should return false", func() {
-		//			sess := setup.NewTestSession()
-		//			sess.Blocklists = []blocklist.Blocklist{}
-		//			result, err := sess.Validate()
-		//			So(err, ShouldNotBeNil)
-		//			So(result, ShouldBeFalse)
-		//		})
-		//	})
-		//})
+		Convey("Validate", func() {
+			Convey("Should return true", func() {
+				sess := setup.NewTestSession()
+				result, err := sess.Validate()
+				So(err, ShouldBeNil)
+				So(result, ShouldBeTrue)
+			})
+
+			Convey("When starts not provided", func() {
+				Convey("Should return false", func() {
+					sess := setup.NewTestSession()
+					sess.Starts = time.Time{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When ends not provided", func() {
+				Convey("Should return false", func() {
+					sess := setup.NewTestSession()
+					sess.Ends = time.Time{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+
+			Convey("When blocklists not provided", func() {
+				Convey("Should return false", func() {
+					sess := setup.NewTestSession()
+					sess.Blocklists = []blocklist.Blocklist{}
+					result, err := sess.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
+			})
+		})
 
 		Reset(func() {
 			session.Remove(testsess.ID.String())

@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
@@ -17,7 +18,7 @@ func TestBlocklistDirname() {
 	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
-		log.Fatalf("error creating test blocklist directory %s: %s", dirname, err.Error())
+		log.Panicf("error creating test blocklist directory %s: %s", dirname, err.Error())
 	}
 
 	store.Blocklist = fs.NewFileStore(dirname)
@@ -28,7 +29,7 @@ func TestSessionDirname() {
 	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
-		log.Fatalf("error creating test session directory %s: %s", dirname, err.Error())
+		log.Panicf("error creating test session directory %s: %s", dirname, err.Error())
 	}
 
 	store.Session = fs.NewFileStore(dirname)
@@ -41,7 +42,7 @@ func TestBlocklist() *blocklist.Blocklist {
 	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
 
 	if err := testlist.Save(); err != nil {
-		log.Fatal("error saving test blocklist: ", err.Error())
+		log.Panic("error saving test blocklist: ", err.Error())
 	}
 
 	return testlist
@@ -49,11 +50,11 @@ func TestBlocklist() *blocklist.Blocklist {
 
 // NewTestSession creates a test session instance.
 func NewTestSession() *session.Session {
-	testsess := session.New()
-	testsess.Name = "test"
-	testsess.Starts = time.Now()
-	testsess.Ends = testsess.Starts.Add(time.Hour * 1)
-	testsess.Repeats = []session.RepeatSchedule{
+	sess := session.New()
+	sess.Name = "test"
+	sess.Starts = time.Now()
+	sess.Ends = sess.Starts.Add(time.Hour * 1)
+	sess.Repeats = []session.RepeatSchedule{
 		session.EverySunday,
 		session.EveryMonday,
 		session.EveryTuesday,
@@ -62,20 +63,21 @@ func NewTestSession() *session.Session {
 		session.EveryFriday,
 		session.EverySaturday,
 	}
-	testsess.Blocklists = []blocklist.Blocklist{
+	sess.Blocklists = []blocklist.Blocklist{
 		*blocklist.New(),
 	}
 
-	return testsess
+	return sess
 }
 
 // TestSession creates and saves a test session.
 func TestSession() *session.Session {
-	testsess := NewTestSession()
+	sess := NewTestSession()
+	sess.ID = uuid.NewV4()
 
-	if err := testsess.Save(); err != nil {
-		log.Fatal("error saving test session: ", err.Error())
+	if err := sess.Save(); err != nil {
+		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())
 	}
 
-	return testsess
+	return sess
 }
