@@ -1,14 +1,10 @@
 package store
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
 
 var (
-	// Database storage implementation.
-	DB *gorm.DB
-
 	// Blocklist is the blocklist storage implementation.
 	Blocklist Interface
 	// Session is the session storage implementation.

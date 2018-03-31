@@ -13,16 +13,16 @@ import (
 
 // Blocklist represents a list of websites to block.
 type Blocklist struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Hosts []string  `json:"hosts" valid:"required"`
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name"`
+	Domains []string  `json:"domains" valid:"required"`
 }
 
 // New creates a Blocklist instance.
 func New() *Blocklist {
 	return &Blocklist{
-		ID:    uuid.NewV4(),
-		Hosts: []string{},
+		ID:      uuid.NewV4(),
+		Domains: []string{},
 	}
 }
 

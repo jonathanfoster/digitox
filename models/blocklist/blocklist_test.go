@@ -35,7 +35,7 @@ func TestBlocklist(t *testing.T) {
 			Convey("Should load hosts", func() {
 				list, err := blocklist.Find(testlist.ID.String())
 				So(err, ShouldBeNil)
-				So(list.Hosts[0], ShouldEqual, testlist.Hosts[0])
+				So(list.Domains[0], ShouldEqual, testlist.Domains[0])
 			})
 		})
 
@@ -49,7 +49,7 @@ func TestBlocklist(t *testing.T) {
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
 				list := blocklist.New()
-				list.Hosts = append(list.Hosts, "www.reddit.com")
+				list.Domains = append(list.Domains, "www.reddit.com")
 
 				err := list.Save()
 				So(err, ShouldBeNil)
@@ -60,7 +60,7 @@ func TestBlocklist(t *testing.T) {
 
 			Convey("When blocklist is not valid", func() {
 				Convey("Should return validation error", func() {
-					testlist.Hosts = []string{}
+					testlist.Domains = []string{}
 					err := testlist.Save()
 					So(err, ShouldNotBeNil)
 				})
@@ -78,7 +78,7 @@ func TestBlocklist(t *testing.T) {
 			Convey("When hosts are not provided", func() {
 				Convey("Should return false", func() {
 					list := setup.NewTestBlocklist()
-					list.Hosts = []string{}
+					list.Domains = []string{}
 					result, err := list.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)

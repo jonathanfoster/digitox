@@ -39,7 +39,7 @@ func TestSessionDirname() {
 func NewTestBlocklist() *blocklist.Blocklist {
 	list := blocklist.New()
 	list.Name = "test"
-	list.Hosts = []string{"www.reddit.com"}
+	list.Domains = []string{"www.reddit.com"}
 
 	return list
 }

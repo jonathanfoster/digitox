@@ -75,18 +75,9 @@
 
 [[projects]]
   name = "github.com/jinzhu/gorm"
-  packages = [
-    ".",
-    "dialects/sqlite"
-  ]
+  packages = ["dialects/sqlite"]
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/jinzhu/inflection"
-  packages = ["."]
-  revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
   name = "github.com/jtolds/gls"
@@ -162,6 +153,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "559a55b5aed9a364223c5420efd7e31f818ca5dad0d4c56892ceac3d08396c9e"
+  inputs-digest = "017a3644a69ad17812c72e099bec53ebb2a305541c9292ccad763a1a2384e38c"
   solver-name = "gps-cdcl"
   solver-version = 1
