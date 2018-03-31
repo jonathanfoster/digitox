@@ -35,17 +35,24 @@ func TestSessionDirname() {
 	store.Session = fs.NewFileStore(dirname)
 }
 
+// NewTestBlocklist creates a test blocklist instance.
+func NewTestBlocklist() *blocklist.Blocklist {
+	list := blocklist.New()
+	list.Name = "test"
+	list.Hosts = []string{"www.reddit.com"}
+
+	return list
+}
+
 // TestBlocklist creates a test blocklist.
 func TestBlocklist() *blocklist.Blocklist {
-	testlist := blocklist.New()
-	testlist.Name = "test"
-	testlist.Hosts = append(testlist.Hosts, "www.reddit.com")
+	list := NewTestBlocklist()
 
-	if err := testlist.Save(); err != nil {
+	if err := list.Save(); err != nil {
 		log.Panic("error saving test blocklist: ", err.Error())
 	}
 
-	return testlist
+	return list
 }
 
 // NewTestSession creates a test session instance.
@@ -64,7 +71,7 @@ func NewTestSession() *session.Session {
 		session.EverySaturday,
 	}
 	sess.Blocklists = []blocklist.Blocklist{
-		*blocklist.New(),
+		*NewTestBlocklist(),
 	}
 
 	return sess

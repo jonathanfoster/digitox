@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http/httptest"
 	"testing"
+	"time"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/test/setup"
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
@@ -57,7 +57,6 @@ func TestSessionHandler(t *testing.T) {
 			Convey("Status code should be 201", func() {
 				sess := setup.NewTestSession()
 				sess.Name = "test"
-				sess.Blocklists = append(sess.Blocklists, *blocklist.New())
 
 				buf, err := json.Marshal(sess)
 				buffer := bytes.NewBuffer(buf)
@@ -73,29 +72,27 @@ func TestSessionHandler(t *testing.T) {
 				So(err, ShouldBeNil)
 			})
 
-			//Convey("When session is not valid", func() {
-			//	Convey("Status code should be 422", func() {
-			//		sess := session.New() // ID must be a valid UUIDv4
-			//		sess.ID = uuid.UUID{}
-			//		sess.Name = "test"
-			//		sess.Blocklists = append(sess.Blocklists, *blocklist.New())
-			//
-			//		buf, err := json.Marshal(sess)
-			//		buffer := bytes.NewBuffer(buf)
-			//		So(err, ShouldBeNil)
-			//
-			//		w := httptest.NewRecorder()
-			//		r := httptest.NewRequest("POST", "/sessions", buffer)
-			//
-			//		router.ServeHTTP(w, r)
-			//		So(w.Code, ShouldEqual, 422)
-			//	})
-			//})
+			Convey("When session is not valid", func() {
+				Convey("Status code should be 422", func() {
+					sess := session.New() // ID must be a valid UUIDv4
+					sess.Starts = time.Time{}
+
+					buf, err := json.Marshal(sess)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("POST", "/sessions", buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
+			})
 		})
 
 		Convey("UpdateSession", func() {
 			Convey("Status code should be 200", func() {
-				testsess.Blocklists = append(testsess.Blocklists, *blocklist.New())
+				testsess.Name = "test2"
 
 				buf, err := json.Marshal(testsess)
 				buffer := bytes.NewBuffer(buf)
@@ -108,22 +105,22 @@ func TestSessionHandler(t *testing.T) {
 				So(w.Code, ShouldEqual, 200)
 			})
 
-			//Convey("When session is not valid", func() {
-			//	Convey("Status code should be 422", func() {
-			//		origID := testsess.ID
-			//		testsess.ID = uuid.UUID{} // ID must be a valid UUIDv4
-			//
-			//		buf, err := json.Marshal(testsess)
-			//		buffer := bytes.NewBuffer(buf)
-			//		So(err, ShouldBeNil)
-			//
-			//		w := httptest.NewRecorder()
-			//		r := httptest.NewRequest("PUT", "/sessions/"+origID.String(), buffer)
-			//
-			//		router.ServeHTTP(w, r)
-			//		So(w.Code, ShouldEqual, 422)
-			//	})
-			//})
+			Convey("When session is not valid", func() {
+				Convey("Status code should be 422", func() {
+					origID := testsess.ID
+					testsess.Starts = time.Time{}
+
+					buf, err := json.Marshal(testsess)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/sessions/"+origID.String(), buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
+			})
 
 			Convey("When session does not exist", func() {
 				Convey("Status code should be 404", func() {

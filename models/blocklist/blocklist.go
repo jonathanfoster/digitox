@@ -13,9 +13,9 @@ import (
 
 // Blocklist represents a list of websites to block.
 type Blocklist struct {
-	ID    uuid.UUID `json:"id" validate:"required"`
+	ID    uuid.UUID `json:"id"`
 	Name  string    `json:"name"`
-	Hosts []string  `json:"hosts" validate:"required"`
+	Hosts []string  `json:"hosts" valid:"required"`
 }
 
 // New creates a Blocklist instance.
