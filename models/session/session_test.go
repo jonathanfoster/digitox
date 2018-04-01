@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -100,7 +99,7 @@ func TestSession(t *testing.T) {
 			Convey("When blocklists not provided", func() {
 				Convey("Should return false", func() {
 					sess := setup.NewTestSession()
-					sess.Blocklists = []blocklist.Blocklist{}
+					sess.Blocklists = nil
 					result, err := sess.Validate()
 					So(err, ShouldNotBeNil)
 					So(result, ShouldBeFalse)
