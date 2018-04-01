@@ -10,7 +10,6 @@ import (
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/store"
-	"github.com/jonathanfoster/freedom/store/fs"
 )
 
 // TestBlocklistDirname creates and sets the test blocklist directory.
@@ -21,7 +20,7 @@ func TestBlocklistDirname() {
 		log.Panicf("error creating test blocklist directory %s: %s", dirname, err.Error())
 	}
 
-	store.Blocklist = fs.NewFileStore(dirname)
+	store.Blocklist = store.NewFileStore(dirname)
 }
 
 // TestSessionDirname creates and sets the test session directory.
@@ -32,7 +31,7 @@ func TestSessionDirname() {
 		log.Panicf("error creating test session directory %s: %s", dirname, err.Error())
 	}
 
-	store.Session = fs.NewFileStore(dirname)
+	store.Session = store.NewFileStore(dirname)
 }
 
 // NewTestBlocklist creates a test blocklist instance.

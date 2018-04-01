@@ -1,4 +1,4 @@
-package fs
+package store
 
 import (
 	"encoding/json"
@@ -10,13 +10,11 @@ import (
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
-
-	"github.com/jonathanfoster/freedom/store"
 )
 
 func init() {
-	store.Blocklist = NewFileStore("/etc/freedom/blocklists/")
-	store.Session = NewFileStore("/etc/freedom/sessions/")
+	Blocklist = NewFileStore("/etc/freedom/blocklists/")
+	Session = NewFileStore("/etc/freedom/sessions/")
 }
 
 // FileStore represents a file store.
@@ -36,7 +34,7 @@ func (f *FileStore) All() ([]string, error) {
 	files, err := ioutil.ReadDir(f.Dirname)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, store.ErrNotExist
+			return nil, ErrNotExist
 		}
 
 		return nil, errors.Wrap(err, "error retrieving all values")
@@ -63,7 +61,7 @@ func (f *FileStore) Find(id string, out interface{}) error {
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return store.ErrNotExist
+			return ErrNotExist
 		}
 
 		return errors.Wrapf(err, "error reading file %s", filename)
@@ -85,7 +83,7 @@ func (f *FileStore) Remove(id string) error {
 
 	if err := os.Remove(filename); err != nil {
 		if os.IsNotExist(err) {
-			return store.ErrNotExist
+			return ErrNotExist
 		}
 
 		return errors.Wrapf(err, "error removing file %s", filename)
@@ -118,23 +116,23 @@ func (f *FileStore) SetDirname(dirname string) {
 	f.Dirname = dirname
 }
 
-// JoinPath sanitizes ID and joins with blocklist directory path to create a
-// file path. The file path is then checked to ensure its directory is the
-// blocklist directory to prevent directory traversal using relative paths.
+// JoinPath sanitizes ID and joins with directory path to create a file path.
+// The file path is then checked to ensure its directory is the directory path
+// to prevent directory traversal using relative paths.
 func JoinPath(filename string, dirname string) (string, error) {
 	filename = path.Join(dirname, validator.SafeFileName(filename))
 	filename, err := filepath.Abs(filename)
 	if err != nil {
-		return "", errors.Wrapf(err, "error returning absolute filename file path %s", filename)
+		return "", errors.Wrapf(err, "error returning absolute path for %s", filename)
 	}
 
 	dirname, err = filepath.Abs(dirname)
 	if err != nil {
-		return "", errors.Wrapf(err, "error returning absolute dirname path %s", dirname)
+		return "", errors.Wrapf(err, "error returning absolute path for %s", dirname)
 	}
 
 	if filepath.Dir(filename) != dirname {
-		return "", fmt.Errorf("filename path %s not in dirname directory %s", filename, dirname)
+		return "", fmt.Errorf("file name %s not in expected directory %s", filename, dirname)
 	}
 
 	return filename, nil
