@@ -1,13 +1,10 @@
 package blocklist
 
 import (
-	"fmt"
-
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
-	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/store"
 )
 
@@ -69,10 +66,6 @@ func Remove(id string) error {
 
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
-	if _, err := b.Validate(); err != nil {
-		return models.NewValidatorError(fmt.Sprintf("error validating blocklist before save: %s", err.Error()))
-	}
-
 	if err := store.Blocklist.Save(b.ID.String(), b); err != nil {
 		return errors.Wrapf(err, "error saving blocklist %s", b.ID)
 	}
@@ -82,10 +75,5 @@ func (b *Blocklist) Save() error {
 
 // Validate validates tags for fields and returns false if there are any errors.
 func (b *Blocklist) Validate() (bool, error) {
-	result, err := validator.ValidateStruct(b)
-	if err != nil {
-		err = models.NewValidatorError(err.Error())
-	}
-
-	return result, err
+	return validator.ValidateStruct(b)
 }

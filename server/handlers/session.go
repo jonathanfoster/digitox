@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/store"
 )
@@ -64,13 +63,13 @@ func CreateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := sess.Save(); err != nil {
-		if models.IsValidator(err) {
-			log.Warn("session not valid: ", err.Error())
-			Error(w, http.StatusUnprocessableEntity)
-			return
-		}
+	if valid, err := sess.Validate(); !valid {
+		log.Warn("session not valid: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
+		return
+	}
 
+	if err := sess.Save(); err != nil {
 		log.Error("error saving session: ", err.Error())
 		Error(w, http.StatusInternalServerError)
 		return
@@ -136,13 +135,13 @@ func UpdateSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := sess.Save(); err != nil {
-		if models.IsValidator(err) {
-			log.Warn("session not valid: ", err.Error())
-			Error(w, http.StatusUnprocessableEntity)
-			return
-		}
+	if valid, err := sess.Validate(); !valid {
+		log.Warn("session not valid: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
+		return
+	}
 
+	if err := sess.Save(); err != nil {
 		log.Error("error saving session: ", err.Error())
 		Error(w, http.StatusInternalServerError)
 		return

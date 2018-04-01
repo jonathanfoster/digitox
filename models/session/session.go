@@ -1,14 +1,12 @@
 package session
 
 import (
-	"fmt"
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
-	"github.com/jonathanfoster/freedom/models"
 	"github.com/jonathanfoster/freedom/store"
 )
 
@@ -86,10 +84,6 @@ func (s *Session) Active() bool {
 
 // Save writes the session to the file system.
 func (s *Session) Save() error {
-	if _, err := s.Validate(); err != nil {
-		return models.NewValidatorError(fmt.Sprintf("error validating session before save: %s", err.Error()))
-	}
-
 	if err := store.Session.Save(s.ID.String(), s); err != nil {
 		return errors.Wrapf(err, "error saving session %s", s.ID)
 	}
@@ -99,10 +93,5 @@ func (s *Session) Save() error {
 
 // Validate validates tags for fields and returns false if there are any errors.
 func (s *Session) Validate() (bool, error) {
-	result, err := validator.ValidateStruct(s)
-	if err != nil {
-		err = models.NewValidatorError(err.Error())
-	}
-
-	return result, err
+	return validator.ValidateStruct(s)
 }

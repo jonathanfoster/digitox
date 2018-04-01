@@ -52,14 +52,6 @@ func TestSession(t *testing.T) {
 				err = session.Remove(sess.ID.String())
 				So(err, ShouldBeNil)
 			})
-
-			Convey("When session is not valid", func() {
-				Convey("Should return validation error", func() {
-					testsess.Starts = time.Time{}
-					err := testsess.Save()
-					So(err, ShouldNotBeNil)
-				})
-			})
 		})
 
 		Convey("Validate", func() {

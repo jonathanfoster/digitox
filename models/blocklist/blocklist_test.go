@@ -57,14 +57,6 @@ func TestBlocklist(t *testing.T) {
 				err = blocklist.Remove(list.ID.String())
 				So(err, ShouldBeNil)
 			})
-
-			Convey("When blocklist is not valid", func() {
-				Convey("Should return validation error", func() {
-					testlist.Domains = []string{}
-					err := testlist.Save()
-					So(err, ShouldNotBeNil)
-				})
-			})
 		})
 
 		Convey("Validate", func() {
