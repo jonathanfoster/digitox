@@ -52,9 +52,9 @@ func (c *Controller) UpdateActiveBlocklist() (bool, error) {
 	// Create expected blocklist
 	activeList := blocklist.Blocklist{}
 	for _, sess := range activeSessions {
-		for _, list := range sess.Blocklists {
+		for _, id := range sess.Blocklists {
 			// Load blocklists
-			list, err = blocklist.Find(list.ID.String())
+			list, err := blocklist.Find(id.String())
 			if err != nil {
 				return false, err
 			}

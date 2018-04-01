@@ -32,12 +32,6 @@ func TestSession(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(sess, ShouldNotBeEmpty)
 			})
-
-			Convey("Should load blocklists", func() {
-				sess, err := session.Find(testsess.ID.String())
-				So(err, ShouldBeNil)
-				So(sess.Blocklists[0].ID, ShouldEqual, testsess.Blocklists[0].ID)
-			})
 		})
 
 		Convey("Remove", func() {

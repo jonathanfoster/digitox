@@ -67,8 +67,8 @@ func NewTestSession() *session.Session {
 	sess.EveryThursday = true
 	sess.EveryFriday = true
 	sess.EverySaturday = true
-	sess.Blocklists = []*blocklist.Blocklist{
-		NewTestBlocklist(),
+	sess.Blocklists = []uuid.UUID{
+		uuid.NewV4(),
 	}
 
 	return sess

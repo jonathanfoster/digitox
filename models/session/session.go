@@ -9,31 +9,29 @@ import (
 	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/freedom/models"
-	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/store"
 )
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID             uuid.UUID              `json:"id"`
-	Name           string                 `json:"name"`
-	Starts         time.Time              `json:"starts" valid:"required"`
-	Ends           time.Time              `json:"ends" valid:"required"`
-	Blocklists     []*blocklist.Blocklist `json:"blocklists" valid:"required"`
-	EverySunday    bool                   `json:"every_sunday"`
-	EveryMonday    bool                   `json:"every_monday"`
-	EveryTuesday   bool                   `json:"every_tuesday"`
-	EveryWednesday bool                   `json:"every_wednesday"`
-	EveryThursday  bool                   `json:"every_thursday"`
-	EveryFriday    bool                   `json:"every_friday"`
-	EverySaturday  bool                   `json:"every_saturday"`
+	ID             uuid.UUID   `json:"id"`
+	Name           string      `json:"name"`
+	Starts         time.Time   `json:"starts" valid:"required"`
+	Ends           time.Time   `json:"ends" valid:"required"`
+	Blocklists     []uuid.UUID `json:"blocklists" valid:"required"`
+	EverySunday    bool        `json:"every_sunday"`
+	EveryMonday    bool        `json:"every_monday"`
+	EveryTuesday   bool        `json:"every_tuesday"`
+	EveryWednesday bool        `json:"every_wednesday"`
+	EveryThursday  bool        `json:"every_thursday"`
+	EveryFriday    bool        `json:"every_friday"`
+	EverySaturday  bool        `json:"every_saturday"`
 }
 
 // New creates a Session instance.
 func New() *Session {
 	return &Session{
-		ID:         uuid.NewV4(),
-		Blocklists: []*blocklist.Blocklist{},
+		ID: uuid.NewV4(),
 	}
 }
 
