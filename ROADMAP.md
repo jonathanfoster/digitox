@@ -28,8 +28,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Session: Handle find session
 * [X] Session: Handle remove session
 * [X] Session: Handle save session
-* [ ] Session: Store sessions in database - **IN PROGRESS**
-* [ ] Session: Validate model before persisting - **IN PROGRESS**
+* [X] Session: Validate model before persisting
 
 ## Blocklist
 
@@ -37,12 +36,11 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Blocklist: Handle find blocklist
 * [X] Blocklist: Handle remove blocklist
 * [X] Blocklist: Handle save blocklist
-* [ ] Blocklist: Store block lists in database - **IN PROGRESS**
-* [ ] Blocklist: Validate model before persisting - **IN PROGRESS**
+* [X] Blocklist: Validate model before persisting
 
 ## Proxy
 
-* [ ] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist
+* [ ] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist - **IN PROGRESS**
 * [ ] Proxy: End session by removing /etc/squid/blocklist
 * [ ] Proxy: Restrict proxy access to devices
 
