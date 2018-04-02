@@ -5,23 +5,35 @@ import (
 	"github.com/jonathanfoster/freedom/models/session"
 )
 
-type Controller struct {
-}
+// Controller represents a structure responsible for controlling the state of
+// the proxy blocklist in relation to active sessions.
+type Controller struct{}
 
+// NewController creates a Controller instance.
 func NewController() *Controller {
 	return &Controller{}
 }
 
+// RestartProxy restarts the proxy server so a new blocklist can take affect.
 func (c *Controller) RestartProxy() error {
+	// https://stackoverflow.com/a/30781156
 	return nil
 }
 
+// Run starts a timer and updates proxy blocklist on a scheduled basis.
 func (c *Controller) Run() error {
 	// TODO: Loop on timer
-	restart, err := c.UpdateActiveBlocklist()
+	_, err := c.ActiveBlocklist()
 	if err != nil {
 		return err
 	}
+
+	restart := false
+
+	// Compare expected blocklist to actual blocklist
+	// Adjust actual blocklist
+	// Domains missing? Add them.
+	// Extra domains? Remove them.
 
 	if restart {
 		if err := c.RestartProxy(); err != nil {
@@ -32,14 +44,14 @@ func (c *Controller) Run() error {
 	return nil
 }
 
-func (c *Controller) UpdateActiveBlocklist() (bool, error) {
+// ActiveBlocklist searches all sessions for active sessions and returns blocked domains.
+func (c *Controller) ActiveBlocklist() ([]string, error) {
 	var activeSessions []*session.Session
-	var result = false
 
 	// Get all sessions
 	sessions, err := session.All()
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	// Find active sessions
@@ -49,24 +61,21 @@ func (c *Controller) UpdateActiveBlocklist() (bool, error) {
 		}
 	}
 
-	// Create expected blocklist
-	activeList := blocklist.New()
+	var domains []string
+
+	// Create active blocklist
 	for _, sess := range activeSessions {
 		for _, id := range sess.Blocklists {
 			// Load blocklists
 			list, err := blocklist.Find(id.String())
 			if err != nil {
-				return false, err
+				return nil, err
 			}
 
-			activeList.Domains = append(activeList.Domains, list.Domains...)
+			// Copy blocked domains to active blocklist
+			domains = append(domains, list.Domains...)
 		}
 	}
 
-	// Compare expected blocklist to actual blocklist
-	// Adjust actual blocklist
-	// Domains missing? Add them.
-	// Extra domains? Remove them.
-
-	return result, nil
+	return domains, nil
 }

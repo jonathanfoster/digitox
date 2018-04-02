@@ -14,7 +14,7 @@ import (
 
 // TestBlocklistDirname creates and sets the test blocklist directory.
 func TestBlocklistDirname() {
-	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
+	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/blocklists/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
 		log.Panicf("error creating test blocklist directory %s: %s", dirname, err.Error())
@@ -56,17 +56,12 @@ func TestBlocklist() *blocklist.Blocklist {
 
 // NewTestSession creates a test session instance.
 func NewTestSession() *session.Session {
+	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
-	sess.Starts = time.Now()
-	sess.Ends = sess.Starts.Add(time.Hour * 1)
-	sess.EverySunday = true
-	sess.EveryMonday = true
-	sess.EveryTuesday = true
-	sess.EveryWednesday = true
-	sess.EveryThursday = true
-	sess.EveryFriday = true
-	sess.EverySaturday = true
+	sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
+	sess.RepeatEveryDay()
 	sess.Blocklists = []uuid.UUID{
 		uuid.NewV4(),
 	}
@@ -76,8 +71,17 @@ func NewTestSession() *session.Session {
 
 // TestSession creates and saves a test session.
 func TestSession() *session.Session {
+	return TestSessionWithBlocklist(uuid.UUID{})
+}
+
+// TestSessionWithBlocklist creates and saves a test session with a specific blocklist ID.
+func TestSessionWithBlocklist(list uuid.UUID) *session.Session {
 	sess := NewTestSession()
-	sess.ID = uuid.NewV4()
+	empty := uuid.UUID{}
+
+	if list != empty {
+		sess.Blocklists = []uuid.UUID{list}
+	}
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

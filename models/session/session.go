@@ -4,9 +4,10 @@ import (
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
-	"github.com/jonathanfoster/freedom/store"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
+
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // Session represents a time frame in which websites are blocked
@@ -76,29 +77,11 @@ func Remove(id string) error {
 // Active determines whether a session is active based on starts, ends, and daily repeat options.
 func (s *Session) Active() bool {
 	now := time.Now().UTC()
-	weekday := now.Weekday()
-	repeatsToday := false
 
 	starts := s.Starts.UTC()
 	ends := s.Ends.UTC()
 
-	if weekday == time.Sunday && s.EverySunday {
-		repeatsToday = true
-	} else if weekday == time.Monday && s.EveryMonday {
-		repeatsToday = true
-	} else if weekday == time.Tuesday && s.EveryTuesday {
-		repeatsToday = true
-	} else if weekday == time.Wednesday && s.EveryWednesday {
-		repeatsToday = true
-	} else if weekday == time.Thursday && s.EveryThursday {
-		repeatsToday = true
-	} else if weekday == time.Friday && s.EveryFriday {
-		repeatsToday = true
-	} else if weekday == time.Saturday && s.EverySaturday {
-		repeatsToday = true
-	}
-
-	if repeatsToday {
+	if s.RepeatsToday() {
 		starts = time.Date(now.Year(), now.Month(), now.Day(), starts.Hour(), starts.Minute(), starts.Second(), starts.Nanosecond(), starts.Location())
 		ends = time.Date(now.Year(), now.Month(), now.Day(), ends.Hour(), ends.Minute(), ends.Second(), ends.Nanosecond(), ends.Location())
 	}
@@ -108,6 +91,42 @@ func (s *Session) Active() bool {
 	}
 
 	return false
+}
+
+// RepeatEveryDay sets session to repeat every day of the week.
+func (s *Session) RepeatEveryDay() {
+	s.EverySunday = true
+	s.EveryMonday = true
+	s.EveryTuesday = true
+	s.EveryWednesday = true
+	s.EveryThursday = true
+	s.EveryFriday = true
+	s.EverySaturday = true
+}
+
+// RepeatNever sets session to never repeat.
+func (s *Session) RepeatNever() {
+	s.EverySunday = false
+	s.EveryMonday = false
+	s.EveryTuesday = false
+	s.EveryWednesday = false
+	s.EveryThursday = false
+	s.EveryFriday = false
+	s.EverySaturday = false
+}
+
+// RepeatsToday returns true if the session repeats on today's day of the week.
+func (s *Session) RepeatsToday() bool {
+	now := time.Now().UTC()
+	weekday := now.Weekday()
+
+	return (weekday == time.Sunday && s.EverySunday) ||
+		(weekday == time.Monday && s.EveryMonday) ||
+		(weekday == time.Tuesday && s.EveryTuesday) ||
+		(weekday == time.Wednesday && s.EveryWednesday) ||
+		(weekday == time.Thursday && s.EveryThursday) ||
+		(weekday == time.Friday && s.EveryFriday) ||
+		(weekday == time.Saturday && s.EverySaturday)
 }
 
 // Save writes the session to the file system.

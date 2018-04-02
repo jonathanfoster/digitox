@@ -36,13 +36,7 @@ func TestSession(t *testing.T) {
 					sess := session.New()
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
-					sess.EverySunday = true
-					sess.EveryMonday = true
-					sess.EveryTuesday = true
-					sess.EveryWednesday = true
-					sess.EveryThursday = true
-					sess.EveryFriday = true
-					sess.EverySaturday = true
+					sess.RepeatEveryDay()
 
 					So(sess.Active(), ShouldBeTrue)
 				})
@@ -83,6 +77,34 @@ func TestSession(t *testing.T) {
 				err := session.Remove(testsess.ID.String())
 
 				So(err, ShouldBeNil)
+			})
+		})
+
+		Convey("RepeatEveryDay", func() {
+			Convey("Should set every day to true", func() {
+				testsess.RepeatEveryDay()
+
+				So(testsess.EverySunday, ShouldBeTrue)
+				So(testsess.EveryMonday, ShouldBeTrue)
+				So(testsess.EveryTuesday, ShouldBeTrue)
+				So(testsess.EveryWednesday, ShouldBeTrue)
+				So(testsess.EveryThursday, ShouldBeTrue)
+				So(testsess.EveryFriday, ShouldBeTrue)
+				So(testsess.EverySaturday, ShouldBeTrue)
+			})
+		})
+
+		Convey("RepeatNever", func() {
+			Convey("Should set every day to false", func() {
+				testsess.RepeatNever()
+
+				So(testsess.EverySunday, ShouldBeFalse)
+				So(testsess.EveryMonday, ShouldBeFalse)
+				So(testsess.EveryTuesday, ShouldBeFalse)
+				So(testsess.EveryWednesday, ShouldBeFalse)
+				So(testsess.EveryThursday, ShouldBeFalse)
+				So(testsess.EveryFriday, ShouldBeFalse)
+				So(testsess.EverySaturday, ShouldBeFalse)
 			})
 		})
 
@@ -145,11 +167,5 @@ func TestSession(t *testing.T) {
 		Reset(func() {
 			session.Remove(testsess.ID.String())
 		})
-	})
-}
-
-func TestSession_Active(t *testing.T) {
-	Convey("Session", t, func() {
-
 	})
 }
