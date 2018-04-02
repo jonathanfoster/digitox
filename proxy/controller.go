@@ -50,7 +50,7 @@ func (c *Controller) UpdateActiveBlocklist() (bool, error) {
 	}
 
 	// Create expected blocklist
-	activeList := blocklist.Blocklist{}
+	activeList := blocklist.New()
 	for _, sess := range activeSessions {
 		for _, id := range sess.Blocklists {
 			// Load blocklists

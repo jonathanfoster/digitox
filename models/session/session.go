@@ -4,10 +4,9 @@ import (
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/jonathanfoster/freedom/store"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
-
-	"github.com/jonathanfoster/freedom/store"
 )
 
 // Session represents a time frame in which websites are blocked
@@ -76,9 +75,38 @@ func Remove(id string) error {
 
 // Active determines whether a session is active based on starts, ends, and daily repeat options.
 func (s *Session) Active() bool {
-	// Check current day of week to see if repeat is enabled
-	// If so, replace starts and ends date (not time) with today
-	// If starts before current time and ends after current time, then session is active
+	now := time.Now().UTC()
+	weekday := now.Weekday()
+	repeatsToday := false
+
+	starts := s.Starts.UTC()
+	ends := s.Ends.UTC()
+
+	if weekday == time.Sunday && s.EverySunday {
+		repeatsToday = true
+	} else if weekday == time.Monday && s.EveryMonday {
+		repeatsToday = true
+	} else if weekday == time.Tuesday && s.EveryTuesday {
+		repeatsToday = true
+	} else if weekday == time.Wednesday && s.EveryWednesday {
+		repeatsToday = true
+	} else if weekday == time.Thursday && s.EveryThursday {
+		repeatsToday = true
+	} else if weekday == time.Friday && s.EveryFriday {
+		repeatsToday = true
+	} else if weekday == time.Saturday && s.EverySaturday {
+		repeatsToday = true
+	}
+
+	if repeatsToday {
+		starts = time.Date(now.Year(), now.Month(), now.Day(), starts.Hour(), starts.Minute(), starts.Second(), starts.Nanosecond(), starts.Location())
+		ends = time.Date(now.Year(), now.Month(), now.Day(), ends.Hour(), ends.Minute(), ends.Second(), ends.Nanosecond(), ends.Location())
+	}
+
+	if starts.Before(now) && ends.After(now) {
+		return true
+	}
+
 	return false
 }
 
