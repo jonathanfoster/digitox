@@ -6,6 +6,7 @@ import (
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/store"
 )
@@ -86,11 +87,29 @@ func (s *Session) Active() bool {
 		ends = time.Date(now.Year(), now.Month(), now.Day(), ends.Hour(), ends.Minute(), ends.Second(), ends.Nanosecond(), ends.Location())
 	}
 
+	active := false
+
 	if starts.Before(now) && ends.After(now) {
-		return true
+		active = true
+	} else {
+		active = false
 	}
 
-	return false
+	fields := log.Fields{
+		"id":     s.ID,
+		"starts": s.Starts.String(),
+		"ends":   s.Ends.String(),
+		"now":    now.String(),
+		"active": active,
+	}
+
+	if active {
+		log.WithFields(fields).Debugf("session %s is active", s.ID)
+	} else {
+		log.WithFields(fields).Debugf("session %s is not active", s.ID)
+	}
+
+	return active
 }
 
 // RepeatEveryDay sets session to repeat every day of the week.

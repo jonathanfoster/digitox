@@ -24,7 +24,7 @@ func TestSession(t *testing.T) {
 					now := time.Now().UTC()
 					sess := session.New()
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
+					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 
 					So(sess.Active(), ShouldBeTrue)
 				})
@@ -35,7 +35,7 @@ func TestSession(t *testing.T) {
 					now := time.Now().UTC().AddDate(0, 0, -1)
 					sess := session.New()
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
+					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 					sess.RepeatEveryDay()
 
 					So(sess.Active(), ShouldBeTrue)
@@ -47,7 +47,7 @@ func TestSession(t *testing.T) {
 					now := time.Now().UTC().AddDate(0, 0, -1)
 					sess := session.New()
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
+					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 
 					So(sess.Active(), ShouldBeFalse)
 				})

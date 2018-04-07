@@ -58,6 +58,7 @@ func (c *Controller) ExpectedBlocklist() ([]string, error) {
 				return nil, err
 			}
 
+			// TODO: Remove duplicate domains
 			// Copy blocked domains to active blocklist
 			domains = append(domains, list.Domains...)
 		}
@@ -94,38 +95,45 @@ func (c *Controller) RestartProxy() error {
 	return nil
 }
 
-// Run starts a timer and updates proxy blocklist on a scheduled basis.
+// UpdateBlocklist starts a timer and updates proxy blocklist on a scheduled basis.
 func (c *Controller) Run() error {
 	// TODO: Loop on timer
+	restart, err := c.UpdateBlocklist()
+	if err != nil {
+		return errors.Wrap(err, "error updating blocklist in run loop")
+	}
+
+	if restart {
+		if err := c.RestartProxy(); err != nil {
+			return errors.Wrap(err, "error restarting proxy in run loop")
+		}
+	}
+
+	return nil
+}
+
+// UpdateBlocklist updates proxy blocklist if changes are required.
+func (c *Controller) UpdateBlocklist() (bool, error) {
 	// Get expected blocklist from active sessions
 	expected, err := c.ExpectedBlocklist()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	// Get actual blocklist from proxy
 	actual, err := c.ReadBlocklistFile()
 	if err != nil {
-		return err
+		return false, err
 	}
-
-	restart := false
 
 	// Compare expected blocklist to actual blocklist
+	// Update if not equal
 	if !equals(expected, actual) {
-		// Adjust actual blocklist
-		// Domains missing? Add them.
-		// Extra domains? Remove them.
-		restart = true
+		c.WriteBlocklistFile(expected)
+		return true, nil
 	}
 
-	if restart {
-		if err := c.RestartProxy(); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return false, nil
 }
 
 // WriteBlocklistFile writes list to blocklist file.

@@ -60,7 +60,7 @@ func NewTestSession() *session.Session {
 	sess := session.New()
 	sess.Name = "test"
 	sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 11, 59, 59, 0, now.Location())
+	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	sess.RepeatEveryDay()
 	sess.Blocklists = []uuid.UUID{
 		uuid.NewV4(),
