@@ -116,6 +116,7 @@ func (s *Session) RepeatNever() {
 }
 
 // RepeatsToday returns true if the session repeats on today's day of the week.
+// nolint: gocyclo
 func (s *Session) RepeatsToday() bool {
 	now := time.Now().UTC()
 	weekday := now.Weekday()

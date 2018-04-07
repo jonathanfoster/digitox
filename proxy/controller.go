@@ -1,51 +1,37 @@
 package proxy
 
 import (
+	"bytes"
+	"io/ioutil"
+	"os"
+	"strings"
+
+	"github.com/pkg/errors"
+
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 )
 
 // Controller represents a structure responsible for controlling the state of
 // the proxy blocklist in relation to active sessions.
-type Controller struct{}
+type Controller struct {
+	Filename string
+}
 
-// NewController creates a Controller instance.
+// NewController creates a Controller instance with the default blocklist file.
 func NewController() *Controller {
-	return &Controller{}
+	return NewControllerWithFilename("/etc/squid/blocklist")
 }
 
-// RestartProxy restarts the proxy server so a new blocklist can take affect.
-func (c *Controller) RestartProxy() error {
-	// https://stackoverflow.com/a/30781156
-	return nil
-}
-
-// Run starts a timer and updates proxy blocklist on a scheduled basis.
-func (c *Controller) Run() error {
-	// TODO: Loop on timer
-	_, err := c.ActiveBlocklist()
-	if err != nil {
-		return err
+// NewControllerWithFilename creates a Controller instance with a custom blocklist file.
+func NewControllerWithFilename(filename string) *Controller {
+	return &Controller{
+		Filename: filename,
 	}
-
-	restart := false
-
-	// Compare expected blocklist to actual blocklist
-	// Adjust actual blocklist
-	// Domains missing? Add them.
-	// Extra domains? Remove them.
-
-	if restart {
-		if err := c.RestartProxy(); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
-// ActiveBlocklist searches all sessions for active sessions and returns blocked domains.
-func (c *Controller) ActiveBlocklist() ([]string, error) {
+// ExpectedBlocklist returns the blocked domains from all active sessions.
+func (c *Controller) ExpectedBlocklist() ([]string, error) {
 	var activeSessions []*session.Session
 
 	// Get all sessions
@@ -78,4 +64,97 @@ func (c *Controller) ActiveBlocklist() ([]string, error) {
 	}
 
 	return domains, nil
+}
+
+// ReadBlocklistFile retrieves the currently blocked domains from the proxy server.
+func (c *Controller) ReadBlocklistFile() ([]string, error) {
+	var list []string
+
+	buf, err := ioutil.ReadFile(c.Filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return list, nil
+		}
+
+		return nil, errors.Wrapf(err, "error opening blocklist file %s", c.Filename)
+	}
+
+	for _, s := range strings.Split(string(buf), "\n") {
+		if s != "" {
+			list = append(list, s)
+		}
+	}
+
+	return list, nil
+}
+
+// RestartProxy restarts the proxy server so a new blocklist can take affect.
+func (c *Controller) RestartProxy() error {
+	// https://stackoverflow.com/a/30781156
+	return nil
+}
+
+// Run starts a timer and updates proxy blocklist on a scheduled basis.
+func (c *Controller) Run() error {
+	// TODO: Loop on timer
+	// Get expected blocklist from active sessions
+	expected, err := c.ExpectedBlocklist()
+	if err != nil {
+		return err
+	}
+
+	// Get actual blocklist from proxy
+	actual, err := c.ReadBlocklistFile()
+	if err != nil {
+		return err
+	}
+
+	restart := false
+
+	// Compare expected blocklist to actual blocklist
+	if !equals(expected, actual) {
+		// Adjust actual blocklist
+		// Domains missing? Add them.
+		// Extra domains? Remove them.
+		restart = true
+	}
+
+	if restart {
+		if err := c.RestartProxy(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// WriteBlocklistFile writes list to blocklist file.
+func (c *Controller) WriteBlocklistFile(list []string) error {
+	var buf bytes.Buffer
+
+	for _, l := range list {
+		if _, err := buf.WriteString(l + "\n"); err != nil {
+			return errors.Wrap(err, "error writing blocklist string to buffer")
+		}
+	}
+
+	if err := ioutil.WriteFile(c.Filename, buf.Bytes(), 0700); err != nil {
+		return errors.Wrap(err, "error writing blocklist file")
+	}
+
+	return nil
+}
+
+func equals(expected []string, actual []string) bool {
+	if len(expected) != len(actual) {
+		return false
+	}
+
+	for i := range expected {
+		if expected[i] != actual[i] {
+			return false
+		}
+	}
+
+	return true
 }
