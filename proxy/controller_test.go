@@ -59,7 +59,7 @@ func TestController_ReadBlocklistFile(t *testing.T) {
 		Convey("ReadBlocklistFile", func() {
 			Convey("Should return blocklist", func() {
 				list := setup.NewTestBlocklist()
-				ctrl := proxy.NewControllerWithFilename(filename)
+				ctrl := proxy.NewController(filename)
 				err := ctrl.WriteBlocklistFile(list.Domains)
 				So(err, ShouldBeNil)
 
@@ -71,7 +71,7 @@ func TestController_ReadBlocklistFile(t *testing.T) {
 
 			Convey("When no blocklist", func() {
 				Convey("Should return nil", func() {
-					ctrl := proxy.NewControllerWithFilename(filename)
+					ctrl := proxy.NewController(filename)
 
 					domains, err := ctrl.ReadBlocklistFile()
 
@@ -97,23 +97,29 @@ func TestController_UpdateBlocklist(t *testing.T) {
 		Convey("UpdateBlocklist", func() {
 			Convey("When expected blocklist is not equal to actual blocklist", func() {
 				Convey("Should update blocklist", func() {
-					ctrl := proxy.NewControllerWithFilename(filename)
+					ctrl := proxy.NewController(filename)
 					err := ctrl.WriteBlocklistFile(nil)
-					ShouldBeNil(err)
+					So(err, ShouldBeNil)
 
 					restart, err := ctrl.UpdateBlocklist()
-					ShouldBeNil(err)
-					ShouldBeTrue(restart)
+					So(err, ShouldBeNil)
+					So(restart, ShouldBeTrue)
 
 					list, err := ctrl.ReadBlocklistFile()
-					ShouldBeNil(err)
-					ShouldResemble(list, testlist.Domains)
+					So(err, ShouldBeNil)
+					So(list, ShouldResemble, testlist.Domains)
 				})
 			})
 
 			Convey("When expected blocklist is equal to actual blocklist", func() {
 				Convey("Should not update blocklist", func() {
+					ctrl := proxy.NewController(filename)
+					err := ctrl.WriteBlocklistFile(testlist.Domains)
+					So(err, ShouldBeNil)
 
+					restart, err := ctrl.UpdateBlocklist()
+					So(err, ShouldBeNil)
+					So(restart, ShouldBeFalse)
 				})
 			})
 
@@ -131,7 +137,7 @@ func TestController_WriteBlocklistFile(t *testing.T) {
 		Convey("WriteBlocklistFile", func() {
 			Convey("Should not return error", func() {
 				list := setup.NewTestBlocklist()
-				ctrl := proxy.NewControllerWithFilename(filename)
+				ctrl := proxy.NewController(filename)
 				err := ctrl.WriteBlocklistFile(list.Domains)
 
 				So(err, ShouldBeNil)

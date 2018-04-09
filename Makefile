@@ -61,7 +61,7 @@ release: precommit docker-push deploy
 
 run: build
 	mkdir -p bin/test/
-	./bin/freedom-apiserver --database ./bin/test/freedom.db
+	./bin/freedom-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --proxylist bin/test/blocklist --tick 10s
 
 .PHONY: test
 test:

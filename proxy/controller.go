@@ -5,28 +5,33 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
+	"github.com/jonathanfoster/freedom/store"
 )
 
 // Controller represents a structure responsible for controlling the state of
 // the proxy blocklist in relation to active sessions.
 type Controller struct {
-	Filename string
+	Filename   string
+	Processing bool
+	Tick       time.Duration
+	Timeout    time.Duration
+	ticker     *time.Ticker
 }
 
-// NewController creates a Controller instance with the default blocklist file.
-func NewController() *Controller {
-	return NewControllerWithFilename("/etc/squid/blocklist")
-}
-
-// NewControllerWithFilename creates a Controller instance with a custom blocklist file.
-func NewControllerWithFilename(filename string) *Controller {
+// NewController creates a Controller instance.
+func NewController(filename string) *Controller {
 	return &Controller{
-		Filename: filename,
+		Filename:   filename,
+		Processing: false,
+		Tick:       time.Second * 30,
+		Timeout:    time.Second * 10,
 	}
 }
 
@@ -37,6 +42,10 @@ func (c *Controller) ExpectedBlocklist() ([]string, error) {
 	// Get all sessions
 	sessions, err := session.All()
 	if err != nil {
+		if err == store.ErrNotExist {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -95,17 +104,53 @@ func (c *Controller) RestartProxy() error {
 	return nil
 }
 
-// UpdateBlocklist starts a timer and updates proxy blocklist on a scheduled basis.
-func (c *Controller) Run() error {
-	// TODO: Loop on timer
-	restart, err := c.UpdateBlocklist()
-	if err != nil {
-		return errors.Wrap(err, "error updating blocklist in run loop")
+// Run starts a timer and updates proxy blocklist on a scheduled basis.
+func (c *Controller) Run() {
+	c.ticker = time.NewTicker(c.Tick)
+
+	go func() {
+		for range c.ticker.C {
+			if c.Processing {
+				log.Debug("proxy blocklist update processing: skipping tick")
+				continue
+			}
+
+			c.Processing = true
+
+			log.Debug("updating proxy blocklist")
+			restart, err := c.UpdateBlocklist()
+			if err != nil {
+				log.Error("error updating blocklist in run loop: ", err)
+			}
+
+			if restart {
+				log.Info("proxy blocklist updated: restarting proxy")
+				if err := c.RestartProxy(); err != nil {
+					log.Error("error restarting proxy run loop: ", err)
+				}
+			} else {
+				log.Debug("proxy blocklist not updated: restart not required")
+			}
+
+			c.Processing = false
+		}
+	}()
+}
+
+// Stop stops controller and if processing, waits for the current process to end.
+func (c *Controller) Stop() error {
+	if c.ticker == nil {
+		return nil
 	}
 
-	if restart {
-		if err := c.RestartProxy(); err != nil {
-			return errors.Wrap(err, "error restarting proxy in run loop")
+	c.ticker.Stop()
+
+	select {
+	case <-time.After(time.Second * 10):
+		return errors.New("proxy controller stop timeout expired")
+	default:
+		if !c.Processing {
+			break
 		}
 	}
 
@@ -126,8 +171,7 @@ func (c *Controller) UpdateBlocklist() (bool, error) {
 		return false, err
 	}
 
-	// Compare expected blocklist to actual blocklist
-	// Update if not equal
+	// Compare expected blocklist to actual blocklist, update if not equal
 	if !equals(expected, actual) {
 		c.WriteBlocklistFile(expected)
 		return true, nil

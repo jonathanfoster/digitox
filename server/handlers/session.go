@@ -6,18 +6,30 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/store"
 )
 
-// ListSessions handles the GET /sessions route.
+// ListSessions handles the GET /sessions/ route.
 func ListSessions(w http.ResponseWriter, r *http.Request) {
 	sessions, err := session.All()
 	if err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warn("sessions do not exist: ", err.Error())
+			JSON(w, http.StatusOK, []*session.Session{})
+			return
+		}
+
 		log.Error("error listing sessions: ", err.Error())
 		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if sessions == nil {
+		sessions = []*session.Session{}
 	}
 
 	JSON(w, http.StatusOK, sessions)
@@ -47,7 +59,7 @@ func FindSession(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, sess)
 }
 
-// CreateSession handles the POST /sessions/{id} route.
+// CreateSession handles the POST /sessions/ route.
 func CreateSession(w http.ResponseWriter, r *http.Request) {
 	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -58,10 +70,12 @@ func CreateSession(w http.ResponseWriter, r *http.Request) {
 
 	var sess session.Session
 	if err := json.Unmarshal(buf, &sess); err != nil {
-		log.Error("error unmarshaling session body: ", err.Error())
-		Error(w, http.StatusInternalServerError)
+		log.Warn("error unmarshaling session body: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
 		return
 	}
+
+	sess.ID = uuid.NewV4()
 
 	if valid, err := sess.Validate(); !valid {
 		log.Warn("session not valid: ", err.Error())
@@ -130,8 +144,8 @@ func UpdateSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.Unmarshal(buf, &sess); err != nil {
-		log.Error("error unmarshaling body: ", err.Error())
-		Error(w, http.StatusInternalServerError)
+		log.Warn("error unmarshaling body: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
 		return
 	}
 

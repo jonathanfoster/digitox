@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/facebookgo/grace/gracehttp"
-	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 	"github.com/urfave/negroni"
 
 	"github.com/jonathanfoster/freedom/server/middleware"
@@ -20,7 +20,7 @@ func New() *Server {
 
 // Run listens on the TCP network address addr and then
 // calls Serve to handle requests on incoming connections.
-func (s *Server) Run(addr string) {
+func (s *Server) Run(addr string) error {
 	router := NewRouter()
 
 	n := negroni.New()
@@ -33,8 +33,9 @@ func (s *Server) Run(addr string) {
 		Handler: n,
 	}
 
-	log.Info("server listening on ", addr)
 	if err := gracehttp.Serve(srv); err != nil {
-		log.Fatal("error starting server: ", err.Error())
+		return errors.Wrap(err, "error starting server")
 	}
+
+	return nil
 }

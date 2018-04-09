@@ -18,6 +18,7 @@ var (
 type Interface interface {
 	All() ([]string, error)
 	Find(id string, out interface{}) error
+	Init() error
 	Remove(id string) error
 	Save(id string, value interface{}) error
 }

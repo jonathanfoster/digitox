@@ -74,6 +74,15 @@ func (f *FileStore) Find(id string, out interface{}) error {
 	return nil
 }
 
+// Init creates the file store directory and all parent directories.
+func (f *FileStore) Init() error {
+	if err := os.MkdirAll(f.Dirname, 0700); err != nil {
+		return errors.Wrapf(err, "error initializing directory %s", f.Dirname)
+	}
+
+	return nil
+}
+
 // Remove removes the session from the filesystem.
 func (f *FileStore) Remove(id string) error {
 	filename, err := JoinPath(id, f.Dirname)

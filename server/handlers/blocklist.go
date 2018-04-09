@@ -6,18 +6,30 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/store"
 )
 
-// ListBlocklists handles the GET /blocklists route.
+// ListBlocklists handles the GET /blocklists/ route.
 func ListBlocklists(w http.ResponseWriter, r *http.Request) {
 	lists, err := blocklist.All()
 	if err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warn("blocklists do not exist: ", err.Error())
+			JSON(w, http.StatusOK, []*blocklist.Blocklist{})
+			return
+		}
+
 		log.Error("error listing blocklists: ", err.Error())
 		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	if lists == nil {
+		lists = []*blocklist.Blocklist{}
 	}
 
 	JSON(w, http.StatusOK, lists)
@@ -47,7 +59,7 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, list)
 }
 
-// CreateBlocklist handles the POST /blocklists route.
+// CreateBlocklist handles the POST /blocklists/ route.
 func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -58,10 +70,12 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	var list blocklist.Blocklist
 	if err := json.Unmarshal(buf, &list); err != nil {
-		log.Error("error unmarshaling blocklist body: ", err.Error())
-		Error(w, http.StatusInternalServerError)
+		log.Warn("error unmarshaling blocklist body: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
 		return
 	}
+
+	list.ID = uuid.NewV4()
 
 	if valid, err := list.Validate(); !valid {
 		log.Warn("blocklist not valid: ", err.Error())
@@ -130,8 +144,8 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.Unmarshal(buf, &list); err != nil {
-		log.Error("error unmarshaling body: ", err.Error())
-		Error(w, http.StatusInternalServerError)
+		log.Warn("error unmarshaling body: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
 		return
 	}
 
