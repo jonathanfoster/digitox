@@ -29,6 +29,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Session: Handle remove session
 * [X] Session: Handle save session
 * [X] Session: Validate model before persisting
+* [ ] Session: Validate blocklists exist before persisting
 
 ## Blocklist
 
@@ -40,9 +41,9 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Proxy
 
-* [ ] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist - **IN PROGRESS**
-* [ ] Proxy: End session by removing /etc/squid/blocklist
-* [ ] Proxy: Restrict proxy access to devices
+* [X] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist
+* [ ] Proxy: End session by removing /etc/squid/blocklist - **IN PROGRESS**
+* [ ] Proxy: Restrict proxy access to devices - use OpenVPN instead?
 
 ## Devices
 
@@ -56,3 +57,8 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 ## Authorization
 
 * [ ] Auth: Restrict access using auth token
+
+## Misc
+
+* [ ] Misc: Rename project to Digitox or Digiclutter
+* [ ] Misc: Create freedomctl CLI
