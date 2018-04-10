@@ -29,7 +29,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Session: Handle remove session
 * [X] Session: Handle save session
 * [X] Session: Validate model before persisting
-* [ ] Session: Validate blocklists exist before persisting
+* [ ] Session: Validate blocklists exist before persisting - **IN PROGRESS**
 
 ## Blocklist
 

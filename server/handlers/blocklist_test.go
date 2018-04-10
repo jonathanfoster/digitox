@@ -25,7 +25,7 @@ func TestBlocklistHandler(t *testing.T) {
 		Convey("ListBlocklists", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/blocklists", nil)
+				r := httptest.NewRequest("GET", "/blocklists/", nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
@@ -83,7 +83,7 @@ func TestBlocklistHandler(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("POST", "/blocklists", buffer)
+				r := httptest.NewRequest("POST", "/blocklists/", buffer)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
@@ -102,7 +102,7 @@ func TestBlocklistHandler(t *testing.T) {
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("POST", "/blocklists", buffer)
+					r := httptest.NewRequest("POST", "/blocklists/", buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 422)

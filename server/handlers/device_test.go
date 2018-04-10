@@ -16,7 +16,7 @@ func TestDeviceHandler(t *testing.T) {
 		Convey("ListDevices", func() {
 			Convey("Status code should be 501", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/devices", nil)
+				r := httptest.NewRequest("GET", "/devices/", nil)
 
 				router.ServeHTTP(w, r)
 
@@ -38,7 +38,7 @@ func TestDeviceHandler(t *testing.T) {
 		Convey("CreateDevice", func() {
 			Convey("Status code should be 501", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("POST", "/devices", nil)
+				r := httptest.NewRequest("POST", "/devices/", nil)
 
 				router.ServeHTTP(w, r)
 

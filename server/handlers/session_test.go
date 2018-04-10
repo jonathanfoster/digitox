@@ -26,7 +26,7 @@ func TestSessionHandler(t *testing.T) {
 		Convey("ListSessions", func() {
 			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/sessions", nil)
+				r := httptest.NewRequest("GET", "/sessions/", nil)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 200)
@@ -63,7 +63,7 @@ func TestSessionHandler(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("POST", "/sessions", buffer)
+				r := httptest.NewRequest("POST", "/sessions/", buffer)
 
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
@@ -82,7 +82,7 @@ func TestSessionHandler(t *testing.T) {
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("POST", "/sessions", buffer)
+					r := httptest.NewRequest("POST", "/sessions/", buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 422)
