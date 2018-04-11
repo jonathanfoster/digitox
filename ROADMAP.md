@@ -42,7 +42,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 ## Proxy
 
 * [X] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist
-* [ ] Proxy: End session by removing /etc/squid/blocklist - **IN PROGRESS**
+* [X] Proxy: End session by removing /etc/squid/blocklist
 * [ ] Proxy: Restrict proxy access to devices - use OpenVPN instead?
 
 ## Devices
