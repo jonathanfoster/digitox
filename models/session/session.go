@@ -104,7 +104,7 @@ func (s *Session) Active() bool {
 		ends = time.Date(now.Year(), now.Month(), now.Day(), ends.Hour(), ends.Minute(), ends.Second(), ends.Nanosecond(), ends.Location())
 	}
 
-	active := false
+	var active bool
 
 	if starts.Before(now) && ends.After(now) {
 		active = true

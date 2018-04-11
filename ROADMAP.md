@@ -62,3 +62,4 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 * [ ] Misc: Rename project to Digitox or Digiclutter
 * [ ] Misc: Create freedomctl CLI
+* [ ] Misc: Switch to Ginkgo for testing

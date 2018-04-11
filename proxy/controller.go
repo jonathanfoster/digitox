@@ -179,7 +179,10 @@ func (c *Controller) UpdateBlocklist() (bool, error) {
 
 	// Compare expected blocklist to actual blocklist, update if not equal
 	if !equals(expected, actual) {
-		c.WriteBlocklistFile(expected)
+		if err := c.WriteBlocklistFile(expected); err != nil {
+			return false, err
+		}
+
 		return true, nil
 	}
 
