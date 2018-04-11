@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
-	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/digitox/store"
 )
 
 // Blocklist represents a list of websites to block.

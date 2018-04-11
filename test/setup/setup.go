@@ -7,14 +7,14 @@ import (
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/models/session"
-	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/models/session"
+	"github.com/jonathanfoster/digitox/store"
 )
 
 // TestBlocklistDirname creates and sets the test blocklist directory.
 func TestBlocklistDirname() {
-	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/blocklists/"
+	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/blocklists/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
 		log.Panicf("error creating test blocklist directory %s: %s", dirname, err.Error())
@@ -25,7 +25,7 @@ func TestBlocklistDirname() {
 
 // TestSessionDirname creates and sets the test session directory.
 func TestSessionDirname() {
-	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/sessions/"
+	dirname := os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/sessions/"
 
 	if err := os.MkdirAll(dirname, 0700); err != nil {
 		log.Panicf("error creating test session directory %s: %s", dirname, err.Error())

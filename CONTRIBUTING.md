@@ -1,1 +1,1 @@
-# Contributing to Freedom
+# Contributing to Digitox

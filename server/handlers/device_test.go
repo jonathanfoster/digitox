@@ -6,7 +6,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/server"
+	"github.com/jonathanfoster/digitox/server"
 )
 
 func TestDeviceHandler(t *testing.T) {

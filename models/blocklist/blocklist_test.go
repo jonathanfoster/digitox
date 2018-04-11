@@ -7,8 +7,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/test/setup"
+	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/test/setup"
 )
 
 func TestBlocklist(t *testing.T) {

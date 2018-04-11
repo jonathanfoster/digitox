@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/negroni"
 
-	"github.com/jonathanfoster/freedom/server/middleware"
+	"github.com/jonathanfoster/digitox/server/middleware"
 )
 
 // Server represents a server.

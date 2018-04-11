@@ -5,7 +5,7 @@ VERSION=0.1.0
 all: clean build
 
 build:
-	go build -ldflags "-X main.version=$(VERSION)" -o bin/freedom-apiserver ./cmd/apiserver
+	go build -ldflags "-X main.version=$(VERSION)" -o bin/digitox-apiserver ./cmd/apiserver
 
 clean:
 	rm -rf bin/
@@ -28,15 +28,15 @@ deploy:
 	kubectl apply -f ./k8s/
 
 docker-build:
-	docker build -t freedom/freedom-apiserver .
+	docker build -t digitox/digitox-apiserver .
 
 docker-push: docker-build
 	$(shell aws ecr get-login --region us-east-1)
-	docker tag freedom/freedom-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
-	docker tag freedom/freedom-apiserver:latest freedom/freedom-apiserver:$(VERSION)
-	docker tag freedom/freedom-apiserver:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:latest
+	docker tag digitox/digitox-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:latest
+	docker tag digitox/digitox-apiserver:latest digitox/digitox-apiserver:$(VERSION)
+	docker tag digitox/digitox-apiserver:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:$(VERSION)
+	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:$(VERSION)
+	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:latest
 
 fmt:
 	@echo "[fmt] Formatting code"
@@ -61,7 +61,7 @@ release: precommit docker-push deploy
 
 run: build
 	mkdir -p bin/test/
-	./bin/freedom-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --proxylist bin/test/blocklist --tick 10s
+	./bin/digitox-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --proxylist bin/test/blocklist --tick 10s
 
 .PHONY: test
 test: clean

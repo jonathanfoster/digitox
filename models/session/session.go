@@ -10,8 +10,8 @@ import (
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/store"
 )
 
 // Session represents a time frame in which websites are blocked

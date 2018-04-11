@@ -7,12 +7,12 @@ import (
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/digitox/store"
 )
 
 func TestPath(t *testing.T) {
 	Convey("joinPath", t, func() {
-		dirname := "/etc/freedom/test/"
+		dirname := "/etc/digitox/test/"
 
 		Convey("Should join filename and directory", func() {
 			id := uuid.NewV4().String()

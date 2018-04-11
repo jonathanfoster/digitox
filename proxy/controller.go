@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/models/session"
-	"github.com/jonathanfoster/freedom/store"
+	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/models/session"
+	"github.com/jonathanfoster/digitox/store"
 )
 
 // Controller represents a structure responsible for controlling the state of

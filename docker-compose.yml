@@ -2,15 +2,15 @@ version: '3'
 services:
   apiserver:
     build: .
-    image: freedom/freedom-apiserver
-    container_name: freedom-apiserver
+    image: digitox/digitox-apiserver
+    container_name: digitox-apiserver
     ports:
       - "8080:8080"
     volumes:
       - squid:/etc/squid
   proxy:
     image: jonathanfoster/squid
-    container_name: freedom-proxy
+    container_name: digitox-proxy
     ports:
       - "3182:3182"
     volumes:

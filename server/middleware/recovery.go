@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/jonathanfoster/freedom/server/handlers"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/jonathanfoster/digitox/server/handlers"
 )
 
 // Recovery represents a panic recovery middleware. When a panic occurs,

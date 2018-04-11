@@ -1,21 +1,21 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: freedom
+  name: digitox
   labels:
-    app: freedom
+    app: digitox
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: freedom
+      app: digitox
   template:
     metadata:
       labels:
-        app: freedom
+        app: digitox
     spec:
       containers:
-      - name: freedom-apiserver
-        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/freedom/freedom-apiserver:0.1.0.6
+      - name: digitox-apiserver
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:0.1.0.6
         ports:
         - containerPort: 8080

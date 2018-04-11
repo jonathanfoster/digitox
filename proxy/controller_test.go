@@ -7,13 +7,13 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
-	"github.com/jonathanfoster/freedom/models/session"
-	"github.com/jonathanfoster/freedom/proxy"
-	"github.com/jonathanfoster/freedom/test/setup"
+	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/models/session"
+	"github.com/jonathanfoster/digitox/proxy"
+	"github.com/jonathanfoster/digitox/test/setup"
 )
 
-var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/freedom/bin/test/blocklist"
+var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/blocklist"
 
 func TestController_ExpectedBlocklist(t *testing.T) {
 	Convey("Controller", t, func() {

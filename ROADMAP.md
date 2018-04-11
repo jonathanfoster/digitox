@@ -1,8 +1,8 @@
 # Roadmap
 
-This document provides a high-level roadmap for Freedom development.
+This document provides a high-level roadmap for Digitox development.
 
-Prioritization follows the principles found in Ron Jeffries' [The Nature of Software Development](https://www.amazon.com/gp/product/1941222374/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1941222374&linkCode=as2&tag=github-jonathanfoster-freedom-20&linkId=eb959b758bf93091a58f633b92397024) (if you only read one Agile book, read this one).
+Prioritization follows the principles found in Ron Jeffries' [The Nature of Software Development](https://www.amazon.com/gp/product/1941222374/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1941222374&linkCode=as2&tag=github-jonathanfoster-digitox-20&linkId=eb959b758bf93091a58f633b92397024) (if you only read one Agile book, read this one).
 
 * Keep it simple
 * Make it valuable
@@ -60,6 +60,6 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Misc
 
-* [ ] Misc: Rename project to Digitox or Digiclutter
-* [ ] Misc: Create freedomctl CLI
+* [X] Misc: Rename project to Digitox or Digiclutter
+* [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing

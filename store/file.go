@@ -13,8 +13,8 @@ import (
 )
 
 func init() {
-	Blocklist = NewFileStore("/etc/freedom/blocklists/")
-	Session = NewFileStore("/etc/freedom/sessions/")
+	Blocklist = NewFileStore("/etc/digitox/blocklists/")
+	Session = NewFileStore("/etc/digitox/sessions/")
 }
 
 // FileStore represents a file store.
