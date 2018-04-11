@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/test/setup"
 )

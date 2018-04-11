@@ -6,11 +6,11 @@ import (
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
-	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/store"
 )
 
