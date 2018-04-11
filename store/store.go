@@ -14,9 +14,10 @@ var (
 	ErrNotExist = errors.New("record does not exist")
 )
 
-// Interface is the session storage interface.
+// Interface is the storage interface.
 type Interface interface {
 	All() ([]string, error)
+	Exists(id string) (bool, error)
 	Find(id string, out interface{}) error
 	Init() error
 	Remove(id string) error

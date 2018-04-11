@@ -56,6 +56,11 @@ func TestBlocklist() *blocklist.Blocklist {
 
 // NewTestSession creates a test session instance.
 func NewTestSession() *session.Session {
+	return NewTestSessionWithBlocklist(uuid.NewV4())
+}
+
+// NewTestSessionWithBlocklist creates a test session instance with a specific blocklist ID.
+func NewTestSessionWithBlocklist(list uuid.UUID) *session.Session {
 	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
@@ -63,7 +68,7 @@ func NewTestSession() *session.Session {
 	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	sess.RepeatEveryDay()
 	sess.Blocklists = []uuid.UUID{
-		uuid.NewV4(),
+		list,
 	}
 
 	return sess

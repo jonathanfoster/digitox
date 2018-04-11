@@ -3,6 +3,7 @@ package blocklist_test
 import (
 	"testing"
 
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -22,6 +23,24 @@ func TestBlocklist(t *testing.T) {
 				lists, err := blocklist.All()
 				So(err, ShouldBeNil)
 				So(lists, ShouldNotBeEmpty)
+			})
+		})
+
+		Convey("Exists", func() {
+			Convey("When blocklist exists", func() {
+				Convey("Should return true", func() {
+					exists, err := blocklist.Exists(testlist.ID.String())
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeTrue)
+				})
+			})
+
+			Convey("When blocklist does not exist", func() {
+				Convey("Should return false", func() {
+					exists, err := blocklist.Exists(uuid.NewV4().String())
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeFalse)
+				})
 			})
 		})
 

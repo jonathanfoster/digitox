@@ -64,7 +64,7 @@ run: build
 	./bin/freedom-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --proxylist bin/test/blocklist --tick 10s
 
 .PHONY: test
-test:
+test: clean
 	mkdir -p bin/
 	go test -coverprofile=./bin/coverage.out -v ./...
 	go tool cover -func=./bin/coverage.out

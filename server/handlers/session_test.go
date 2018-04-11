@@ -7,12 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jonathanfoster/freedom/test/setup"
 	"github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/jonathanfoster/freedom/models/session"
 	"github.com/jonathanfoster/freedom/server"
+	"github.com/jonathanfoster/freedom/test/setup"
 )
 
 func TestSessionHandler(t *testing.T) {
@@ -20,8 +21,10 @@ func TestSessionHandler(t *testing.T) {
 
 	Convey("Session Handler", t, func() {
 		router := server.NewRouter()
+		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
-		testsess := setup.TestSession()
+		testlist := setup.TestBlocklist()
+		testsess := setup.TestSessionWithBlocklist(testlist.ID)
 
 		Convey("ListSessions", func() {
 			Convey("Status code should be 200", func() {
@@ -55,7 +58,7 @@ func TestSessionHandler(t *testing.T) {
 
 		Convey("CreateSession", func() {
 			Convey("Status code should be 201", func() {
-				sess := setup.NewTestSession()
+				sess := setup.NewTestSessionWithBlocklist(testlist.ID)
 				sess.Name = "test"
 
 				buf, err := json.Marshal(sess)
@@ -68,7 +71,12 @@ func TestSessionHandler(t *testing.T) {
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
 
-				err = session.Remove(sess.ID.String())
+				var body session.Session
+
+				err = json.Unmarshal(w.Body.Bytes(), &body)
+				So(err, ShouldBeNil)
+
+				err = session.Remove(body.ID.String())
 				So(err, ShouldBeNil)
 			})
 
@@ -160,6 +168,7 @@ func TestSessionHandler(t *testing.T) {
 		})
 
 		Reset(func() {
+			blocklist.Remove(testlist.ID.String())
 			session.Remove(testsess.ID.String())
 		})
 	})

@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jonathanfoster/freedom/models/blocklist"
+	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
@@ -15,8 +17,10 @@ func TestSession(t *testing.T) {
 	log.SetLevel(log.FatalLevel)
 
 	Convey("Session", t, func() {
+		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
-		testsess := setup.TestSession()
+		testlist := setup.TestBlocklist()
+		testsess := setup.TestSessionWithBlocklist(testlist.ID)
 
 		Convey("Active", func() {
 			Convey("When session is active", func() {
@@ -60,6 +64,24 @@ func TestSession(t *testing.T) {
 
 				So(err, ShouldBeNil)
 				So(sess, ShouldNotBeEmpty)
+			})
+		})
+
+		Convey("Exists", func() {
+			Convey("When session exists", func() {
+				Convey("Should return true", func() {
+					exists, err := session.Exists(testsess.ID.String())
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeTrue)
+				})
+			})
+
+			Convey("When session does not exist", func() {
+				Convey("Should return false", func() {
+					exists, err := session.Exists(uuid.NewV4().String())
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeFalse)
+				})
 			})
 		})
 
@@ -123,48 +145,55 @@ func TestSession(t *testing.T) {
 
 		Convey("Validate", func() {
 			Convey("Should return true", func() {
-				sess := setup.NewTestSession()
-				result, err := sess.Validate()
+				valid, err := testsess.Validate()
 
 				So(err, ShouldBeNil)
-				So(result, ShouldBeTrue)
+				So(valid, ShouldBeTrue)
 			})
 
 			Convey("When starts not provided", func() {
 				Convey("Should return false", func() {
-					sess := setup.NewTestSession()
-					sess.Starts = time.Time{}
-					result, err := sess.Validate()
+					testsess.Starts = time.Time{}
+					valid, err := testsess.Validate()
 
 					So(err, ShouldNotBeNil)
-					So(result, ShouldBeFalse)
+					So(valid, ShouldBeFalse)
 				})
 			})
 
 			Convey("When ends not provided", func() {
 				Convey("Should return false", func() {
-					sess := setup.NewTestSession()
-					sess.Ends = time.Time{}
-					result, err := sess.Validate()
+					testsess.Ends = time.Time{}
+					valid, err := testsess.Validate()
 
 					So(err, ShouldNotBeNil)
-					So(result, ShouldBeFalse)
+					So(valid, ShouldBeFalse)
 				})
 			})
 
 			Convey("When blocklists not provided", func() {
 				Convey("Should return false", func() {
-					sess := setup.NewTestSession()
-					sess.Blocklists = nil
-					result, err := sess.Validate()
+					testsess.Blocklists = nil
+					valid, err := testsess.Validate()
 
 					So(err, ShouldNotBeNil)
-					So(result, ShouldBeFalse)
+					So(valid, ShouldBeFalse)
+				})
+			})
+
+			Convey("When blocklist does not exist", func() {
+				Convey("Should return false", func() {
+					testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4())
+					valid, err := testsess.Validate()
+
+					So(err, ShouldNotBeNil)
+					So(valid, ShouldBeFalse)
 				})
 			})
 		})
 
 		Reset(func() {
+			blocklist.Remove(testlist.ID.String())
 			session.Remove(testsess.ID.String())
 		})
 	})

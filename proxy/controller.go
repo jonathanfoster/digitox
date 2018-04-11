@@ -64,6 +64,12 @@ func (c *Controller) ExpectedBlocklist() ([]string, error) {
 			// Load blocklists
 			list, err := blocklist.Find(id.String())
 			if err != nil {
+				// Be resilient to missing blocklists
+				if err == store.ErrNotExist {
+					log.Warnf("error determining expected blocklist: error finding blocklist %s: %s", id, err.Error())
+					continue
+				}
+
 				return nil, err
 			}
 

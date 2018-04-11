@@ -51,6 +51,24 @@ func (f *FileStore) All() ([]string, error) {
 	return vv, nil
 }
 
+// Exists checks if a file exists without reading the entire file.
+func (f *FileStore) Exists(id string) (bool, error) {
+	filename, err := JoinPath(id, f.Dirname)
+	if err != nil {
+		return false, errors.Wrapf(err, "error creating file name to check if %s exists", id)
+	}
+
+	if _, err := os.Stat(filename); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+
+		return false, errors.Wrapf(err, "error retrieving file info for file %s", filename)
+	}
+
+	return true, nil
+}
+
 // Find finds a blocklist by ID in the filesystem.
 func (f *FileStore) Find(id string, out interface{}) error {
 	filename, err := JoinPath(id, f.Dirname)

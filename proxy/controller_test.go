@@ -24,7 +24,7 @@ func TestController_ExpectedBlocklist(t *testing.T) {
 
 		Convey("ExpectedBlocklist", func() {
 			Convey("Should return active session blocklist domains", func() {
-				ctrl := proxy.NewController()
+				ctrl := proxy.NewController(filename)
 				domains, err := ctrl.ExpectedBlocklist()
 
 				So(err, ShouldBeNil)
@@ -38,7 +38,7 @@ func TestController_ExpectedBlocklist(t *testing.T) {
 					testsess.RepeatNever()
 					So(testsess.Save(), ShouldBeNil)
 
-					ctrl := proxy.NewController()
+					ctrl := proxy.NewController(filename)
 					domains, err := ctrl.ExpectedBlocklist()
 
 					So(err, ShouldBeNil)

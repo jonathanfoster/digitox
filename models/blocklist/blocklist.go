@@ -44,6 +44,20 @@ func All() ([]*Blocklist, error) {
 	return bb, nil
 }
 
+// Exists checks if a blocklist exists by ID.
+func Exists(id string) (bool, error) {
+	exists, err := store.Blocklist.Exists(id)
+	if err != nil {
+		if err == store.ErrNotExist {
+			return false, nil
+		}
+
+		return false, errors.Wrapf(err, "error checking if blocklist %s exists", id)
+	}
+
+	return exists, nil
+}
+
 // Find finds a blocklist by ID.
 func Find(id string) (*Blocklist, error) {
 	var list Blocklist

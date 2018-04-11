@@ -88,7 +88,12 @@ func TestBlocklistHandler(t *testing.T) {
 				router.ServeHTTP(w, r)
 				So(w.Code, ShouldEqual, 201)
 
-				err = blocklist.Remove(list.ID.String())
+				var body blocklist.Blocklist
+
+				err = json.Unmarshal(w.Body.Bytes(), &body)
+				So(err, ShouldBeNil)
+
+				err = blocklist.Remove(body.ID.String())
 				So(err, ShouldBeNil)
 			})
 

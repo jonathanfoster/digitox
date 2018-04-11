@@ -1,9 +1,12 @@
 package session
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/jonathanfoster/freedom/models/blocklist"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
@@ -53,6 +56,20 @@ func All() ([]*Session, error) {
 	}
 
 	return ss, nil
+}
+
+// Exists checks if a session exists by ID.
+func Exists(id string) (bool, error) {
+	exists, err := store.Session.Exists(id)
+	if err != nil {
+		if err == store.ErrNotExist {
+			return false, nil
+		}
+
+		return false, errors.Wrapf(err, "error checking if session %s exists", id)
+	}
+
+	return exists, nil
 }
 
 // Find finds a session by ID.
@@ -160,5 +177,41 @@ func (s *Session) Save() error {
 
 // Validate validates tags for fields and returns false if there are any errors.
 func (s *Session) Validate() (bool, error) {
-	return validator.ValidateStruct(s)
+	var msgs []string
+
+	// Validate blocklists exist
+	for _, id := range s.Blocklists {
+		exists, err := blocklist.Exists(id.String())
+		if err != nil {
+			return false, errors.Wrapf(err, "error validating session blocklist %s", id.String())
+		}
+
+		if !exists {
+			msgs = append(msgs, fmt.Sprintf("blocklist %s does not exist", id.String()))
+		}
+	}
+
+	var listExistsErr error
+
+	listsExist := len(msgs) == 0
+	if !listsExist {
+		listExistsErr = errors.New(strings.Join(msgs, ": "))
+	}
+
+	var structValidErr error
+
+	// Validate session struct
+	structValid, structValidErr := validator.ValidateStruct(s)
+
+	var err error
+
+	if listExistsErr != nil && structValidErr != nil {
+		err = errors.New(strings.Join([]string{structValidErr.Error(), listExistsErr.Error()}, ":"))
+	} else if listExistsErr != nil {
+		err = listExistsErr
+	} else if structValidErr != nil {
+		err = structValidErr
+	}
+
+	return listsExist && structValid, err
 }
