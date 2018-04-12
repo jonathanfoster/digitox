@@ -20,7 +20,7 @@ func TestController_ExpectedBlocklist(t *testing.T) {
 		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
 		testlist := setup.TestBlocklist()
-		testsess := setup.TestSessionWithBlocklist(testlist.ID)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("ExpectedBlocklist", func() {
 			Convey("Should return active session blocklist domains", func() {
@@ -92,7 +92,7 @@ func TestController_UpdateBlocklist(t *testing.T) {
 		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
 		testlist := setup.TestBlocklist()
-		testsess := setup.TestSessionWithBlocklist(testlist.ID)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("UpdateBlocklist", func() {
 			Convey("When expected blocklist is not equal to actual blocklist", func() {
