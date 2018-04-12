@@ -43,6 +43,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 * [X] Proxy: Start session by copying active session blocklists to /etc/squid/blocklist
 * [X] Proxy: End session by removing /etc/squid/blocklist
+* [ ] Proxy: Restart proxy after blocklist update - **IN PROGRESS**
 * [ ] Proxy: Restrict proxy access to devices - use OpenVPN instead?
 
 ## Devices
@@ -63,3 +64,4 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Misc: Rename project to Digitox or Digiclutter
 * [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing
+* [ ] Misc: Generate OpenAPI spec for API

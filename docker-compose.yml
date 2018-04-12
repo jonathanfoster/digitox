@@ -9,7 +9,10 @@ services:
     volumes:
       - squid:/etc/squid
   proxy:
-    image: jonathanfoster/squid
+    build:
+      context: .
+      dockerfile: ./Dockerfile.proxy
+    image: digitox/digitox-proxy
     container_name: digitox-proxy
     ports:
       - "3182:3182"

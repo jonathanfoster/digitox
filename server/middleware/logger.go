@@ -10,7 +10,7 @@ import (
 func NewLogger() *negroni.Logger {
 	l := negroni.NewLogger()
 	l.ALogger = log.StandardLogger()
-	l.SetFormat("{{.StartTime}} | {{.Status}} | \t {{.Duration}} | {{.Hostname}} | {{.Method}} {{.Path}}")
+	l.SetFormat("{{.StartTime}} | {{.Status}} | {{.Duration}} | {{.Hostname}} | {{.Method}} {{.Path}}")
 
 	return l
 }
