@@ -54,13 +54,8 @@ func TestBlocklist() *blocklist.Blocklist {
 	return list
 }
 
-// NewTestSession creates a test session instance.
-func NewTestSession() *session.Session {
-	return NewTestSessionWithBlocklist(uuid.NewV4())
-}
-
-// NewTestSessionWithBlocklist creates a test session instance with a specific blocklist ID.
-func NewTestSessionWithBlocklist(list uuid.UUID) *session.Session {
+// NewTestSession creates a test session instance with a specific blocklist ID.
+func NewTestSession(list uuid.UUID) *session.Session {
 	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
@@ -74,19 +69,9 @@ func NewTestSessionWithBlocklist(list uuid.UUID) *session.Session {
 	return sess
 }
 
-// TestSession creates and saves a test session.
-func TestSession() *session.Session {
-	return TestSessionWithBlocklist(uuid.UUID{})
-}
-
-// TestSessionWithBlocklist creates and saves a test session with a specific blocklist ID.
-func TestSessionWithBlocklist(list uuid.UUID) *session.Session {
-	sess := NewTestSession()
-	empty := uuid.UUID{}
-
-	if list != empty {
-		sess.Blocklists = []uuid.UUID{list}
-	}
+// TestSession creates and saves a test session with a specific blocklist ID.
+func TestSession(list uuid.UUID) *session.Session {
+	sess := NewTestSession(list)
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

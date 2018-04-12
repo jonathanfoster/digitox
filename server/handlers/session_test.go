@@ -24,7 +24,7 @@ func TestSessionHandler(t *testing.T) {
 		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
 		testlist := setup.TestBlocklist()
-		testsess := setup.TestSessionWithBlocklist(testlist.ID)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("ListSessions", func() {
 			Convey("Status code should be 200", func() {
@@ -58,7 +58,7 @@ func TestSessionHandler(t *testing.T) {
 
 		Convey("CreateSession", func() {
 			Convey("Status code should be 201", func() {
-				sess := setup.NewTestSessionWithBlocklist(testlist.ID)
+				sess := setup.NewTestSession(testlist.ID)
 				sess.Name = "test"
 
 				buf, err := json.Marshal(sess)

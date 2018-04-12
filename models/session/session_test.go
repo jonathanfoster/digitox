@@ -20,7 +20,7 @@ func TestSession(t *testing.T) {
 		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
 		testlist := setup.TestBlocklist()
-		testsess := setup.TestSessionWithBlocklist(testlist.ID)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("Active", func() {
 			Convey("When session is active", func() {
@@ -132,7 +132,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
-				sess := setup.NewTestSession()
+				sess := setup.NewTestSession(testlist.ID)
 				sess.Name = "test-2"
 
 				err := sess.Save()
