@@ -104,12 +104,6 @@ func (c *Controller) ReadBlocklistFile() ([]string, error) {
 	return list, nil
 }
 
-// RestartProxy restarts the proxy server so a new blocklist can take affect.
-func (c *Controller) RestartProxy() error {
-	// https://stackoverflow.com/a/30781156
-	return nil
-}
-
 // Run starts a timer and updates proxy blocklist on a scheduled basis.
 func (c *Controller) Run() {
 	c.ticker = time.NewTicker(c.Tick)
@@ -124,16 +118,13 @@ func (c *Controller) Run() {
 			c.Processing = true
 
 			log.Debug("updating proxy blocklist")
-			restart, err := c.UpdateBlocklist()
+			updated, err := c.UpdateBlocklist()
 			if err != nil {
 				log.Error("error updating blocklist in run loop: ", err)
 			}
 
-			if restart {
-				log.Info("proxy blocklist updated: restarting proxy")
-				if err := c.RestartProxy(); err != nil {
-					log.Error("error restarting proxy run loop: ", err)
-				}
+			if updated {
+				log.Info("proxy blocklist updated")
 			} else {
 				log.Debug("proxy blocklist not updated: restart not required")
 			}

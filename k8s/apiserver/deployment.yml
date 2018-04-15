@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: digitox
+  labels:
+    app: digitox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: digitox
+  template:
+    metadata:
+      labels:
+        app: digitox
+    spec:
+      containers:
+      - name: digitox-apiserver
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:latest
+        ports:
+        - containerPort: 8080

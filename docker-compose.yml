@@ -1,22 +1,26 @@
 version: '3'
 services:
   apiserver:
-    build: .
+    build:
+      context: .
+      dockerfile: ./build/apiserver/Dockerfile
     image: digitox/digitox-apiserver
     container_name: digitox-apiserver
     ports:
       - "8080:8080"
     volumes:
+      - digitox:/etc/digitox
       - squid:/etc/squid
   proxy:
     build:
-      context: .
-      dockerfile: ./Dockerfile.proxy
+      context: ./build/proxy
+      dockerfile: ./Dockerfile
     image: digitox/digitox-proxy
     container_name: digitox-proxy
     ports:
-      - "3182:3182"
+      - "3128:3128"
     volumes:
       - squid:/etc/squid
 volumes:
+  digitox:
   squid:

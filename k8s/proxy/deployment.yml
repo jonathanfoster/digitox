@@ -15,7 +15,7 @@ spec:
         app: digitox
     spec:
       containers:
-      - name: digitox-apiserver
-        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:0.1.0.6
+      - name: digitox-proxy
+        image: 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-proxy:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 3128
