@@ -35,8 +35,8 @@ func NewController(filename string) *Controller {
 	}
 }
 
-// ExpectedBlocklist returns the blocked domains from all active sessions.
-func (c *Controller) ExpectedBlocklist() ([]string, error) {
+// ActiveBlocklist returns the blocked domains from all active sessions.
+func (c *Controller) ActiveBlocklist() ([]string, error) {
 	var activeSessions []*session.Session
 
 	// Get all sessions
@@ -66,7 +66,7 @@ func (c *Controller) ExpectedBlocklist() ([]string, error) {
 			if err != nil {
 				// Be resilient to missing blocklists
 				if err == store.ErrNotExist {
-					log.Warnf("error determining expected blocklist: error finding blocklist %s: %s", id, err.Error())
+					log.Warnf("error determining active blocklist: error finding blocklist %s: %s", id, err.Error())
 					continue
 				}
 
@@ -157,7 +157,7 @@ func (c *Controller) Stop() error {
 // UpdateBlocklist updates proxy blocklist if changes are required.
 func (c *Controller) UpdateBlocklist() (bool, error) {
 	// Get expected blocklist from active sessions
-	expected, err := c.ExpectedBlocklist()
+	expected, err := c.ActiveBlocklist()
 	if err != nil {
 		return false, err
 	}
