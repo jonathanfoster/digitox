@@ -7,4 +7,4 @@ then
     exit 1
 fi
 
-curl -i -X DELETE http://0.0.0.0:8080/sessions/${1}
+curl -i -X DELETE http://localhost:8080/sessions/${1}

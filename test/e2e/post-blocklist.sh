@@ -6,4 +6,4 @@ curl -i -X POST -d \
   "name": "test",
   "domains": ["www.reddit.com"]
 }' \
-http://0.0.0.0:8080/blocklists/
+http://localhost:8080/blocklists/

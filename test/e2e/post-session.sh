@@ -16,4 +16,4 @@ curl -i -X POST -d \
   \"ends\": \"${TODAY}T23:59:59Z\",
   \"blocklists\": [\"${1}\"]
 }" \
-http://0.0.0.0:8080/sessions/
+http://localhost:8080/sessions/
