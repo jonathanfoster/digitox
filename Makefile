@@ -17,8 +17,8 @@ dep-build:
 	dep ensure
 
 dep-deploy:
-	./install-kops.sh
-	./install-kubectl.sh
+	./scripts/install-kops.sh
+	./scripts/install-kubectl.sh
 
 dep-dev:
 	go get -u github.com/alecthomas/gometalinter
