@@ -1,9 +1,10 @@
 FROM alpine:latest
 
 RUN apk add --no-cache squid incron && \
-    echo "" > /etc/squid/blocklist && \
+    mkdir -p /etc/digitox && \
+    echo "" > /etc/digitox/active && \
     echo "root" > /etc/incron.allow && \
-    echo "/etc/squid/blocklist IN_MODIFY /usr/sbin/squid -k reconfigure" > /var/spool/incron/root
+    echo "/etc/digitox/active IN_MODIFY /usr/sbin/squid -k reconfigure" > /var/spool/incron/root
 
 COPY squid.conf /etc/squid/
 COPY entrypoint.sh /usr/local/bin/

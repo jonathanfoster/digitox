@@ -10,7 +10,6 @@ services:
       - "8080:8080"
     volumes:
       - digitox:/etc/digitox
-      - squid:/etc/squid
   proxy:
     build:
       context: ./build/proxy
@@ -20,7 +19,6 @@ services:
     ports:
       - "3128:3128"
     volumes:
-      - squid:/etc/squid
+      - digitox:/etc/digitox
 volumes:
   digitox:
-  squid:

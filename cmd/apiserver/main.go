@@ -20,7 +20,7 @@ var (
 	verbose    = app.Flag("verbose", "Output debug log messages.").Short('v').Bool()
 	sessions   = app.Flag("sessions", "Sessions store directory.").Short('s').Default("/etc/digitox/sessions/").String()
 	blocklists = app.Flag("blocklists", "Blocklists store directory.").Short('b').Default("/etc/digitox/blocklists/").String()
-	proxylist  = app.Flag("proxylist", "Proxy blocklist file name.").Short('l').Default("/etc/squid/blocklist").String()
+	active     = app.Flag("active", "Active blocklist file name.").Short('l').Default("/etc/digitox/active").String()
 	tick       = app.Flag("tick", "Tick duration of blocklist update ticker.").Short('t').Default("1s").String()
 )
 
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	log.Info("starting proxy controller")
-	ctrl := proxy.NewController(*proxylist)
+	ctrl := proxy.NewController(*active)
 	ctrl.Tick = d
 	ctrl.Run()
 

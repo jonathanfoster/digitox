@@ -13,7 +13,7 @@ import (
 	"github.com/jonathanfoster/digitox/test/setup"
 )
 
-var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/blocklist"
+var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/active"
 
 func TestController_ActiveBlocklist(t *testing.T) {
 	Convey("Controller", t, func() {
