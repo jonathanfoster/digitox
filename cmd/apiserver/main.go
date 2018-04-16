@@ -15,13 +15,13 @@ import (
 
 var (
 	version    string
-	app        = kingpin.New("digitox-apiserver", "Digitox API server provides a REST API for managing Digitox proxy.").Version(version)
+	app        = kingpin.New("digitox-apiserver", "Digitox API server provides a REST API for managing sessions.").Version(version)
 	port       = app.Flag("port", "Port to listen on.").Short('p').Default("8080").String()
 	verbose    = app.Flag("verbose", "Output debug log messages.").Short('v').Bool()
 	sessions   = app.Flag("sessions", "Sessions store directory.").Short('s').Default("/etc/digitox/sessions/").String()
 	blocklists = app.Flag("blocklists", "Blocklists store directory.").Short('b').Default("/etc/digitox/blocklists/").String()
 	proxylist  = app.Flag("proxylist", "Proxy blocklist file name.").Short('l').Default("/etc/squid/blocklist").String()
-	tick       = app.Flag("tick", "Tick duration of blocklist update ticker.").Short('t').Default("30s").String()
+	tick       = app.Flag("tick", "Tick duration of blocklist update ticker.").Short('t').Default("1s").String()
 )
 
 func main() {
@@ -46,8 +46,8 @@ func main() {
 
 	d, err := time.ParseDuration(*tick)
 	if err != nil {
-		log.Warnf("error parsing duration %s: using default value 30s: %s", err.Error())
-		d = time.Second * 30
+		log.Warnf("error parsing duration %s: using default value 1s: %s", err.Error())
+		d = time.Second * 1
 	}
 
 	log.Info("starting proxy controller")
