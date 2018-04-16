@@ -15,7 +15,7 @@ import (
 
 var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/blocklist"
 
-func TestController_ExpectedBlocklist(t *testing.T) {
+func TestController_ActiveBlocklist(t *testing.T) {
 	Convey("Controller", t, func() {
 		setup.TestBlocklistDirname()
 		setup.TestSessionDirname()
