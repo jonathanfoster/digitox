@@ -29,9 +29,9 @@ dep-dev:
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
-.PHONY: deploy
-deploy: 
-	kubectl apply -f ./k8s/
+.PHONY: deploy-apiserver
+deploy-apiserver:
+	kubectl apply -f ./k8s/apiserver/
 
 .PHONY: docker-build
 docker-build:
