@@ -1,18 +1,18 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: digitox
+  name: digitox-apiserver
   labels:
-    app: digitox
+    app: digitox-apiserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: digitox
+      app: digitox-apiserver
   template:
     metadata:
       labels:
-        app: digitox
+        app: digitox-apiserver
     spec:
       containers:
       - name: digitox-apiserver

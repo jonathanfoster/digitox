@@ -1,19 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: digitox
+  name: digitox-apiserver
   labels:
     app: digitox
-    dns: route53
   annotations:
-    domainName: "digitox.jonathanfoster.io"
+    external-dns.alpha.kubernetes.io/hostname: digitox-apiserver.k8s.jonathanfoster.io.
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-1:672132384976:certificate/09e95650-8ab3-49fa-a010-080fc2c954ce"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:672132384976:certificate/30f757ef-4cff-40b2-9650-3c3b93da1dea
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 443
 spec:
   type: LoadBalancer
   selector:
-    app: digitox
+    app: digitox-apiserver
   ports:  
   - name: http
     port: 80

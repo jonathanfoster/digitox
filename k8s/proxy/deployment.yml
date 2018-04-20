@@ -1,18 +1,18 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: digitox
+  name: digitox-proxy
   labels:
-    app: digitox
+    app: digitox-proxy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: digitox
+      app: digitox-proxy
   template:
     metadata:
       labels:
-        app: digitox
+        app: digitox-proxy
     spec:
       containers:
       - name: digitox-proxy

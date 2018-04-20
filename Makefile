@@ -29,9 +29,16 @@ dep-dev:
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
+.PHONY: deploy
+deploy: deploy-apiserver deploy-proxy
+
 .PHONY: deploy-apiserver
 deploy-apiserver:
 	kubectl apply -f ./k8s/apiserver/
+
+.PHONY: deploy-proxy
+deploy-proxy:
+	kubectl apply -f ./k8s/proxy/
 
 .PHONY: docker-build
 docker-build:
