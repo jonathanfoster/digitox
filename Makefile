@@ -8,6 +8,7 @@ all: clean build
 build:
 	go build -ldflags "-X main.version=$(VERSION)" -o bin/digitox-apiserver ./cmd/apiserver
 
+.PHONY: clean
 clean:
 	rm -rf bin/
 
@@ -90,7 +91,7 @@ release: precommit docker-push deploy
 .PHONY: run
 run: build
 	mkdir -p bin/test/
-	./bin/digitox-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --proxylist bin/test/blocklist --tick 10s
+	./bin/digitox-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --active bin/test/active --devices bin/test/passwd --tick 10s
 
 .PHONY: test
 test: clean

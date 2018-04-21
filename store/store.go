@@ -7,6 +7,8 @@ import (
 var (
 	// Blocklist is the blocklist storage implementation.
 	Blocklist Interface
+	// Device is the device storage implementation.
+	Device Interface
 	// Session is the session storage implementation.
 	Session Interface
 

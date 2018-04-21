@@ -57,6 +57,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/foomo/htpasswd"
+  packages = ["."]
+  revision = "e7f5c19025c3fae9edaa8de044abc9c5c219b39d"
+
+[[projects]]
+  branch = "master"
   name = "github.com/gopherjs/gopherjs"
   packages = ["js"]
   revision = "82b322028c96512b15077093b16a5f1c7ea897ac"
@@ -126,7 +132,11 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "bcrypt",
+    "blowfish",
+    "ssh/terminal"
+  ]
   revision = "88942b9c40a4c9d203b82b3731787b672d6e809b"
 
 [[projects]]
@@ -141,6 +151,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4a5cb89d8f7fb8055f665574a7b0eb29e3a376b5d8493ffa932c7a5aeebf1ce8"
+  inputs-digest = "ba09aa1a9d53ee1a9074147d34c7ac629094e0eaf8ca806175df22dc8e45ff6c"
   solver-name = "gps-cdcl"
   solver-version = 1

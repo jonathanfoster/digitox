@@ -138,11 +138,6 @@ func (f *FileStore) Save(id string, v interface{}) error {
 	return nil
 }
 
-// SetDirname sets the file system directory name.
-func (f *FileStore) SetDirname(dirname string) {
-	f.Dirname = dirname
-}
-
 // JoinPath sanitizes ID and joins with directory path to create a file path.
 // The file path is then checked to ensure its directory is the directory path
 // to prevent directory traversal using relative paths.
