@@ -55,6 +55,16 @@ func (h *HtpasswdStore) Exists(name string) (bool, error) {
 
 // Find finds a device by name in htpasswd file.
 func (h *HtpasswdStore) Find(name string, out interface{}) error {
+	passwords, err := htpasswd.ParseHtpasswdFile(h.Filename)
+	if err != nil {
+		return errors.Wrapf(err, "error finding device %s in htpasswd file", name)
+	}
+
+	out, ok := passwords[name]
+	if !ok {
+		return ErrNotExist
+	}
+
 	return nil
 }
 

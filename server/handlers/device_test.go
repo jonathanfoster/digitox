@@ -14,7 +14,7 @@ func TestDeviceHandler(t *testing.T) {
 	Convey("Device Handler", t, func() {
 		router := server.NewRouter()
 		setup.TestDeviceStore()
-		setup.TestDevice()
+		testdev := setup.TestDevice()
 
 		Convey("ListDevices", func() {
 			Convey("Status code should be 200", func() {
@@ -28,13 +28,22 @@ func TestDeviceHandler(t *testing.T) {
 		})
 
 		Convey("FindDevice", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("GET", "/devices/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
+				r := httptest.NewRequest("GET", "/devices/"+testdev.Name, nil)
 
 				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 200)
+			})
 
-				So(w.Code, ShouldEqual, 501)
+			Convey("When device does not exist", func() {
+				Convey("Status code should be 404", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("GET", "/devices/notfound", nil)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
 			})
 		})
 
@@ -69,6 +78,10 @@ func TestDeviceHandler(t *testing.T) {
 
 				So(w.Code, ShouldEqual, 501)
 			})
+		})
+
+		Reset(func() {
+			setup.ResetTestDeviceStore()
 		})
 	})
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
-// ListDevices handles the GET /devices route.
+// ListDevices handles the GET /devices/ route.
 func ListDevices(w http.ResponseWriter, r *http.Request) {
 	devices, err := device.All()
 	if err != nil {
@@ -35,13 +35,26 @@ func ListDevices(w http.ResponseWriter, r *http.Request) {
 
 // FindDevice handles the GET /devices/{id} route.
 func FindDevice(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseID(r)
+	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	Error(w, http.StatusNotImplemented)
+	dev, err := device.Find(id)
+	if err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warnf("device %s does not exist: %s", id, err.Error())
+			Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error finding device %s: %s", id, err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	JSON(w, http.StatusOK, dev)
 }
 
 // CreateDevice handles the POST /devices/{id} route.

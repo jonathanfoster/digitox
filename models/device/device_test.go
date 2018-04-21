@@ -11,12 +11,12 @@ import (
 	"github.com/jonathanfoster/digitox/test/setup"
 )
 
-func TestBlocklist(t *testing.T) {
+func TestDevice(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Device", t, func() {
 		setup.TestDeviceStore()
-		setup.TestDevice()
+		testdev := setup.TestDevice()
 
 		Convey("All", func() {
 			Convey("Should return devices", func() {
@@ -33,6 +33,14 @@ func TestBlocklist(t *testing.T) {
 
 				err := d.Save()
 				So(err, ShouldBeNil)
+			})
+		})
+
+		Convey("Find", func() {
+			Convey("Should return device", func() {
+				dev, err := device.Find(testdev.Name)
+				So(err, ShouldBeNil)
+				So(dev, ShouldNotBeNil)
 			})
 		})
 

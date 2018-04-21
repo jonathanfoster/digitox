@@ -35,6 +35,20 @@ func All() ([]*Device, error) {
 	return devices, nil
 }
 
+// Find finds a blocklist by name.
+func Find(name string) (*Device, error) {
+	var hash string
+
+	if err := store.Device.Find(name, &hash); err != nil {
+		return nil, errors.Wrapf(err, "error finding device %s", name)
+	}
+
+	dev := New(name)
+	dev.Hash = hash
+
+	return dev, nil
+}
+
 // Save writes device to store.
 func (d *Device) Save() error {
 	credentials := NewCredentials(d)

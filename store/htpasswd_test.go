@@ -5,8 +5,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jonathanfoster/digitox/store"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/jonathanfoster/digitox/store"
 )
 
 func TestHtpasswdStore(t *testing.T) {

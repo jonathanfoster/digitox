@@ -1,6 +1,7 @@
 package device
 
-// Credentials represents a set of htpasswd credentials.
+// Credentials represents a set of htpasswd credentials. This structure is used to keep the device struct decoupled
+// from the htpasswd struct and avoid cyclical references.
 type Credentials struct {
 	dev *Device
 }
