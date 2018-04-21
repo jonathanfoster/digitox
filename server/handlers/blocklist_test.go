@@ -52,26 +52,6 @@ func TestBlocklistHandler(t *testing.T) {
 			})
 		})
 
-		Convey("DeleteBlocklist", func() {
-			Convey("Status code should be 204", func() {
-				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.ID.String(), nil)
-
-				router.ServeHTTP(w, r)
-				So(w.Code, ShouldEqual, 204)
-			})
-
-			Convey("When blocklist does not exist", func() {
-				Convey("Status code should be 404", func() {
-					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/blocklists/notfound", nil)
-
-					router.ServeHTTP(w, r)
-					So(w.Code, ShouldEqual, 404)
-				})
-			})
-		})
-
 		Convey("CreateBlocklist", func() {
 			Convey("Status code should be 201", func() {
 				list := blocklist.New()
@@ -111,6 +91,26 @@ func TestBlocklistHandler(t *testing.T) {
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 422)
+				})
+			})
+		})
+
+		Convey("DeleteBlocklist", func() {
+			Convey("Status code should be 204", func() {
+				w := httptest.NewRecorder()
+				r := httptest.NewRequest("DELETE", "/blocklists/"+testlist.ID.String(), nil)
+
+				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 204)
+			})
+
+			Convey("When blocklist does not exist", func() {
+				Convey("Status code should be 404", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("DELETE", "/blocklists/notfound", nil)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
 				})
 			})
 		})

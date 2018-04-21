@@ -1,10 +1,14 @@
 package handlers_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/jonathanfoster/digitox/models/device"
 	"github.com/jonathanfoster/digitox/test/setup"
+	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/digitox/server"
@@ -48,13 +52,43 @@ func TestDeviceHandler(t *testing.T) {
 		})
 
 		Convey("CreateDevice", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 201", func() {
+				dev := device.New(uuid.NewV4().String())
+				dev.Password = uuid.NewV4().String()
+
+				buf, err := json.Marshal(dev)
+				buffer := bytes.NewBuffer(buf)
+				So(err, ShouldBeNil)
+
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("POST", "/devices/", nil)
+				r := httptest.NewRequest("POST", "/devices/", buffer)
 
 				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 201)
 
-				So(w.Code, ShouldEqual, 501)
+				var body device.Device
+
+				err = json.Unmarshal(w.Body.Bytes(), &body)
+				So(err, ShouldBeNil)
+
+				err = device.Remove(body.Name)
+				So(err, ShouldBeNil)
+			})
+
+			Convey("When device is not valid", func() {
+				Convey("Status code should be 422", func() {
+					dev := device.New(uuid.NewV4().String())
+
+					buf, err := json.Marshal(dev)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("POST", "/devices/", buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
 			})
 		})
 

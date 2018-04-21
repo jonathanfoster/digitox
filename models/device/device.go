@@ -1,14 +1,16 @@
 package device
 
 import (
-	"github.com/jonathanfoster/digitox/store"
+	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
+
+	"github.com/jonathanfoster/digitox/store"
 )
 
 // Device represents a device.
 type Device struct {
 	Name     string `json:"name" valid:"required"`
-	Password string `json:"password"`
+	Password string `json:"password" valid:"required"`
 	Hash     string `json:"hash"`
 }
 
@@ -49,6 +51,15 @@ func Find(name string) (*Device, error) {
 	return dev, nil
 }
 
+// Remove removes the device.
+func Remove(name string) error {
+	if err := store.Device.Remove(name); err != nil {
+		return errors.Wrapf(err, "error removing device %s", name)
+	}
+
+	return nil
+}
+
 // Save writes device to store.
 func (d *Device) Save() error {
 	credentials := NewCredentials(d)
@@ -58,4 +69,9 @@ func (d *Device) Save() error {
 	}
 
 	return nil
+}
+
+// Validate validates tags for fields and returns false if there are any errors.
+func (d *Device) Validate() (bool, error) {
+	return validator.ValidateStruct(d)
 }

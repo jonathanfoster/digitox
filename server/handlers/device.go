@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/jonathanfoster/digitox/models/device"
@@ -57,9 +59,35 @@ func FindDevice(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, dev)
 }
 
-// CreateDevice handles the POST /devices/{id} route.
+// CreateDevice handles the POST /devices/ route.
 func CreateDevice(w http.ResponseWriter, r *http.Request) {
-	Error(w, http.StatusNotImplemented)
+	buf, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Error("error reading device body: ", err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	var device device.Device
+	if err := json.Unmarshal(buf, &device); err != nil {
+		log.Warn("error unmarshaling device body: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
+		return
+	}
+
+	if valid, err := device.Validate(); !valid {
+		log.Warn("device not valid: ", err.Error())
+		Error(w, http.StatusUnprocessableEntity)
+		return
+	}
+
+	if err := device.Save(); err != nil {
+		log.Error("error saving device: ", err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	JSON(w, http.StatusCreated, device)
 }
 
 // DeleteDevice handles the DELETE /devices/{id} route.

@@ -26,6 +26,13 @@ func TestDevice(t *testing.T) {
 			})
 		})
 
+		Convey("Remove", func() {
+			Convey("Should not return error", func() {
+				err := device.Remove(testdev.Name)
+				So(err, ShouldBeNil)
+			})
+		})
+
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
 				d := device.New("test")
@@ -41,6 +48,25 @@ func TestDevice(t *testing.T) {
 				dev, err := device.Find(testdev.Name)
 				So(err, ShouldBeNil)
 				So(dev, ShouldNotBeNil)
+			})
+		})
+
+		Convey("Validate", func() {
+			Convey("Should return true", func() {
+				dev := setup.NewTestDevice()
+				result, err := dev.Validate()
+				So(err, ShouldBeNil)
+				So(result, ShouldBeTrue)
+			})
+
+			Convey("When password not provided", func() {
+				Convey("Should return false", func() {
+					dev := setup.NewTestDevice()
+					dev.Password = ""
+					result, err := dev.Validate()
+					So(err, ShouldNotBeNil)
+					So(result, ShouldBeFalse)
+				})
 			})
 		})
 
