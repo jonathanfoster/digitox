@@ -4,6 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/jonathanfoster/digitox/test/setup"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/digitox/server"
@@ -12,15 +13,17 @@ import (
 func TestDeviceHandler(t *testing.T) {
 	Convey("Device Handler", t, func() {
 		router := server.NewRouter()
+		setup.TestDeviceStore()
+		setup.TestDevice()
 
 		Convey("ListDevices", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 200", func() {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("GET", "/devices/", nil)
 
 				router.ServeHTTP(w, r)
 
-				So(w.Code, ShouldEqual, 501)
+				So(w.Code, ShouldEqual, 200)
 			})
 		})
 

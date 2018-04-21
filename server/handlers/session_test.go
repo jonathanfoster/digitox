@@ -21,8 +21,8 @@ func TestSessionHandler(t *testing.T) {
 
 	Convey("Session Handler", t, func() {
 		router := server.NewRouter()
-		setup.TestBlocklistDirname()
-		setup.TestSessionDirname()
+		setup.TestBlocklistStore()
+		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
 		testsess := setup.TestSession(testlist.ID)
 

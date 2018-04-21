@@ -11,6 +11,13 @@ func init() {
 	Device = NewHtpasswdStore("/etc/digitox/passwd")
 }
 
+// Credentials represents an interface for storing a record in htpasswd file.
+type Credentials interface {
+	Username() string
+	Password() string
+	Hash() string
+}
+
 // HtpasswdStore represents a htpasswd store.
 type HtpasswdStore struct {
 	Filename string
@@ -41,17 +48,17 @@ func (h *HtpasswdStore) All() ([]string, error) {
 	return deviceNames, nil
 }
 
-// Exists checks if a file exists without reading the entire file.
-func (h *HtpasswdStore) Exists(id string) (bool, error) {
+// Exists checks if a device exists in htpasswd file.
+func (h *HtpasswdStore) Exists(name string) (bool, error) {
 	return false, nil
 }
 
-// Find finds a device by ID in htpasswd.
-func (h *HtpasswdStore) Find(id string, out interface{}) error {
+// Find finds a device by name in htpasswd file.
+func (h *HtpasswdStore) Find(name string, out interface{}) error {
 	return nil
 }
 
-// Init creates the htpasswd store directory and all parent directories.
+// Init creates the htpasswd file directory and all parent directories.
 func (h *HtpasswdStore) Init() error {
 	if err := os.MkdirAll(h.Filename, 0700); err != nil {
 		return errors.Wrapf(err, "error initializing directory %s", h.Filename)
@@ -60,12 +67,29 @@ func (h *HtpasswdStore) Init() error {
 	return nil
 }
 
-// Remove removes the device from htpasswd.
-func (h *HtpasswdStore) Remove(id string) error {
+// Remove removes device from htpasswd file.
+func (h *HtpasswdStore) Remove(name string) error {
 	return nil
 }
 
-// Save writes value to htpasswd.
-func (h *HtpasswdStore) Save(id string, v interface{}) error {
+// Save writes device to htpasswd file.
+func (h *HtpasswdStore) Save(name string, v interface{}) error {
+	credentials, ok := v.(Credentials)
+	if !ok {
+		return errors.New("value is not of type credentials")
+	}
+
+	if credentials.Hash() != "" {
+		if err := htpasswd.SetPasswordHash(h.Filename, credentials.Username(), credentials.Hash()); err != nil {
+			return errors.Wrapf(err, "error saving device %s hash", credentials.Username())
+		}
+
+	} else {
+		if err := htpasswd.SetPassword(h.Filename, credentials.Username(), credentials.Password(), htpasswd.HashBCrypt); err != nil {
+			return errors.Wrapf(err, "error saving device %s password", credentials.Username())
+		}
+
+	}
+
 	return nil
 }

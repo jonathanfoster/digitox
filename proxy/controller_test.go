@@ -13,18 +13,18 @@ import (
 	"github.com/jonathanfoster/digitox/test/setup"
 )
 
-var filename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/active"
+var activeFilename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/active"
 
-func TestController_ActiveBlocklist(t *testing.T) {
+func TestController(t *testing.T) {
 	Convey("Controller", t, func() {
-		setup.TestBlocklistDirname()
-		setup.TestSessionDirname()
+		setup.TestBlocklistStore()
+		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
 		testsess := setup.TestSession(testlist.ID)
 
 		Convey("ActiveBlocklist", func() {
 			Convey("Should return active session blocklist domains", func() {
-				ctrl := proxy.NewController(filename)
+				ctrl := proxy.NewController(activeFilename)
 				domains, err := ctrl.ActiveBlocklist()
 
 				So(err, ShouldBeNil)
@@ -38,7 +38,7 @@ func TestController_ActiveBlocklist(t *testing.T) {
 					testsess.RepeatNever()
 					So(testsess.Save(), ShouldBeNil)
 
-					ctrl := proxy.NewController(filename)
+					ctrl := proxy.NewController(activeFilename)
 					domains, err := ctrl.ActiveBlocklist()
 
 					So(err, ShouldBeNil)
@@ -47,19 +47,10 @@ func TestController_ActiveBlocklist(t *testing.T) {
 			})
 		})
 
-		Reset(func() {
-			blocklist.Remove(testlist.ID.String())
-			session.Remove(testsess.ID.String())
-		})
-	})
-}
-
-func TestController_ReadBlocklistFile(t *testing.T) {
-	Convey("Controller", t, func() {
 		Convey("ReadBlocklistFile", func() {
 			Convey("Should return blocklist", func() {
 				list := setup.NewTestBlocklist()
-				ctrl := proxy.NewController(filename)
+				ctrl := proxy.NewController(activeFilename)
 				err := ctrl.WriteBlocklistFile(list.Domains)
 				So(err, ShouldBeNil)
 
@@ -71,7 +62,7 @@ func TestController_ReadBlocklistFile(t *testing.T) {
 
 			Convey("When no blocklist", func() {
 				Convey("Should return nil", func() {
-					ctrl := proxy.NewController(filename)
+					ctrl := proxy.NewController(activeFilename)
 
 					domains, err := ctrl.ReadBlocklistFile()
 
@@ -81,23 +72,10 @@ func TestController_ReadBlocklistFile(t *testing.T) {
 			})
 		})
 
-		Reset(func() {
-			os.Remove(filename)
-		})
-	})
-}
-
-func TestController_UpdateBlocklist(t *testing.T) {
-	Convey("Controller", t, func() {
-		setup.TestBlocklistDirname()
-		setup.TestSessionDirname()
-		testlist := setup.TestBlocklist()
-		testsess := setup.TestSession(testlist.ID)
-
 		Convey("UpdateBlocklist", func() {
 			Convey("When expected blocklist is not equal to actual blocklist", func() {
 				Convey("Should update blocklist", func() {
-					ctrl := proxy.NewController(filename)
+					ctrl := proxy.NewController(activeFilename)
 					err := ctrl.WriteBlocklistFile(nil)
 					So(err, ShouldBeNil)
 
@@ -113,7 +91,7 @@ func TestController_UpdateBlocklist(t *testing.T) {
 
 			Convey("When expected blocklist is equal to actual blocklist", func() {
 				Convey("Should not update blocklist", func() {
-					ctrl := proxy.NewController(filename)
+					ctrl := proxy.NewController(activeFilename)
 					err := ctrl.WriteBlocklistFile(testlist.Domains)
 					So(err, ShouldBeNil)
 
@@ -122,30 +100,22 @@ func TestController_UpdateBlocklist(t *testing.T) {
 					So(restart, ShouldBeFalse)
 				})
 			})
-
-			Reset(func() {
-				os.Remove(filename)
-				blocklist.Remove(testlist.ID.String())
-				session.Remove(testsess.ID.String())
-			})
 		})
-	})
-}
 
-func TestController_WriteBlocklistFile(t *testing.T) {
-	Convey("Controller", t, func() {
 		Convey("WriteBlocklistFile", func() {
 			Convey("Should not return error", func() {
 				list := setup.NewTestBlocklist()
-				ctrl := proxy.NewController(filename)
+				ctrl := proxy.NewController(activeFilename)
 				err := ctrl.WriteBlocklistFile(list.Domains)
 
 				So(err, ShouldBeNil)
 			})
+		})
 
-			Reset(func() {
-				os.Remove(filename)
-			})
+		Reset(func() {
+			blocklist.Remove(testlist.ID.String())
+			session.Remove(testsess.ID.String())
+			os.Remove(activeFilename)
 		})
 	})
 }

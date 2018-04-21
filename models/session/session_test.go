@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jonathanfoster/digitox/models/blocklist"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/jonathanfoster/digitox/models/blocklist"
 	"github.com/jonathanfoster/digitox/models/session"
 	"github.com/jonathanfoster/digitox/test/setup"
 )
@@ -17,8 +17,8 @@ func TestSession(t *testing.T) {
 	log.SetLevel(log.FatalLevel)
 
 	Convey("Session", t, func() {
-		setup.TestBlocklistDirname()
-		setup.TestSessionDirname()
+		setup.TestBlocklistStore()
+		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
 		testsess := setup.TestSession(testlist.ID)
 
