@@ -2,6 +2,7 @@ package store
 
 import (
 	"os"
+	"path"
 
 	"github.com/foomo/htpasswd"
 	"github.com/pkg/errors"
@@ -55,13 +56,13 @@ func (h *HtpasswdStore) Exists(name string) (bool, error) {
 }
 
 // Find finds a device by name in htpasswd file.
-func (h *HtpasswdStore) Find(name string, out interface{}) error {
+func (h *HtpasswdStore) Find(name string, out interface{}) error { // nolint: megacheck
 	passwords, err := htpasswd.ParseHtpasswdFile(h.Filename)
 	if err != nil {
 		return errors.Wrapf(err, "error finding device %s in htpasswd file", name)
 	}
 
-	out, ok := passwords[name]
+	out, ok := passwords[name] // nolint: ineffassign, megacheck
 	if !ok {
 		return ErrNotExist
 	}
@@ -71,8 +72,17 @@ func (h *HtpasswdStore) Find(name string, out interface{}) error {
 
 // Init creates the htpasswd file directory and all parent directories.
 func (h *HtpasswdStore) Init() error {
-	if err := os.MkdirAll(h.Filename, 0700); err != nil {
-		return errors.Wrapf(err, "error initializing directory %s", h.Filename)
+	dirname := path.Dir(h.Filename)
+
+	if err := os.MkdirAll(dirname, 0700); err != nil {
+		return errors.Wrapf(err, "error initializing htpasswd directory %s", dirname)
+	}
+
+	f, err := os.OpenFile(h.Filename, os.O_RDONLY|os.O_CREATE, 0600)
+	defer f.Close() // nolint: errcheck, megacheck
+
+	if err != nil {
+		return errors.Wrapf(err, "error initializing htpasswd file %s", h.Filename)
 	}
 
 	return nil
