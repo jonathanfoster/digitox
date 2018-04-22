@@ -92,13 +92,25 @@ func CreateDevice(w http.ResponseWriter, r *http.Request) {
 
 // DeleteDevice handles the DELETE /devices/{id} route.
 func DeleteDevice(w http.ResponseWriter, r *http.Request) {
-	_, ok := ParseID(r)
+	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	Error(w, http.StatusNotImplemented)
+	if err := device.Remove(id); err != nil {
+		if errors.Cause(err) == store.ErrNotExist {
+			log.Warnf("device %s does not exist: %s", id, err.Error())
+			Error(w, http.StatusNotFound)
+			return
+		}
+
+		log.Errorf("error removing device %s: %s", id, err.Error())
+		Error(w, http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // UpdateDevice handles the PUT /devices/{id} route.

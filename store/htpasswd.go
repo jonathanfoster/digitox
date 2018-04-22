@@ -79,6 +79,14 @@ func (h *HtpasswdStore) Init() error {
 
 // Remove removes device from htpasswd file.
 func (h *HtpasswdStore) Remove(name string) error {
+	if err := htpasswd.RemoveUser(h.Filename, name); err != nil {
+		if err.Error() == "user did not exist in file" {
+			return ErrNotExist
+		}
+
+		return errors.Wrapf(err, "error removing device %s from htpasswd file", name)
+	}
+
 	return nil
 }
 

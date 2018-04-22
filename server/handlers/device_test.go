@@ -92,21 +92,30 @@ func TestDeviceHandler(t *testing.T) {
 			})
 		})
 
+		Convey("DeleteDevice", func() {
+			Convey("Status code should be 204", func() {
+				w := httptest.NewRecorder()
+				r := httptest.NewRequest("DELETE", "/devices/"+testdev.Name, nil)
+
+				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 204)
+			})
+
+			Convey("When device does not exist", func() {
+				Convey("Status code should be 404", func() {
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("DELETE", "/devices/notfound", nil)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
+			})
+		})
+
 		Convey("UpdateDevice", func() {
 			Convey("Status code should be 501", func() {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("PUT", "/devices/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
-
-				router.ServeHTTP(w, r)
-
-				So(w.Code, ShouldEqual, 501)
-			})
-		})
-
-		Convey("DeleteDevice", func() {
-			Convey("Status code should be 501", func() {
-				w := httptest.NewRecorder()
-				r := httptest.NewRequest("DELETE", "/devices/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
 
 				router.ServeHTTP(w, r)
 

@@ -26,6 +26,14 @@ func TestDevice(t *testing.T) {
 			})
 		})
 
+		Convey("Find", func() {
+			Convey("Should return device", func() {
+				dev, err := device.Find(testdev.Name)
+				So(err, ShouldBeNil)
+				So(dev, ShouldNotBeNil)
+			})
+		})
+
 		Convey("Remove", func() {
 			Convey("Should not return error", func() {
 				err := device.Remove(testdev.Name)
@@ -40,14 +48,6 @@ func TestDevice(t *testing.T) {
 
 				err := d.Save()
 				So(err, ShouldBeNil)
-			})
-		})
-
-		Convey("Find", func() {
-			Convey("Should return device", func() {
-				dev, err := device.Find(testdev.Name)
-				So(err, ShouldBeNil)
-				So(dev, ShouldNotBeNil)
 			})
 		})
 
