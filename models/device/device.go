@@ -39,16 +39,13 @@ func All() ([]*Device, error) {
 
 // Find finds a blocklist by name.
 func Find(name string) (*Device, error) {
-	var hash string
+	var dev Device
 
-	if err := store.Device.Find(name, &hash); err != nil {
+	if err := store.Device.Find(name, &dev); err != nil {
 		return nil, errors.Wrapf(err, "error finding device %s", name)
 	}
 
-	dev := New(name)
-	dev.Hash = hash
-
-	return dev, nil
+	return &dev, nil
 }
 
 // Remove removes the device.
@@ -62,9 +59,7 @@ func Remove(name string) error {
 
 // Save writes device to store.
 func (d *Device) Save() error {
-	credentials := NewCredentials(d)
-
-	if err := store.Device.Save(d.Name, credentials); err != nil {
+	if err := store.Device.Save(d.Name, d); err != nil {
 		return errors.Wrapf(err, "error saving device %s", d.Name)
 	}
 

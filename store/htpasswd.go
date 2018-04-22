@@ -3,6 +3,8 @@ package store
 import (
 	"os"
 	"path"
+	"reflect"
+	"runtime"
 
 	"github.com/foomo/htpasswd"
 	"github.com/pkg/errors"
@@ -10,14 +12,6 @@ import (
 
 func init() {
 	Device = NewHtpasswdStore("/etc/digitox/passwd")
-}
-
-// Credentials represents an interface for storing a record in htpasswd file.  This interface is used to keep the store
-// package decoupled from the device package and avoid cyclical references.
-type Credentials interface {
-	Username() string
-	Password() string
-	Hash() string
 }
 
 // HtpasswdStore represents a htpasswd store.
@@ -56,16 +50,34 @@ func (h *HtpasswdStore) Exists(name string) (bool, error) {
 }
 
 // Find finds a device by name in htpasswd file.
-func (h *HtpasswdStore) Find(name string, out interface{}) error { // nolint: megacheck
+func (h *HtpasswdStore) Find(name string, out interface{}) (err error) {
 	passwords, err := htpasswd.ParseHtpasswdFile(h.Filename)
 	if err != nil {
 		return errors.Wrapf(err, "error finding device %s in htpasswd file", name)
 	}
 
-	out, ok := passwords[name] // nolint: ineffassign, megacheck
+	hash, ok := passwords[name]
 	if !ok {
 		return ErrNotExist
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(runtime.Error); ok {
+				panic(r)
+			}
+
+			err = r.(error)
+		}
+	}()
+
+	// Assumes out is a pointer to a struct with Name and Hash fields
+	// If not the above defer func will catch and set err value
+	ptr := reflect.ValueOf(out)
+	value := ptr.Elem()
+
+	value.FieldByName("Name").SetString(name)
+	value.FieldByName("Hash").SetString(hash)
 
 	return nil
 }
@@ -102,19 +114,32 @@ func (h *HtpasswdStore) Remove(name string) error {
 }
 
 // Save writes device to htpasswd file.
-func (h *HtpasswdStore) Save(name string, v interface{}) error {
-	credentials, ok := v.(Credentials)
-	if !ok {
-		return errors.New("value is not of type credentials")
-	}
+func (h *HtpasswdStore) Save(name string, v interface{}) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(runtime.Error); ok {
+				panic(r)
+			}
 
-	if credentials.Password() != "" {
-		if err := htpasswd.SetPassword(h.Filename, credentials.Username(), credentials.Password(), htpasswd.HashBCrypt); err != nil {
-			return errors.Wrapf(err, "error saving device %s: error setting password", credentials.Username())
+			err = r.(error)
+		}
+	}()
+
+	// Assumes v is a pointer to a struct with Name, Password, and Hash fields
+	// If not the above defer func will catch and set err value
+	ptr := reflect.ValueOf(v)
+	value := ptr.Elem()
+
+	password := value.FieldByName("Password").String()
+	hash := value.FieldByName("Hash").String()
+
+	if password != "" {
+		if err := htpasswd.SetPassword(h.Filename, name, password, htpasswd.HashBCrypt); err != nil {
+			return errors.Wrapf(err, "error saving device %s: error setting password", name)
 		}
 	} else {
-		if err := htpasswd.SetPasswordHash(h.Filename, credentials.Username(), credentials.Hash()); err != nil {
-			return errors.Wrapf(err, "error saving device %s: error setting password hash", credentials.Username())
+		if err := htpasswd.SetPasswordHash(h.Filename, name, hash); err != nil {
+			return errors.Wrapf(err, "error saving device %s: error setting password hash", name)
 		}
 	}
 

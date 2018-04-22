@@ -32,6 +32,13 @@ func TestDevice(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(dev, ShouldNotBeNil)
 			})
+
+			Convey("Should load hash", func() {
+				dev, err := device.Find(testdev.Name)
+				So(err, ShouldBeNil)
+				So(dev, ShouldNotBeNil)
+				So(dev.Hash, ShouldNotBeEmpty)
+			})
 		})
 
 		Convey("Remove", func() {
