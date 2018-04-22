@@ -48,7 +48,7 @@ func TestSessionHandler(t *testing.T) {
 			Convey("When session does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("GET", "/sessions/notfound", nil)
+					r := httptest.NewRequest("GET", "/sessions/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -159,7 +159,7 @@ func TestSessionHandler(t *testing.T) {
 			Convey("When session does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/sessions/notfound", nil)
+					r := httptest.NewRequest("DELETE", "/sessions/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)

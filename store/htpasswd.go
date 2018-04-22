@@ -98,16 +98,14 @@ func (h *HtpasswdStore) Save(name string, v interface{}) error {
 		return errors.New("value is not of type credentials")
 	}
 
-	if credentials.Hash() != "" {
-		if err := htpasswd.SetPasswordHash(h.Filename, credentials.Username(), credentials.Hash()); err != nil {
-			return errors.Wrapf(err, "error saving device %s: error setting password hash", credentials.Username())
-		}
-
-	} else {
+	if credentials.Password() != "" {
 		if err := htpasswd.SetPassword(h.Filename, credentials.Username(), credentials.Password(), htpasswd.HashBCrypt); err != nil {
 			return errors.Wrapf(err, "error saving device %s: error setting password", credentials.Username())
 		}
-
+	} else {
+		if err := htpasswd.SetPasswordHash(h.Filename, credentials.Username(), credentials.Hash()); err != nil {
+			return errors.Wrapf(err, "error saving device %s: error setting password hash", credentials.Username())
+		}
 	}
 
 	return nil

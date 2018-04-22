@@ -43,7 +43,7 @@ func TestDeviceHandler(t *testing.T) {
 			Convey("When device does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("GET", "/devices/notfound", nil)
+					r := httptest.NewRequest("GET", "/devices/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -104,7 +104,7 @@ func TestDeviceHandler(t *testing.T) {
 			Convey("When device does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/devices/notfound", nil)
+					r := httptest.NewRequest("DELETE", "/devices/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -113,13 +113,50 @@ func TestDeviceHandler(t *testing.T) {
 		})
 
 		Convey("UpdateDevice", func() {
-			Convey("Status code should be 501", func() {
+			Convey("Status code should be 200", func() {
+				testdev.Password = uuid.NewV4().String()
+
+				buf, err := json.Marshal(testdev)
+				buffer := bytes.NewBuffer(buf)
+				So(err, ShouldBeNil)
+
 				w := httptest.NewRecorder()
-				r := httptest.NewRequest("PUT", "/devices/a8ae93e6-0e81-485e-9320-ff360fa70595", nil)
+				r := httptest.NewRequest("PUT", "/devices/"+testdev.Name, buffer)
 
 				router.ServeHTTP(w, r)
+				So(w.Code, ShouldEqual, 200)
+			})
 
-				So(w.Code, ShouldEqual, 501)
+			Convey("When device is not valid", func() {
+				Convey("Status code should be 422", func() {
+					testdev.Password = ""
+
+					buf, err := json.Marshal(testdev)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/devices/"+testdev.Name, buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 422)
+				})
+			})
+
+			Convey("When device does not exist", func() {
+				Convey("Status code should be 404", func() {
+					dev := setup.NewTestDevice()
+
+					buf, err := json.Marshal(dev)
+					buffer := bytes.NewBuffer(buf)
+					So(err, ShouldBeNil)
+
+					w := httptest.NewRecorder()
+					r := httptest.NewRequest("PUT", "/devices/doesnotexist", buffer)
+
+					router.ServeHTTP(w, r)
+					So(w.Code, ShouldEqual, 404)
+				})
 			})
 		})
 

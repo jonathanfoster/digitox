@@ -3,7 +3,7 @@
 ## Resources
 
 * Session
-* Block List
+* Blocklist
 * Device
 
 ## Endpoints
@@ -30,19 +30,19 @@ DELETE /sessions/{id}
 ### Block Lists
 
 ```bash
-# List block lists
+# List blocklists
 GET /blocklists/
 
-# Find block list
+# Find blocklist
 GET /blocklists/{id}
 
-# Create block list
+# Create blocklist
 POST /blocklists/
 
-# Update block list
+# Update blocklist
 PUT /blocklists/{id}
 
-# Remove block list
+# Remove blocklist
 DELETE /blocklists/{id}
 ```
 

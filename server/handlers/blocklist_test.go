@@ -44,7 +44,7 @@ func TestBlocklistHandler(t *testing.T) {
 			Convey("When blocklist does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("GET", "/blocklists/notfound", nil)
+					r := httptest.NewRequest("GET", "/blocklists/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -107,7 +107,7 @@ func TestBlocklistHandler(t *testing.T) {
 			Convey("When blocklist does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/blocklists/notfound", nil)
+					r := httptest.NewRequest("DELETE", "/blocklists/doesnotexist", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)

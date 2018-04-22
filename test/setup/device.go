@@ -15,7 +15,7 @@ var testDeviceFilename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/d
 
 // NewTestDevice creates a test device instance.
 func NewTestDevice() *device.Device {
-	dev := device.New("test")
+	dev := device.New(uuid.NewV4().String())
 	dev.Password = uuid.NewV4().String()
 
 	return dev
