@@ -3,10 +3,10 @@ package setup
 import (
 	"os"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/jonathanfoster/digitox/models/blocklist"
 	"github.com/jonathanfoster/digitox/store"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // NewTestBlocklist creates a test blocklist instance.

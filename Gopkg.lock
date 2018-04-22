@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/foomo/htpasswd"
   packages = ["."]
-  revision = "e7f5c19025c3fae9edaa8de044abc9c5c219b39d"
+  revision = "cb63c4ac0e5029b961b3ac7dcc281ed2a9232e4e"
 
 [[projects]]
   branch = "master"

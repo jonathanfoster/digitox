@@ -11,7 +11,8 @@ func init() {
 	Device = NewHtpasswdStore("/etc/digitox/passwd")
 }
 
-// Credentials represents an interface for storing a record in htpasswd file.
+// Credentials represents an interface for storing a record in htpasswd file.  This interface is used to keep the store
+// package decoupled from the device package and avoid cyclical references.
 type Credentials interface {
 	Username() string
 	Password() string
@@ -80,7 +81,7 @@ func (h *HtpasswdStore) Init() error {
 // Remove removes device from htpasswd file.
 func (h *HtpasswdStore) Remove(name string) error {
 	if err := htpasswd.RemoveUser(h.Filename, name); err != nil {
-		if err.Error() == "user did not exist in file" {
+		if err == htpasswd.ErrNotExist {
 			return ErrNotExist
 		}
 
@@ -99,12 +100,12 @@ func (h *HtpasswdStore) Save(name string, v interface{}) error {
 
 	if credentials.Hash() != "" {
 		if err := htpasswd.SetPasswordHash(h.Filename, credentials.Username(), credentials.Hash()); err != nil {
-			return errors.Wrapf(err, "error saving device %s hash", credentials.Username())
+			return errors.Wrapf(err, "error saving device %s: error setting password hash", credentials.Username())
 		}
 
 	} else {
 		if err := htpasswd.SetPassword(h.Filename, credentials.Username(), credentials.Password(), htpasswd.HashBCrypt); err != nil {
-			return errors.Wrapf(err, "error saving device %s password", credentials.Username())
+			return errors.Wrapf(err, "error saving device %s: error setting password", credentials.Username())
 		}
 
 	}

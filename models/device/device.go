@@ -7,6 +7,8 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
+// TODO: Don't return password or hash
+// TODO: Remove hash and use password for both unhashed and hashed values, add IsHashed method
 // Device represents a device.
 type Device struct {
 	Name     string `json:"name" valid:"required"`
