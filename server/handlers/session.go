@@ -18,7 +18,7 @@ func ListSessions(w http.ResponseWriter, r *http.Request) {
 	sessions, err := session.All()
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warn("sessions do not exist: ", err.Error())
+			log.Warn("sessions not found: ", err.Error())
 			JSON(w, http.StatusOK, []*session.Session{})
 			return
 		}
@@ -46,7 +46,7 @@ func FindSession(w http.ResponseWriter, r *http.Request) {
 	sess, err := session.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("session %s does not exist: %s", id, err.Error())
+			log.Warnf("session %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -102,7 +102,7 @@ func DeleteSession(w http.ResponseWriter, r *http.Request) {
 
 	if err := session.Remove(id); err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("session %s does not exist: %s", id, err.Error())
+			log.Warnf("session %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -126,7 +126,7 @@ func UpdateSession(w http.ResponseWriter, r *http.Request) {
 	sess, err := session.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("session %s does not exist: %s", id, err.Error())
+			log.Warnf("session %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}

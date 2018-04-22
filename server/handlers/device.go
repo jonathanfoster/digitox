@@ -46,7 +46,7 @@ func FindDevice(w http.ResponseWriter, r *http.Request) {
 	dev, err := device.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("device %s does not exist: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -100,7 +100,7 @@ func DeleteDevice(w http.ResponseWriter, r *http.Request) {
 
 	if err := device.Remove(id); err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("device %s does not exist: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -124,7 +124,7 @@ func UpdateDevice(w http.ResponseWriter, r *http.Request) {
 	dev, err := device.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("device %s does not exist: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}

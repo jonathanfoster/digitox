@@ -18,7 +18,7 @@ func ListBlocklists(w http.ResponseWriter, r *http.Request) {
 	lists, err := blocklist.All()
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warn("blocklists do not exist: ", err.Error())
+			log.Warn("blocklists not found: ", err.Error())
 			JSON(w, http.StatusOK, []*blocklist.Blocklist{})
 			return
 		}
@@ -46,7 +46,7 @@ func FindBlocklist(w http.ResponseWriter, r *http.Request) {
 	list, err := blocklist.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
+			log.Warnf("blocklist %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -102,7 +102,7 @@ func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
 
 	if err := blocklist.Remove(id); err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
+			log.Warnf("blocklist %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
@@ -126,7 +126,7 @@ func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
 	list, err := blocklist.Find(id)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotExist {
-			log.Warnf("blocklist %s does not exist: %s", id, err.Error())
+			log.Warnf("blocklist %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
