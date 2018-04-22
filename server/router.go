@@ -18,7 +18,6 @@ func NewRouter() *Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/", handlers.Status).Methods("GET")
-	router.HandleFunc("/panic", handlers.Panic).Methods("GET")
 
 	router.HandleFunc("/blocklists/", handlers.ListBlocklists).Methods("GET")
 	router.HandleFunc("/blocklists/{id}", handlers.FindBlocklist).Methods("GET")
