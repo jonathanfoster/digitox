@@ -26,6 +26,24 @@ func TestDevice(t *testing.T) {
 			})
 		})
 
+		Convey("Exists", func() {
+			Convey("When device exists", func() {
+				Convey("Should return true", func() {
+					exists, err := device.Exists(testdev.Name)
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeTrue)
+				})
+			})
+
+			Convey("When device does not exist", func() {
+				Convey("Should return false", func() {
+					exists, err := device.Exists(uuid.NewV4().String())
+					So(err, ShouldBeNil)
+					So(exists, ShouldBeFalse)
+				})
+			})
+		})
+
 		Convey("Find", func() {
 			Convey("Should return device", func() {
 				dev, err := device.Find(testdev.Name)

@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/digitox/models/blocklist"
+	"github.com/jonathanfoster/digitox/models/device"
 	"github.com/jonathanfoster/digitox/store"
 )
 
@@ -21,6 +22,7 @@ type Session struct {
 	Starts         time.Time   `json:"starts" valid:"required"`
 	Ends           time.Time   `json:"ends" valid:"required"`
 	Blocklists     []uuid.UUID `json:"blocklists" valid:"required"`
+	Devices        []string    `json:"devices" valid:"required"`
 	EverySunday    bool        `json:"every_sunday"`
 	EveryMonday    bool        `json:"every_monday"`
 	EveryTuesday   bool        `json:"every_tuesday"`
@@ -179,6 +181,8 @@ func (s *Session) Save() error {
 func (s *Session) Validate() (bool, error) {
 	var msgs []string
 
+	listsExist := true
+
 	// Validate blocklists exist
 	for _, id := range s.Blocklists {
 		exists, err := blocklist.Exists(id.String())
@@ -187,31 +191,37 @@ func (s *Session) Validate() (bool, error) {
 		}
 
 		if !exists {
+			listsExist = false
 			msgs = append(msgs, fmt.Sprintf("blocklist %s does not exist", id.String()))
 		}
 	}
 
-	var listExistsErr error
+	devsExist := true
 
-	listsExist := len(msgs) == 0
-	if !listsExist {
-		listExistsErr = errors.New(strings.Join(msgs, ": "))
+	// Validate devices exist
+	for _, dev := range s.Devices {
+		exists, err := device.Exists(dev)
+		if err != nil {
+			return false, errors.Wrapf(err, "error validating session device %s", dev)
+		}
+
+		if !exists {
+			devsExist = false
+			msgs = append(msgs, fmt.Sprintf("device %s does not exist", dev))
+		}
 	}
 
-	var structValidErr error
-
 	// Validate session struct
-	structValid, structValidErr := validator.ValidateStruct(s)
+	structValid, errStructValid := validator.ValidateStruct(s)
+	if errStructValid != nil {
+		msgs = append(msgs, errStructValid.Error())
+	}
 
 	var err error
 
-	if listExistsErr != nil && structValidErr != nil {
-		err = errors.New(strings.Join([]string{structValidErr.Error(), listExistsErr.Error()}, ":"))
-	} else if listExistsErr != nil {
-		err = listExistsErr
-	} else if structValidErr != nil {
-		err = structValidErr
+	if len(msgs) > 0 {
+		err = errors.New(strings.Join(msgs, ": "))
 	}
 
-	return listsExist && structValid, err
+	return listsExist && devsExist && structValid, err
 }

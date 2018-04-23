@@ -46,7 +46,14 @@ func (h *HtpasswdStore) All() ([]string, error) {
 
 // Exists checks if a device exists in htpasswd file.
 func (h *HtpasswdStore) Exists(name string) (bool, error) {
-	return false, nil
+	passwords, err := htpasswd.ParseHtpasswdFile(h.Filename)
+	if err != nil {
+		return false, errors.Wrapf(err, "error checking if device %s exists in htpasswd file", name)
+	}
+
+	_, ok := passwords[name]
+
+	return ok, nil
 }
 
 // Find finds a device by name in htpasswd file.

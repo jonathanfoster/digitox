@@ -11,17 +11,16 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
-// NewTestSession creates a test session instance with a specific blocklist ID.
-func NewTestSession(list uuid.UUID) *session.Session {
+// NewTestSession creates a test session instance with a specific blocklist ID and device name.
+func NewTestSession(list uuid.UUID, dev string) *session.Session {
 	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
 	sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	sess.RepeatEveryDay()
-	sess.Blocklists = []uuid.UUID{
-		list,
-	}
+	sess.Blocklists = []uuid.UUID{list}
+	sess.Devices = []string{dev}
 
 	return sess
 }
@@ -38,8 +37,8 @@ func TestSessionStore() {
 }
 
 // TestSession creates and saves a test session with a specific blocklist ID.
-func TestSession(list uuid.UUID) *session.Session {
-	sess := NewTestSession(list)
+func TestSession(list uuid.UUID, dev string) *session.Session {
+	sess := NewTestSession(list, dev)
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

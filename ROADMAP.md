@@ -45,16 +45,15 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [X] Proxy: End session by removing /etc/squid/blocklist
 * [X] Proxy: Restart proxy after blocklist update
 * [X] Proxy: Restart proxy immediately after session or blocklist change
-* [ ] Proxy: Restrict proxy access to devices - **IN PROGRESS**
+* [X] Proxy: Restrict proxy access to devices
 
 ## Devices
 
-* [ ] Device: Handle list devices
-* [ ] Device: Handle find device
-* [ ] Device: Handle remove device
-* [ ] Device: Handle save device
-* [ ] Device: Store devices in database
-* [ ] Device: Validate model before persisting
+* [X] Device: Handle list devices
+* [X] Device: Handle find device
+* [X] Device: Handle remove device
+* [X] Device: Handle save device
+* [X] Device: Validate model before persisting
 
 ## Authorization
 

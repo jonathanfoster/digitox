@@ -37,6 +37,20 @@ func All() ([]*Device, error) {
 	return devices, nil
 }
 
+// Exists checks if a device exists by name.
+func Exists(name string) (bool, error) {
+	exists, err := store.Device.Exists(name)
+	if err != nil {
+		if err == store.ErrNotExist {
+			return false, nil
+		}
+
+		return false, errors.Wrapf(err, "error checking if device %s exists", name)
+	}
+
+	return exists, nil
+}
+
 // Find finds a blocklist by name.
 func Find(name string) (*Device, error) {
 	var dev Device
