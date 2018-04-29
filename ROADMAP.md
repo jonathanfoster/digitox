@@ -57,11 +57,15 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Authorization
 
-* [ ] Auth: Restrict access using auth token
+* [ ] Auth: Restrict access using auth token - **IN PROGRESS**
+** [X] Auth: Create OAuth endpoints
+** [X] Auth: Use JWT token signed with RSA
+** [ ] Auth: Authorize requests with JWT token
 
 ## Misc
 
 * [X] Misc: Rename project to Digitox
+* [ ] Misc: Combine Squid and API server containers
 * [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API

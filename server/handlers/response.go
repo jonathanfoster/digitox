@@ -8,14 +8,14 @@ import (
 )
 
 type errorResponse struct {
-	Message    string `json:"message"`
+	Error      string `json:"error"`
 	StatusCode int    `json:"status_code"`
 }
 
 // Error writes application/json error to response writer.
 func Error(w http.ResponseWriter, statusCode int) {
 	JSON(w, statusCode, &errorResponse{
-		Message:    http.StatusText(statusCode),
+		Error:      http.StatusText(statusCode),
 		StatusCode: statusCode,
 	})
 }
@@ -25,6 +25,6 @@ func JSON(w http.ResponseWriter, statusCode int, v interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(statusCode)
 	if err := json.NewEncoder(w).Encode(v); err != nil {
-		log.Error("error json encoding: ", err.Error())
+		log.Error("error json encoding value: ", err.Error())
 	}
 }

@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/RangelReale/osin"
+  packages = ["."]
+  revision = "92fc3c3539125bddc695a988974243479d82f8b4"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/alecthomas/kingpin"
   packages = ["."]
   revision = "947dcec5ba9c011838740e680966fd7087a71d0d"
@@ -27,6 +33,12 @@
   packages = ["."]
   revision = "ccb8e960c48f04d6935e72476ae4a51028f9e22f"
   version = "v9"
+
+[[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
 
 [[projects]]
   branch = "master"
@@ -84,6 +96,12 @@
   packages = ["."]
   revision = "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
   version = "v4.2.1"
+
+[[projects]]
+  name = "github.com/pborman/uuid"
+  packages = ["."]
+  revision = "e790cca94e6cc75c7064b1332e63811d4aae1a53"
+  version = "v1.1"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -151,6 +169,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ba09aa1a9d53ee1a9074147d34c7ac629094e0eaf8ca806175df22dc8e45ff6c"
+  inputs-digest = "d9b8d5991aad56b4e6e718057d93cab1ad6b5aa719386b3f84a86eb0d6f58163"
   solver-name = "gps-cdcl"
   solver-version = 1

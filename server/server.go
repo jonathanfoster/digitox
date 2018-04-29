@@ -8,19 +8,24 @@ import (
 	"github.com/urfave/negroni"
 
 	"github.com/jonathanfoster/digitox/server/middleware"
+	"github.com/jonathanfoster/digitox/server/oauth"
 )
 
 // Server represents a server.
-type Server struct{}
+type Server struct {
+	config *Config
+}
 
 // New creates a Server instance.
-func New() *Server {
-	return &Server{}
+func New(config *Config) *Server {
+	return &Server{config: config}
 }
 
 // Run listens on the TCP network address addr and then
 // calls Serve to handle requests on incoming connections.
-func (s *Server) Run(addr string) error {
+func (s *Server) Run() error {
+	oauth.InitOAuth(s.config.TokenSigningKey)
+
 	router := NewRouter()
 
 	n := negroni.New()
@@ -29,7 +34,7 @@ func (s *Server) Run(addr string) error {
 	n.UseHandler(router)
 
 	srv := &http.Server{
-		Addr:    addr,
+		Addr:    s.config.Addr,
 		Handler: n,
 	}
 

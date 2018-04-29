@@ -91,7 +91,14 @@ release: precommit docker-push deploy
 .PHONY: run
 run: build
 	mkdir -p bin/test/
-	./bin/digitox-apiserver -v --sessions bin/test/sessions --blocklists bin/test/blocklists --active bin/test/active --devices bin/test/passwd --tick 10s
+	./bin/digitox-apiserver -v \
+	    --sessions bin/test/sessions \
+	    --blocklists bin/test/blocklists \
+	    --active bin/test/active \
+	    --devices bin/test/passwd \
+	    --tick 10s \
+	    --signing-key "" \
+	    --verifying-key ""
 
 .PHONY: test
 test: clean
