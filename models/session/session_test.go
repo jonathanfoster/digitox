@@ -18,11 +18,9 @@ func TestSession(t *testing.T) {
 
 	Convey("Session", t, func() {
 		setup.TestBlocklistStore()
-		setup.TestDeviceStore()
 		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
-		testdev := setup.TestDevice()
-		testsess := setup.TestSession(testlist.ID, testdev.Name)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("Active", func() {
 			Convey("When session is active", func() {
@@ -134,7 +132,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
-				sess := setup.NewTestSession(testlist.ID, testdev.Name)
+				sess := setup.NewTestSession(testlist.ID)
 				sess.Name = "test-2"
 
 				err := sess.Save()
@@ -186,26 +184,6 @@ func TestSession(t *testing.T) {
 			Convey("When blocklist does not exist", func() {
 				Convey("Should return false", func() {
 					testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4())
-					valid, err := testsess.Validate()
-
-					So(err, ShouldNotBeNil)
-					So(valid, ShouldBeFalse)
-				})
-			})
-
-			Convey("When devices not provided", func() {
-				Convey("Should return false", func() {
-					testsess.Devices = nil
-					valid, err := testsess.Validate()
-
-					So(err, ShouldNotBeNil)
-					So(valid, ShouldBeFalse)
-				})
-			})
-
-			Convey("When device does not exist", func() {
-				Convey("Should return false", func() {
-					testsess.Devices = append(testsess.Devices, uuid.NewV4().String())
 					valid, err := testsess.Validate()
 
 					So(err, ShouldNotBeNil)

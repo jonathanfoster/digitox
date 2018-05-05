@@ -18,11 +18,9 @@ var activeFilename = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digit
 func TestController(t *testing.T) {
 	Convey("Controller", t, func() {
 		setup.TestBlocklistStore()
-		setup.TestDeviceStore()
 		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
-		testdev := setup.TestDevice()
-		testsess := setup.TestSession(testlist.ID, testdev.Name)
+		testsess := setup.TestSession(testlist.ID)
 
 		Convey("ActiveBlocklist", func() {
 			Convey("Should return active session blocklist domains", func() {
@@ -118,7 +116,6 @@ func TestController(t *testing.T) {
 			blocklist.Remove(testlist.ID.String())
 			session.Remove(testsess.ID.String())
 			os.Remove(activeFilename)
-			setup.ResetTestDeviceStore()
 		})
 	})
 }

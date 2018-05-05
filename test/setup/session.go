@@ -12,7 +12,7 @@ import (
 )
 
 // NewTestSession creates a test session instance with a specific blocklist ID and device name.
-func NewTestSession(list uuid.UUID, dev string) *session.Session {
+func NewTestSession(list uuid.UUID) *session.Session {
 	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
@@ -20,7 +20,6 @@ func NewTestSession(list uuid.UUID, dev string) *session.Session {
 	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	sess.RepeatEveryDay()
 	sess.Blocklists = []uuid.UUID{list}
-	sess.Devices = []string{dev}
 
 	return sess
 }
@@ -37,8 +36,8 @@ func TestSessionStore() {
 }
 
 // TestSession creates and saves a test session with a specific blocklist ID.
-func TestSession(list uuid.UUID, dev string) *session.Session {
-	sess := NewTestSession(list, dev)
+func TestSession(list uuid.UUID) *session.Session {
+	sess := NewTestSession(list)
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

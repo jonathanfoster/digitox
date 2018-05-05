@@ -11,7 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/digitox/models/blocklist"
-	"github.com/jonathanfoster/digitox/models/device"
 	"github.com/jonathanfoster/digitox/store"
 )
 
@@ -22,7 +21,6 @@ type Session struct {
 	Starts         time.Time   `json:"starts" valid:"required"`
 	Ends           time.Time   `json:"ends" valid:"required"`
 	Blocklists     []uuid.UUID `json:"blocklists" valid:"required"`
-	Devices        []string    `json:"devices" valid:"required"`
 	EverySunday    bool        `json:"every_sunday"`
 	EveryMonday    bool        `json:"every_monday"`
 	EveryTuesday   bool        `json:"every_tuesday"`
@@ -178,7 +176,7 @@ func (s *Session) Save() error {
 }
 
 // Validate validates tags for fields and returns false if there are any errors.
-func (s *Session) Validate() (bool, error) { // nolint: gocyclo
+func (s *Session) Validate() (bool, error) {
 	var msgs []string
 
 	listsExist := true
@@ -196,21 +194,6 @@ func (s *Session) Validate() (bool, error) { // nolint: gocyclo
 		}
 	}
 
-	devsExist := true
-
-	// Validate devices exist
-	for _, dev := range s.Devices {
-		exists, err := device.Exists(dev)
-		if err != nil {
-			return false, errors.Wrapf(err, "error validating session device %s", dev)
-		}
-
-		if !exists {
-			devsExist = false
-			msgs = append(msgs, fmt.Sprintf("device %s does not exist", dev))
-		}
-	}
-
 	// Validate session struct
 	structValid, errStructValid := validator.ValidateStruct(s)
 	if errStructValid != nil {
@@ -223,5 +206,5 @@ func (s *Session) Validate() (bool, error) { // nolint: gocyclo
 		err = errors.New(strings.Join(msgs, ": "))
 	}
 
-	return listsExist && devsExist && structValid, err
+	return listsExist && structValid, err
 }
