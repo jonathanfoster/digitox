@@ -13,7 +13,7 @@ type OAuthStore struct {
 }
 
 // NewOAuthStore creates a OAuthStore instance.
-func NewOAuthStore() *OAuthStore {
+func NewOAuthStore(clientID string, clientSecret string) *OAuthStore {
 	r := &OAuthStore{
 		clients:   make(map[string]osin.Client),
 		authorize: make(map[string]*osin.AuthorizeData),
@@ -21,11 +21,10 @@ func NewOAuthStore() *OAuthStore {
 		refresh:   make(map[string]string),
 	}
 
-	// TODO: Pass in client ID and secret
-	r.clients["admin"] = &osin.DefaultClient{
-		Id:          "admin",
-		Secret:      "Digitox123",
-		RedirectUri: "http://localhost/",
+	r.clients[clientID] = &osin.DefaultClient{
+		Id:          clientID,
+		Secret:      clientSecret,
+		RedirectUri: "http://locahost",
 	}
 
 	return r

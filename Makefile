@@ -96,7 +96,7 @@ run: build
 	    --blocklists bin/test/blocklists \
 	    --active bin/test/active \
 	    --devices bin/test/passwd \
-	    --tick 30s
+	    --ticker-duration 30s
 
 .PHONY: test
 test: clean

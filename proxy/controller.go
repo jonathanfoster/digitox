@@ -18,20 +18,20 @@ import (
 // Controller represents a structure responsible for controlling the state of
 // the proxy blocklist in relation to active sessions.
 type Controller struct {
-	Filename   string
-	Processing bool
-	Tick       time.Duration
-	Timeout    time.Duration
-	ticker     *time.Ticker
+	Filename       string
+	Processing     bool
+	TickerDuration time.Duration
+	Timeout        time.Duration
+	ticker         *time.Ticker
 }
 
 // NewController creates a Controller instance.
 func NewController(filename string) *Controller {
 	return &Controller{
-		Filename:   filename,
-		Processing: false,
-		Tick:       time.Second * 30,
-		Timeout:    time.Second * 10,
+		Filename:       filename,
+		Processing:     false,
+		TickerDuration: time.Second * 30,
+		Timeout:        time.Second * 10,
 	}
 }
 
@@ -106,7 +106,7 @@ func (c *Controller) ReadBlocklistFile() ([]string, error) {
 
 // Run starts a timer and updates proxy blocklist on a scheduled basis.
 func (c *Controller) Run() {
-	c.ticker = time.NewTicker(c.Tick)
+	c.ticker = time.NewTicker(c.TickerDuration)
 
 	go func() {
 		for range c.ticker.C {

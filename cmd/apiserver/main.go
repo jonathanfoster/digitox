@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/rsa"
 	"io/ioutil"
 	"os"
 	"time"
@@ -26,9 +25,11 @@ var (
 	blocklists       = app.Flag("blocklists", "Blocklists store directory.").Default("/etc/digitox/blocklists/").String()
 	active           = app.Flag("active", "Active blocklist file name.").Default("/etc/digitox/active").String()
 	devices          = app.Flag("devices", "Devices password file name.").Default("/etc/digitox/passwd").String()
-	tick             = app.Flag("tick", "Tick duration of blocklist update ticker.").Short('t').Default("1s").String()
+	tickerDuration   = app.Flag("ticker-duration", "Duration of blocklist update ticker.").Short('t').Default("1s").String()
 	signingKeyPath   = app.Flag("signing-key", "RSA private key path for signing JWT tokens.").Default("/etc/digitox/signing-key.pem").String()
 	verifyingKeyPath = app.Flag("verifying-key", "RSA public key path verifying JWT tokens.").Default("/etc/digitox/verifying-key.pem").String()
+	clientID         = app.Flag("client-id", "OAuth client ID.").String()
+	clientSecret     = app.Flag("client-secret", "OAuth client secret.").String()
 )
 
 func main() {
@@ -39,19 +40,6 @@ func main() {
 		log.Debug("debug log messages enabled")
 	}
 
-	initStores(blocklists, sessions, devices)
-
-	d, err := time.ParseDuration(*tick)
-	if err != nil {
-		log.Warnf("error parsing duration %s: using default value 1s: %s", err.Error())
-		d = time.Second * 1
-	}
-
-	log.Info("starting proxy controller")
-	ctrl := proxy.NewController(*active)
-	ctrl.Tick = d
-	ctrl.Run()
-
 	status.Current = &status.Status{
 		Version: version,
 	}
@@ -59,8 +47,16 @@ func main() {
 	config := server.NewConfig()
 
 	config.Addr = ":" + *port
-	config.TokenSigningKey = initSigningKey(signingKeyPath)
-	config.TokenVerifyingKey = initVerifyingKey(verifyingKeyPath)
+	initCredentials(config, clientID, clientSecret)
+	initStores(blocklists, sessions, devices)
+	initTickerDuration(config, tickerDuration)
+	initTokenSigningKey(config, signingKeyPath)
+	initTokenVerifyingKey(config, verifyingKeyPath)
+
+	log.Info("starting proxy controller")
+	ctrl := proxy.NewController(*active)
+	ctrl.TickerDuration = config.TickerDuration
+	ctrl.Run()
 
 	exitCode := 0
 
@@ -78,6 +74,22 @@ func main() {
 	}
 
 	os.Exit(exitCode)
+}
+
+func initCredentials(config *server.Config, clientID *string, clientSecret *string) {
+	if clientID == nil || *clientID == "" {
+		log.Warnf("client ID not provided: using default client ID %s", oauth.DefaultClientID)
+		config.ClientID = oauth.DefaultClientID
+	} else {
+		config.ClientID = *clientID
+	}
+
+	if clientSecret == nil || *clientSecret == "" {
+		log.Warnf("client secret not provided: using default client secret %s", oauth.DefaultClientSecret)
+		config.ClientSecret = oauth.DefaultClientSecret
+	} else {
+		config.ClientSecret = *clientSecret
+	}
 }
 
 func initStores(blocklists *string, sessions *string, devices *string) {
@@ -100,7 +112,17 @@ func initStores(blocklists *string, sessions *string, devices *string) {
 	}
 }
 
-func initSigningKey(signingKeyPath *string) (signingKey *rsa.PrivateKey) {
+func initTickerDuration(config *server.Config, tick *string) {
+	d, err := time.ParseDuration(*tick)
+	if err != nil {
+		log.Warnf("error parsing duration %s: using default value 1s: %s", err.Error())
+		d = time.Second * 1
+	}
+
+	config.TickerDuration = d
+}
+
+func initTokenSigningKey(config *server.Config, signingKeyPath *string) {
 	if signingKeyPath != nil && *signingKeyPath != "" {
 		signingKeyBytes, err := ioutil.ReadFile(*signingKeyPath)
 		if err != nil {
@@ -108,22 +130,20 @@ func initSigningKey(signingKeyPath *string) (signingKey *rsa.PrivateKey) {
 		}
 
 		if len(signingKeyBytes) > 0 {
-			signingKey, err = jwt.ParseRSAPrivateKeyFromPEM(signingKeyBytes)
+			config.TokenSigningKey, err = jwt.ParseRSAPrivateKeyFromPEM(signingKeyBytes)
 			if err != nil {
 				log.Warn("error parsing RSA private key from signing key bytes: ", err.Error())
 			}
 		}
 	}
 
-	if signingKey == nil {
+	if config.TokenSigningKey == nil {
 		log.Warnf("signing key not provided: using default signing key")
-		signingKey = oauth.DefaultSigningKey
+		config.TokenSigningKey = oauth.DefaultSigningKey
 	}
-
-	return
 }
 
-func initVerifyingKey(verifyingKeyPath *string) (verifyingKey *rsa.PublicKey) {
+func initTokenVerifyingKey(config *server.Config, verifyingKeyPath *string) {
 	if verifyingKeyPath != nil && *verifyingKeyPath != "" {
 		verifyingKeyBytes, err := ioutil.ReadFile(*verifyingKeyPath)
 		if err != nil {
@@ -131,17 +151,15 @@ func initVerifyingKey(verifyingKeyPath *string) (verifyingKey *rsa.PublicKey) {
 		}
 
 		if len(verifyingKeyBytes) > 0 {
-			verifyingKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyingKeyBytes)
+			config.TokenVerifyingKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyingKeyBytes)
 			if err != nil {
 				log.Warn("error parsing RSA public key from verifying key bytes: ", err.Error())
 			}
 		}
 	}
 
-	if verifyingKey == nil {
+	if config.TokenVerifyingKey == nil {
 		log.Warnf("verifying key not provided: using default verifying key")
-		verifyingKey = oauth.DefaultVerifyingKey
+		config.TokenVerifyingKey = oauth.DefaultVerifyingKey
 	}
-
-	return
 }

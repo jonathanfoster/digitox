@@ -2,13 +2,7 @@
 
 This document provides a high-level roadmap for Digitox development.
 
-Prioritization follows the principles found in Ron Jeffries' [The Nature of Software Development](https://www.amazon.com/gp/product/1941222374/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1941222374&linkCode=as2&tag=github-jonathanfoster-digitox-20&linkId=eb959b758bf93091a58f633b92397024) (if you only read one Agile book, read this one).
-
-* Keep it simple
-* Make it valuable
-* Build it piece by piece
-
-## CI/CD [In Progress]
+## CI/CD
 
 * [X] CI/CD: Build API server docker image
 * [X] CI/CD: Run proxy and API server containers with shared data store
@@ -57,11 +51,7 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Authorization
 
-* [X] Auth: Restrict access using auth token - **IN PROGRESS**
-** [X] Auth: Create OAuth endpoints
-** [X] Auth: Use JWT token signed with RSA
-** [X] Auth: Authorize requests with JWT token
-** [ ] Auth: Pass in client ID and secret as CLI arg
+* [X] Auth: Restrict access using auth token
 
 ## Misc
 

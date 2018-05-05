@@ -24,7 +24,7 @@ func New(config *Config) *Server {
 // Run listens on the TCP network address addr and then
 // calls Serve to handle requests on incoming connections.
 func (s *Server) Run() error {
-	oauth.InitOAuth(s.config.TokenSigningKey)
+	oauth.InitOAuthServer(s.config.TokenSigningKey, s.config.ClientID, s.config.ClientSecret)
 
 	router := NewRouter()
 
