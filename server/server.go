@@ -29,6 +29,7 @@ func (s *Server) Run() error {
 	router := NewRouter()
 
 	n := negroni.New()
+	n.Use(middleware.NewAuth(s.config.TokenVerifyingKey))
 	n.Use(middleware.NewRecovery())
 	n.Use(middleware.NewLogger())
 	n.UseHandler(router)

@@ -96,9 +96,7 @@ run: build
 	    --blocklists bin/test/blocklists \
 	    --active bin/test/active \
 	    --devices bin/test/passwd \
-	    --tick 10s \
-	    --signing-key "" \
-	    --verifying-key ""
+	    --tick 30s
 
 .PHONY: test
 test: clean

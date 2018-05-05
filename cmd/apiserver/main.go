@@ -58,27 +58,26 @@ func main() {
 
 	config := server.NewConfig()
 
+	config.Addr = ":" + *port
 	config.TokenSigningKey = initSigningKey(signingKeyPath)
 	config.TokenVerifyingKey = initVerifyingKey(verifyingKeyPath)
 
-	addr := ":" + *port
-	code := 0
-	config.Addr = ":" + *port
+	exitCode := 0
 
-	log.Info("server listening on ", addr)
+	log.Info("server listening on ", config.Addr)
 	srv := server.New(config)
 	if err := srv.Run(); err != nil {
 		log.Error("error starting server: ", err)
-		code = 1
+		exitCode = 1
 	}
 
 	log.Info("stopping proxy controller")
 	if err := ctrl.Stop(); err != nil {
 		log.Error("error stopping proxy controller: ", err)
-		code = 1
+		exitCode = 1
 	}
 
-	os.Exit(code)
+	os.Exit(exitCode)
 }
 
 func initStores(blocklists *string, sessions *string, devices *string) {
@@ -105,13 +104,13 @@ func initSigningKey(signingKeyPath *string) (signingKey *rsa.PrivateKey) {
 	if signingKeyPath != nil && *signingKeyPath != "" {
 		signingKeyBytes, err := ioutil.ReadFile(*signingKeyPath)
 		if err != nil {
-			log.Error("error reading signing key file: ", err.Error())
+			log.Warn("error reading signing key file: ", err.Error())
 		}
 
 		if len(signingKeyBytes) > 0 {
 			signingKey, err = jwt.ParseRSAPrivateKeyFromPEM(signingKeyBytes)
 			if err != nil {
-				log.Error("error parsing RSA private key from signing key bytes: ", err.Error())
+				log.Warn("error parsing RSA private key from signing key bytes: ", err.Error())
 			}
 		}
 	}
@@ -128,13 +127,13 @@ func initVerifyingKey(verifyingKeyPath *string) (verifyingKey *rsa.PublicKey) {
 	if verifyingKeyPath != nil && *verifyingKeyPath != "" {
 		verifyingKeyBytes, err := ioutil.ReadFile(*verifyingKeyPath)
 		if err != nil {
-			log.Error("error reading verifying key file: ", err.Error())
+			log.Warn("error reading verifying key file: ", err.Error())
 		}
 
 		if len(verifyingKeyBytes) > 0 {
 			verifyingKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyingKeyBytes)
 			if err != nil {
-				log.Error("error parsing RSA public key from verifying key bytes: ", err.Error())
+				log.Warn("error parsing RSA public key from verifying key bytes: ", err.Error())
 			}
 		}
 	}

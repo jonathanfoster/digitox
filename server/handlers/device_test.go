@@ -6,12 +6,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jonathanfoster/digitox/models/device"
-	"github.com/jonathanfoster/digitox/test/setup"
 	"github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/jonathanfoster/digitox/models/device"
 	"github.com/jonathanfoster/digitox/server"
+	"github.com/jonathanfoster/digitox/test/setup"
 )
 
 func TestDeviceHandler(t *testing.T) {

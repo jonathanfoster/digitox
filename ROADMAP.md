@@ -57,10 +57,11 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 
 ## Authorization
 
-* [ ] Auth: Restrict access using auth token - **IN PROGRESS**
+* [X] Auth: Restrict access using auth token - **IN PROGRESS**
 ** [X] Auth: Create OAuth endpoints
 ** [X] Auth: Use JWT token signed with RSA
-** [ ] Auth: Authorize requests with JWT token
+** [X] Auth: Authorize requests with JWT token
+** [ ] Auth: Pass in client ID and secret as CLI arg
 
 ## Misc
 
@@ -69,3 +70,4 @@ Prioritization follows the principles found in Ron Jeffries' [The Nature of Soft
 * [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API
+* [ ] Misc: Use SQLite as data store
