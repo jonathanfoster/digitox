@@ -92,7 +92,7 @@ func TestDeviceHandler(t *testing.T) {
 			})
 		})
 
-		Convey("DeleteDevice", func() {
+		Convey("RemoveDevice", func() {
 			Convey("Status code should be 204", func() {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("DELETE", "/devices/"+testdev.Name, nil)

@@ -90,8 +90,8 @@ func CreateDevice(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusCreated, dev)
 }
 
-// DeleteDevice handles the DELETE /devices/{id} route.
-func DeleteDevice(w http.ResponseWriter, r *http.Request) {
+// RemoveDevice handles the DELETE /devices/{id} route.
+func RemoveDevice(w http.ResponseWriter, r *http.Request) {
 	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)

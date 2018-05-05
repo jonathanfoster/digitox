@@ -92,8 +92,8 @@ func CreateSession(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusCreated, sess)
 }
 
-// DeleteSession handles the DELETE /sessions/{id} route.
-func DeleteSession(w http.ResponseWriter, r *http.Request) {
+// RemoveSession handles the DELETE /sessions/{id} route.
+func RemoveSession(w http.ResponseWriter, r *http.Request) {
 	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)

@@ -149,7 +149,7 @@ func TestSessionHandler(t *testing.T) {
 			})
 		})
 
-		Convey("DeleteSession", func() {
+		Convey("RemoveSession", func() {
 			Convey("Status code should be 204", func() {
 				w := httptest.NewRecorder()
 				r := httptest.NewRequest("DELETE", "/sessions/"+testsess.ID.String(), nil)

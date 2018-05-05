@@ -92,8 +92,8 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusCreated, list)
 }
 
-// DeleteBlocklist handles the DELETE /blocklists/{id} route.
-func DeleteBlocklist(w http.ResponseWriter, r *http.Request) {
+// RemoveBlocklist handles the DELETE /blocklists/{id} route.
+func RemoveBlocklist(w http.ResponseWriter, r *http.Request) {
 	id, ok := ParseID(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
