@@ -12,8 +12,8 @@ var (
 	// Session is the session storage implementation.
 	Session Interface
 
-	// ErrNotExist is the error returned when a record does not exist.
-	ErrNotExist = errors.New("record does not exist")
+	// ErrNotFound is the error returned when a record is not found.
+	ErrNotFound = errors.New("record not found")
 )
 
 // Interface is the storage interface.

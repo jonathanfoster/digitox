@@ -41,7 +41,7 @@ func All() ([]*Device, error) {
 func Exists(name string) (bool, error) {
 	exists, err := store.Device.Exists(name)
 	if err != nil {
-		if err == store.ErrNotExist {
+		if err == store.ErrNotFound {
 			return false, nil
 		}
 

@@ -34,7 +34,7 @@ func (f *FileStore) All() ([]string, error) {
 	files, err := ioutil.ReadDir(f.Dirname)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, ErrNotExist
+			return nil, ErrNotFound
 		}
 
 		return nil, errors.Wrap(err, "error retrieving all values")
@@ -79,7 +79,7 @@ func (f *FileStore) Find(id string, out interface{}) error {
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return ErrNotExist
+			return ErrNotFound
 		}
 
 		return errors.Wrapf(err, "error reading file %s", filename)
@@ -110,7 +110,7 @@ func (f *FileStore) Remove(id string) error {
 
 	if err := os.Remove(filename); err != nil {
 		if os.IsNotExist(err) {
-			return ErrNotExist
+			return ErrNotFound
 		}
 
 		return errors.Wrapf(err, "error removing file %s", filename)

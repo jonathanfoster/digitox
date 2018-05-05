@@ -42,7 +42,7 @@ func (c *Controller) ActiveBlocklist() ([]string, error) {
 	// Get all sessions
 	sessions, err := session.All()
 	if err != nil {
-		if err == store.ErrNotExist {
+		if err == store.ErrNotFound {
 			return nil, nil
 		}
 
@@ -65,7 +65,7 @@ func (c *Controller) ActiveBlocklist() ([]string, error) {
 			list, err := blocklist.Find(id.String())
 			if err != nil {
 				// Be resilient to missing blocklists
-				if err == store.ErrNotExist {
+				if err == store.ErrNotFound {
 					log.Warnf("error determining active blocklist: error finding blocklist %s: %s", id, err.Error())
 					continue
 				}

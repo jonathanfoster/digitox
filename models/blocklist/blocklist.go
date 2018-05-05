@@ -48,7 +48,7 @@ func All() ([]*Blocklist, error) {
 func Exists(id string) (bool, error) {
 	exists, err := store.Blocklist.Exists(id)
 	if err != nil {
-		if err == store.ErrNotExist {
+		if err == store.ErrNotFound {
 			return false, nil
 		}
 

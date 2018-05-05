@@ -17,7 +17,7 @@ import (
 func ListDevices(w http.ResponseWriter, r *http.Request) {
 	devices, err := device.All()
 	if err != nil {
-		if errors.Cause(err) == store.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotFound {
 			log.Warn("devices do not exist: ", err.Error())
 			JSON(w, http.StatusOK, []*blocklist.Blocklist{})
 			return
@@ -45,7 +45,7 @@ func FindDevice(w http.ResponseWriter, r *http.Request) {
 
 	dev, err := device.Find(id)
 	if err != nil {
-		if errors.Cause(err) == store.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotFound {
 			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
@@ -99,7 +99,7 @@ func DeleteDevice(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := device.Remove(id); err != nil {
-		if errors.Cause(err) == store.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotFound {
 			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return
@@ -123,7 +123,7 @@ func UpdateDevice(w http.ResponseWriter, r *http.Request) {
 
 	dev, err := device.Find(id)
 	if err != nil {
-		if errors.Cause(err) == store.ErrNotExist {
+		if errors.Cause(err) == store.ErrNotFound {
 			log.Warnf("device %s not found: %s", id, err.Error())
 			Error(w, http.StatusNotFound)
 			return

@@ -65,7 +65,7 @@ func (h *HtpasswdStore) Find(name string, out interface{}) (err error) {
 
 	hash, ok := passwords[name]
 	if !ok {
-		return ErrNotExist
+		return ErrNotFound
 	}
 
 	defer func() {
@@ -111,7 +111,7 @@ func (h *HtpasswdStore) Init() error {
 func (h *HtpasswdStore) Remove(name string) error {
 	if err := htpasswd.RemoveUser(h.Filename, name); err != nil {
 		if err == htpasswd.ErrNotExist {
-			return ErrNotExist
+			return ErrNotFound
 		}
 
 		return errors.Wrapf(err, "error removing device %s from htpasswd file", name)
