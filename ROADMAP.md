@@ -56,7 +56,7 @@ This document provides a high-level roadmap for Digitox development.
 ## Misc
 
 * [X] Misc: Rename project to Digitox
-* [ ] Misc: Combine Squid and API server containers
+* [X] Misc: Combine Squid and API server containers
 * [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API

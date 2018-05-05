@@ -20,45 +20,23 @@ dep-build:
 	go get -u github.com/golang/dep/cmd/dep
 	dep ensure
 
-.PHONY: dep-deploy
-dep-deploy:
-	./scripts/install-kops.sh
-	./scripts/install-kubectl.sh
-
 .PHONY: dep-dev
 dep-dev:
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
-.PHONY: deploy
-deploy: deploy-apiserver deploy-proxy
-
-.PHONY: deploy-apiserver
-deploy-apiserver:
-	kubectl apply -f ./k8s/apiserver/
-
-.PHONY: deploy-proxy
-deploy-proxy:
-	kubectl apply -f ./k8s/proxy/
-
 .PHONY: docker-build
 docker-build:
-	docker build -t digitox/digitox-apiserver -f ./build/apiserver/Dockerfile .
-	docker build -t digitox/digitox-proxy ./build/proxy/
+	docker build -t digitox/digitox .
 
 .PHONY: docker-push
 docker-push: docker-build
 	$(shell aws ecr get-login --region us-east-1)
-	docker tag digitox/digitox-apiserver:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:latest
-	docker tag digitox/digitox-apiserver:latest digitox/digitox-apiserver:$(VERSION)
-	docker tag digitox/digitox-apiserver:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-apiserver:latest
-	docker tag digitox/digitox-proxy:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-proxy:latest
-	docker tag digitox/digitox-proxy:latest digitox/digitox-proxy:$(VERSION)
-	docker tag digitox/digitox-proxy:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-proxy:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-proxy:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox-proxy:latest
+	docker tag digitox/digitox:latest digitox/digitox:$(VERSION)
+	docker tag digitox/digitox:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:latest
+	docker tag digitox/digitox:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:$(VERSION)
+	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:$(VERSION)
+	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:latest
 
 .PHONY: fmt
 fmt:
@@ -86,7 +64,7 @@ lint:
 precommit: fmt-check imports-check lint test
 
 .PHONY: release
-release: precommit docker-push deploy
+release: precommit docker-push
 
 .PHONY: run
 run: build

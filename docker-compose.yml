@@ -1,23 +1,12 @@
 version: '3'
 services:
-  apiserver:
-    build:
-      context: .
-      dockerfile: ./build/apiserver/Dockerfile
-    image: digitox/digitox-apiserver
-    container_name: digitox-apiserver
-    ports:
-      - "8080:8080"
-    volumes:
-      - digitox:/etc/digitox
-  proxy:
-    build:
-      context: ./build/proxy
-      dockerfile: ./Dockerfile
-    image: digitox/digitox-proxy
-    container_name: digitox-proxy
+  digitox:
+    build: .
+    image: digitox/digitox
+    container_name: digitox
     ports:
       - "3128:3128"
+      - "8080:8080"
     volumes:
       - digitox:/etc/digitox
 volumes:

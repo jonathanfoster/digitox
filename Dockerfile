@@ -1,3 +1,8 @@
+FROM golang:latest as build
+WORKDIR /go/src/github.com/jonathanfoster/digitox/
+COPY . .
+RUN make dep-build && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 make build
+
 FROM alpine:latest
 
 RUN apk add --no-cache squid incron && \
@@ -7,12 +12,12 @@ RUN apk add --no-cache squid incron && \
     echo "/etc/digitox/active IN_MODIFY /usr/sbin/squid -k reconfigure" > /var/spool/incron/root && \
     echo "/etc/digitox/passwd IN_MODIFY /usr/sbin/squid -k reconfigure" >> /var/spool/incron/root
 
+COPY --from=build /go/src/github.com/jonathanfoster/digitox/bin/digitox-apiserver /usr/local/bin/
 COPY squid.conf /etc/squid/
 COPY entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-EXPOSE 3128
+EXPOSE 3128 8080
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["-NYCd", "1"]

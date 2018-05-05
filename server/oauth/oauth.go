@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	DefaultClientID     = "59f92849-b883-402c-b429-15a67663d4f3"
-	DefaultClientSecret = "450a31ea-0c18-4925-97db-b9f981ca4a62"
+	// DefaultClientID is the default client ID used if none provided.
+	DefaultClientID = "59f92849-b883-402c-b429-15a67663d4f3"
+	// DefaultClientSecret is the default client secret used if none provided.
+	DefaultClientSecret = "450a31ea-0c18-4925-97db-b9f981ca4a62" // nolint: gas
 )
 
 // Server serves OAuth endpoint requests.

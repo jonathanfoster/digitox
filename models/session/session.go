@@ -178,7 +178,7 @@ func (s *Session) Save() error {
 }
 
 // Validate validates tags for fields and returns false if there are any errors.
-func (s *Session) Validate() (bool, error) {
+func (s *Session) Validate() (bool, error) { // nolint: gocyclo
 	var msgs []string
 
 	listsExist := true
