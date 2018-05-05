@@ -1,6 +1,6 @@
 # Digitox
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/jonathanfoster/digitox?style=flat-square)](https://goreportcard.com/report/github.com/jonathanfoster/digitox)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jonathanfoster/digitox)](https://goreportcard.com/report/github.com/jonathanfoster/digitox)
 [![Coverage](https://codecov.io/gh/jonathanfoster/digitox/branch/master/graph/badge.svg)](https://codecov.io/gh/jonathanfoster/digitox)
 [![Build Status](https://img.shields.io/travis/jonathanfoster/digitox.svg?style=flat-square&&branch=master)](https://travis-ci.org/jonathanfoster/digitox)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/jonathanfoster/digitox)
