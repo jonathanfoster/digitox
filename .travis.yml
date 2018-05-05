@@ -1,0 +1,9 @@
+language: go
+go:
+  - tip
+
+script:
+  - make dep
+  - make lint
+  - make test
+  - make
