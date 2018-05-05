@@ -10,6 +10,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/jonathanfoster/digitox/server"
+	"github.com/jonathanfoster/digitox/server/oauth"
 )
 
 type AccessToken struct {
@@ -25,14 +26,12 @@ func TestOAuthHandler(t *testing.T) {
 
 	Convey("Blocklist Handler", t, func() {
 		router := server.NewRouter()
-		clientID := "admin"
-		clientSecret := "Digitox123"
 
 		Convey("Token", func() {
 			Convey("Client Credentials grant type", func() {
 				Convey("GET /oauth/token", func() {
 					targetFormat := "/oauth/token?grant_type=client_credentials&client_id=%s&client_secret=%s&redirect_uri=http://localhost"
-					target := fmt.Sprintf(targetFormat, clientID, clientSecret)
+					target := fmt.Sprintf(targetFormat, oauth.DefaultClientID, oauth.DefaultClientSecret)
 
 					Convey("Status code should be 200", func() {
 						w := httptest.NewRecorder()
