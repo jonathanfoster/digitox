@@ -1,12 +1,18 @@
 language: go
+
 go:
   - tip
+
 branches:
   only:
   - master
+
 script:
   - make dep
   - make lint
-  - make test
+  - make test-codecov
   - make
   - make docker-hub-build
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

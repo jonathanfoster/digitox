@@ -77,6 +77,10 @@ test: clean
 	go test -coverprofile=./bin/coverage.out -v ./...
 	go tool cover -func=./bin/coverage.out
 
+.PHONY: test-codecov
+test-codecov: test
+    mv bin/coverage.out coverage.txt
+
 .PHONY: test-cover-html
 test-cover-html:
 	go tool cover -html=./bin/coverage.out
