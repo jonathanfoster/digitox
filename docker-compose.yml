@@ -2,7 +2,7 @@ version: '3'
 services:
   digitox:
     build: .
-    image: digitox/digitox
+    image: jonathanfoster/digitox
     container_name: digitox
     ports:
       - "3128:3128"

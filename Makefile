@@ -1,12 +1,13 @@
 SHELL=/bin/bash
 SRC=$(shell go list -f '{{ .Dir }}' ./...)
+BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 VERSION=0.1.0
 
 all: clean build
 
 .PHONY: build
 build:
-	go build -ldflags "-X main.version=$(VERSION)" -o bin/digitox-apiserver ./cmd/apiserver
+	go build -ldflags "-X main.version=${VERSION}" -o bin/digitox-apiserver ./cmd/apiserver
 
 .PHONY: clean
 clean:
@@ -27,16 +28,14 @@ dep-dev:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t digitox/digitox .
+	docker build -t jonathanfoster/digitox .
 
-.PHONY: docker-push
-docker-push: docker-build
-	$(shell aws ecr get-login --region us-east-1)
-	docker tag digitox/digitox:latest digitox/digitox:$(VERSION)
-	docker tag digitox/digitox:latest 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:latest
-	docker tag digitox/digitox:$(VERSION) 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:$(VERSION)
-	docker push 672132384976.dkr.ecr.us-east-1.amazonaws.com/digitox/digitox:latest
+.PHONY: docker-hub-build
+docker-hub-build:
+	curl -H "Content-Type: application/json" \
+		--data "{\"source_type\": \"Branch\", \"source_name\": \"${BRANCH}\"}" \
+		-X POST \
+		https://registry.hub.docker.com/u/jonathanfoster/digitox/trigger/${DOCKER_HUB_TOKEN}/
 
 .PHONY: fmt
 fmt:
@@ -63,9 +62,6 @@ lint:
 .PHONY: precommit
 precommit: fmt-check imports-check lint test
 
-.PHONY: release
-release: precommit docker-push
-
 .PHONY: run
 run: build
 	mkdir -p bin/test/
@@ -82,6 +78,6 @@ test: clean
 	go test -coverprofile=./bin/coverage.out -v ./...
 	go tool cover -func=./bin/coverage.out
 
-.PHONY: cover-html
-cover-html:
+.PHONY: test-cover-html
+test-cover-html:
 	go tool cover -html=./bin/coverage.out

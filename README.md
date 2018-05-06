@@ -6,7 +6,7 @@
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/jonathanfoster/digitox)
 [![Release](https://img.shields.io/github/release/jonathanfoster/digitox.svg?style=flat-square)](https://github.com/jonathanfoster/digitox/releases/latest)
 
-Digitox is a self-hosted website blocker that allows you to block websites on your laptop and mobile devices without relying upon third-party services like [Freedom](https://freedom.to/).
+Digitox is a self-hosted website blocker that allows you to block sites on your devices without relying upon third-party services like [Freedom](https://freedom.to/).
 
 ## Features
 
