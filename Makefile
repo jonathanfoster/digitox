@@ -1,6 +1,5 @@
 SHELL=/bin/bash
 SRC=$(shell go list -f '{{ .Dir }}' ./...)
-BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 VERSION=0.1.0
 
 all: clean build
@@ -33,7 +32,7 @@ docker-build:
 .PHONY: docker-hub-build
 docker-hub-build:
 	curl -H "Content-Type: application/json" \
-		--data "{\"source_type\": \"Branch\", \"source_name\": \"${BRANCH}\"}" \
+		--data '{"source_type": "Branch", "source_name": "master"}" \
 		-X POST \
 		https://registry.hub.docker.com/u/jonathanfoster/digitox/trigger/${DOCKER_HUB_TOKEN}/
 
