@@ -79,7 +79,7 @@ test: clean
 
 .PHONY: test-codecov
 test-codecov: test
-    mv bin/coverage.out coverage.txt
+	mv bin/coverage.out coverage.txt
 
 .PHONY: test-cover-html
 test-cover-html:
