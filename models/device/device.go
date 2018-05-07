@@ -1,17 +1,24 @@
 package device
 
 import (
+	"time"
+
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 
 	"github.com/jonathanfoster/digitox/store"
 )
 
 // Device represents a device.
 type Device struct {
-	Name     string `json:"name" valid:"required"`
-	Password string `json:"password" valid:"required"`
-	Hash     string `json:"hash"`
+	ID        uuid.UUID  `json:"id" gorm:"type:text"`
+	Name      string     `json:"name" valid:"required"`
+	Password  string     `json:"password" valid:"required"`
+	Hash      string     `json:"hash"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 // New creates a Device instance.

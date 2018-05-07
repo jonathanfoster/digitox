@@ -7,7 +7,7 @@ This document provides a high-level roadmap for Digitox development.
 * [X] CI/CD: Build API server docker image
 * [X] CI/CD: Run proxy and API server containers with shared data store
 * [X] CI/CD: Create deployment pipeline using Kubernetes
-* [ ] CI/CD: Run unit tests during CI build
+* [X] CI/CD: Run unit tests during CI build
 
 ## API Server
 
@@ -60,4 +60,10 @@ This document provides a high-level roadmap for Digitox development.
 * [ ] Misc: Create digitoxctl CLI
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API
-* [ ] Misc: Use SQLite as data store
+* [ ] Misc: Use SQLite as data store - **IN PROGRESS**
+* [ ] Misc: Update README with Docker instructions
+
+## Someday Maybe
+
+* [ ] Security: Generate OAuth credentials if not provided (no default)
+* [ ] Security: Generate RSA key pair if not provided (no default)

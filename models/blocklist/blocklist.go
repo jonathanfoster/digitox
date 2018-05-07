@@ -1,6 +1,8 @@
 package blocklist
 
 import (
+	"time"
+
 	validator "github.com/asaskevich/govalidator"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
@@ -10,9 +12,12 @@ import (
 
 // Blocklist represents a list of websites to block.
 type Blocklist struct {
-	ID      uuid.UUID `json:"id"`
-	Name    string    `json:"name"`
-	Domains []string  `json:"domains" valid:"required"`
+	ID        uuid.UUID  `json:"id" gorm:"type:text"`
+	Name      string     `json:"name"`
+	Domains   []string   `json:"domains" valid:"required" gorm:"-"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 // New creates a Blocklist instance.

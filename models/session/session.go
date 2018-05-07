@@ -16,11 +16,11 @@ import (
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID             uuid.UUID   `json:"id"`
+	ID             uuid.UUID   `json:"id" gorm:"type:text"`
 	Name           string      `json:"name"`
 	Starts         time.Time   `json:"starts" valid:"required"`
 	Ends           time.Time   `json:"ends" valid:"required"`
-	Blocklists     []uuid.UUID `json:"blocklists" valid:"required"`
+	Blocklists     []uuid.UUID `json:"blocklists" valid:"required" gorm:"-"`
 	EverySunday    bool        `json:"every_sunday"`
 	EveryMonday    bool        `json:"every_monday"`
 	EveryTuesday   bool        `json:"every_tuesday"`
@@ -28,6 +28,9 @@ type Session struct {
 	EveryThursday  bool        `json:"every_thursday"`
 	EveryFriday    bool        `json:"every_friday"`
 	EverySaturday  bool        `json:"every_saturday"`
+	CreatedAt      time.Time   `json:"created_at"`
+	UpdatedAt      time.Time   `json:"updated_at"`
+	DeletedAt      *time.Time  `json:"deleted_at"`
 }
 
 // New creates a Session instance.
@@ -152,8 +155,7 @@ func (s *Session) RepeatNever() {
 }
 
 // RepeatsToday returns true if the session repeats on today's day of the week.
-// nolint: gocyclo
-func (s *Session) RepeatsToday() bool {
+func (s *Session) RepeatsToday() bool { // nolint: gocyclo
 	now := time.Now().UTC()
 	weekday := now.Weekday()
 

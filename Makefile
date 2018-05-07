@@ -69,7 +69,8 @@ run: build
 	    --blocklists bin/test/blocklists \
 	    --active bin/test/active \
 	    --devices bin/test/passwd \
-	    --ticker-duration 30s
+	    --ticker-duration 30s \
+	    --data-source bin/test/digitox.db
 
 .PHONY: test
 test: clean

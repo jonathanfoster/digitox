@@ -10,6 +10,7 @@ type Config struct {
 	Addr              string
 	ClientID          string
 	ClientSecret      string
+	DataSourceName    string
 	TickerDuration    time.Duration
 	TokenSigningKey   *rsa.PrivateKey
 	TokenVerifyingKey *rsa.PublicKey
