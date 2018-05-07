@@ -56,7 +56,7 @@ imports-check:
 
 .PHONY: lint
 lint:
-	gometalinter --vendor ./...
+	gometalinter --vendor --deadline 60s ./...
 
 .PHONY: precommit
 precommit: fmt-check imports-check lint test
