@@ -51,7 +51,7 @@ func (c *Controller) ActiveBlocklist() ([]string, error) {
 
 	// Find active sessions
 	for _, sess := range sessions {
-		if sess.Active() {
+		if sess.IsActive() {
 			activeSessions = append(activeSessions, sess)
 		}
 	}

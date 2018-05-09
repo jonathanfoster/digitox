@@ -95,8 +95,8 @@ func Remove(id string) error {
 	return nil
 }
 
-// Active determines whether a session is active based on starts, ends, and daily repeat options.
-func (s *Session) Active() bool {
+// IsActive determines whether a session is active based on starts, ends, and daily repeat options.
+func (s *Session) IsActive() bool {
 	now := time.Now().UTC()
 
 	starts := s.Starts.UTC()

@@ -22,7 +22,7 @@ func TestSession(t *testing.T) {
 		testlist := setup.TestBlocklist()
 		testsess := setup.TestSession(testlist.ID)
 
-		Convey("Active", func() {
+		Convey("IsActive", func() {
 			Convey("When session is active", func() {
 				Convey("Should return true", func() {
 					now := time.Now().UTC()
@@ -30,7 +30,7 @@ func TestSession(t *testing.T) {
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 
-					So(sess.Active(), ShouldBeTrue)
+					So(sess.IsActive(), ShouldBeTrue)
 				})
 			})
 
@@ -42,7 +42,7 @@ func TestSession(t *testing.T) {
 					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 					sess.RepeatEveryDay()
 
-					So(sess.Active(), ShouldBeTrue)
+					So(sess.IsActive(), ShouldBeTrue)
 				})
 			})
 
@@ -53,7 +53,7 @@ func TestSession(t *testing.T) {
 					sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 					sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 
-					So(sess.Active(), ShouldBeFalse)
+					So(sess.IsActive(), ShouldBeFalse)
 				})
 			})
 		})
