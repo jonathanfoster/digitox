@@ -1,9 +1,14 @@
 package blocklist
 
 import (
+	"bytes"
+	"database/sql/driver"
+	"fmt"
+	"strings"
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
@@ -14,10 +19,44 @@ import (
 type Blocklist struct {
 	ID        uuid.UUID  `json:"id" gorm:"type:text"`
 	Name      string     `json:"name"`
-	Domains   []string   `json:"domains" valid:"required" gorm:"-"`
+	Domains   domainList `json:"domains" valid:"required" gorm:"type:text"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
+}
+
+type domainList []string
+
+func (d domainList) Value() (driver.Value, error) {
+	var buffer bytes.Buffer
+
+	for _, domain := range d {
+		buffer.WriteString(fmt.Sprintf("%s,", domain))
+	}
+
+	return buffer.String(), nil
+}
+
+func (d *domainList) Scan(value interface{}) error {
+	sv, err := driver.String.ConvertValue(value)
+	if err != nil {
+		return errors.Wrap(err, "error converting scanner value to string type")
+	}
+
+	b, ok := sv.([]byte)
+	if !ok {
+		return errors.New("scanner value is not byte array type")
+	}
+
+	s := string(b)
+
+	for _, domain := range strings.Split(s, ",") {
+		if domain != "" {
+			*d = append(*d, domain)
+		}
+	}
+
+	return nil
 }
 
 // New creates a Blocklist instance.
@@ -30,54 +69,60 @@ func New() *Blocklist {
 
 // All retrieves all blocklists.
 func All() ([]*Blocklist, error) {
-	ff, err := store.Blocklist.All()
-	if err != nil {
-		return nil, err
+	var lists []*Blocklist
+
+	if err := store.DB.Find(&lists).Error; err != nil {
+		return nil, errors.Wrap(err, "error retrieving all blocklists")
 	}
 
-	var bb []*Blocklist
-
-	for _, f := range ff {
-		b, err := Find(f)
-		if err != nil {
-			return nil, err
-		}
-
-		bb = append(bb, b)
-	}
-
-	return bb, nil
+	return lists, nil
 }
 
 // Exists checks if a blocklist exists by ID.
-func Exists(id string) (bool, error) {
-	exists, err := store.Blocklist.Exists(id)
-	if err != nil {
-		if err == store.ErrNotFound {
+func Exists(id uuid.UUID) (bool, error) {
+	if _, err := Find(id); err != nil {
+		if errors.Cause(err) == store.ErrNotFound {
 			return false, nil
 		}
 
-		return false, errors.Wrapf(err, "error checking if blocklist %s exists", id)
+		return false, errors.Wrap(err, "error checking if blocklist exists")
 	}
 
-	return exists, nil
+	return true, nil
 }
 
 // Find finds a blocklist by ID.
-func Find(id string) (*Blocklist, error) {
+func Find(id uuid.UUID) (*Blocklist, error) {
 	var list Blocklist
 
-	if err := store.Blocklist.Find(id, &list); err != nil {
-		return nil, errors.Wrapf(err, "error finding blocklist %s", id)
+	if err := store.DB.Find(&list, &Blocklist{ID: id}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return nil, errors.Wrap(err, "error finding blocklist")
 	}
 
 	return &list, nil
 }
 
 // Remove removes the blocklist.
-func Remove(id string) error {
-	if err := store.Blocklist.Remove(id); err != nil {
-		return errors.Wrapf(err, "error removing blocklist %s", id)
+func Remove(id uuid.UUID) error {
+	exists, err := Exists(id)
+	if err != nil {
+		return errors.Wrap(err, "error removing blocklist")
+	}
+
+	if !exists {
+		return store.ErrNotFound
+	}
+
+	if err := store.DB.Delete(&Blocklist{ID: id}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return errors.Wrap(err, "error removing blocklist")
 	}
 
 	return nil
@@ -85,8 +130,12 @@ func Remove(id string) error {
 
 // Save writes the blocklist to the filesystem.
 func (b *Blocklist) Save() error {
-	if err := store.Blocklist.Save(b.ID.String(), b); err != nil {
-		return errors.Wrapf(err, "error saving blocklist %s", b.ID)
+	if err := store.DB.Save(b).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return errors.Wrap(err, "error saving blocklist")
 	}
 
 	return nil

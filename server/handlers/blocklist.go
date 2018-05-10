@@ -37,8 +37,9 @@ func ListBlocklists(w http.ResponseWriter, r *http.Request) {
 
 // FindBlocklist handles the GET /blocklists/{id} route.
 func FindBlocklist(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}
@@ -94,8 +95,9 @@ func CreateBlocklist(w http.ResponseWriter, r *http.Request) {
 
 // RemoveBlocklist handles the DELETE /blocklists/{id} route.
 func RemoveBlocklist(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}
@@ -117,8 +119,9 @@ func RemoveBlocklist(w http.ResponseWriter, r *http.Request) {
 
 // UpdateBlocklist handles the PUT /blocklists/{id} route.
 func UpdateBlocklist(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}

@@ -1,24 +1,16 @@
 package device
 
 import (
-	"time"
-
 	validator "github.com/asaskevich/govalidator"
-	"github.com/pkg/errors"
-	"github.com/satori/go.uuid"
-
 	"github.com/jonathanfoster/digitox/store"
+	"github.com/pkg/errors"
 )
 
 // Device represents a device.
 type Device struct {
-	ID        uuid.UUID  `json:"id" gorm:"type:text"`
-	Name      string     `json:"name" valid:"required"`
-	Password  string     `json:"password" valid:"required"`
-	Hash      string     `json:"hash"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
+	Name     string `json:"name" valid:"required"`
+	Password string `json:"password" valid:"required"`
+	Hash     string `json:"hash"`
 }
 
 // New creates a Device instance.
@@ -52,7 +44,7 @@ func Exists(name string) (bool, error) {
 			return false, nil
 		}
 
-		return false, errors.Wrapf(err, "error checking if device %s exists", name)
+		return false, errors.Wrap(err, "error checking if device exists")
 	}
 
 	return exists, nil
@@ -63,7 +55,7 @@ func Find(name string) (*Device, error) {
 	var dev Device
 
 	if err := store.Device.Find(name, &dev); err != nil {
-		return nil, errors.Wrapf(err, "error finding device %s", name)
+		return nil, errors.Wrap(err, "error finding device")
 	}
 
 	return &dev, nil
@@ -72,7 +64,7 @@ func Find(name string) (*Device, error) {
 // Remove removes the device.
 func Remove(name string) error {
 	if err := store.Device.Remove(name); err != nil {
-		return errors.Wrapf(err, "error removing device %s", name)
+		return errors.Wrap(err, "error removing device")
 	}
 
 	return nil
@@ -81,7 +73,7 @@ func Remove(name string) error {
 // Save writes device to store.
 func (d *Device) Save() error {
 	if err := store.Device.Save(d.Name, d); err != nil {
-		return errors.Wrapf(err, "error saving device %s", d.Name)
+		return errors.Wrap(err, "error saving device")
 	}
 
 	return nil

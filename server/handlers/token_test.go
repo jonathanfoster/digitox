@@ -60,7 +60,7 @@ func TestOAuthHandler(t *testing.T) {
 					Convey("When client is unauthorized", func() {
 						Convey("Status code should be 400", func() {
 							w := httptest.NewRecorder()
-							r := httptest.NewRequest("GET", fmt.Sprintf(targetFormat, "doesnotexist", "doesnotexist"), nil)
+							r := httptest.NewRequest("GET", fmt.Sprintf(targetFormat, "notfound", "notfound"), nil)
 
 							router.ServeHTTP(w, r)
 							So(w.Code, ShouldEqual, 400)

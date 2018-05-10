@@ -10,10 +10,11 @@ type Config struct {
 	Addr              string
 	ClientID          string
 	ClientSecret      string
-	DataSourceName    string
+	DataSource        string
 	TickerDuration    time.Duration
 	TokenSigningKey   *rsa.PrivateKey
 	TokenVerifyingKey *rsa.PublicKey
+	Verbose           bool
 }
 
 // NewConfig creates a Config instance

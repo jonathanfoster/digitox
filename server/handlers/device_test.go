@@ -43,7 +43,7 @@ func TestDeviceHandler(t *testing.T) {
 			Convey("When device does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("GET", "/devices/doesnotexist", nil)
+					r := httptest.NewRequest("GET", "/devices/notfound", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -104,7 +104,7 @@ func TestDeviceHandler(t *testing.T) {
 			Convey("When device does not exist", func() {
 				Convey("Status code should be 404", func() {
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("DELETE", "/devices/doesnotexist", nil)
+					r := httptest.NewRequest("DELETE", "/devices/notfound", nil)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)
@@ -152,7 +152,7 @@ func TestDeviceHandler(t *testing.T) {
 					So(err, ShouldBeNil)
 
 					w := httptest.NewRecorder()
-					r := httptest.NewRequest("PUT", "/devices/doesnotexist", buffer)
+					r := httptest.NewRequest("PUT", "/devices/notfound", buffer)
 
 					router.ServeHTTP(w, r)
 					So(w.Code, ShouldEqual, 404)

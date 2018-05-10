@@ -61,6 +61,8 @@ This document provides a high-level roadmap for Digitox development.
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API
 * [ ] Misc: Use SQLite as data store - **IN PROGRESS**
+** [ ] Map domains (string array) to and from domain list (string, comma separated) on save and load
+** [X] Write Gorm log messages to logrus
 * [ ] Misc: Update README with Docker instructions
 
 ## Someday Maybe

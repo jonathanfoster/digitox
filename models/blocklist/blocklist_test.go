@@ -29,7 +29,7 @@ func TestBlocklist(t *testing.T) {
 		Convey("Exists", func() {
 			Convey("When blocklist exists", func() {
 				Convey("Should return true", func() {
-					exists, err := blocklist.Exists(testlist.ID.String())
+					exists, err := blocklist.Exists(testlist.ID)
 					So(err, ShouldBeNil)
 					So(exists, ShouldBeTrue)
 				})
@@ -37,7 +37,7 @@ func TestBlocklist(t *testing.T) {
 
 			Convey("When blocklist does not exist", func() {
 				Convey("Should return false", func() {
-					exists, err := blocklist.Exists(uuid.NewV4().String())
+					exists, err := blocklist.Exists(uuid.NewV4())
 					So(err, ShouldBeNil)
 					So(exists, ShouldBeFalse)
 				})
@@ -46,13 +46,13 @@ func TestBlocklist(t *testing.T) {
 
 		Convey("Find", func() {
 			Convey("Should return blocklist", func() {
-				list, err := blocklist.Find(testlist.ID.String())
+				list, err := blocklist.Find(testlist.ID)
 				So(err, ShouldBeNil)
 				So(list, ShouldNotBeEmpty)
 			})
 
 			Convey("Should load hosts", func() {
-				list, err := blocklist.Find(testlist.ID.String())
+				list, err := blocklist.Find(testlist.ID)
 				So(err, ShouldBeNil)
 				So(list.Domains[0], ShouldEqual, testlist.Domains[0])
 			})
@@ -60,7 +60,7 @@ func TestBlocklist(t *testing.T) {
 
 		Convey("Remove", func() {
 			Convey("Should not return error", func() {
-				err := blocklist.Remove(testlist.ID.String())
+				err := blocklist.Remove(testlist.ID)
 				So(err, ShouldBeNil)
 			})
 		})
@@ -73,7 +73,7 @@ func TestBlocklist(t *testing.T) {
 				err := list.Save()
 				So(err, ShouldBeNil)
 
-				err = blocklist.Remove(list.ID.String())
+				err = blocklist.Remove(list.ID)
 				So(err, ShouldBeNil)
 			})
 		})
@@ -98,7 +98,7 @@ func TestBlocklist(t *testing.T) {
 		})
 
 		Reset(func() {
-			blocklist.Remove(testlist.ID.String())
+			blocklist.Remove(testlist.ID)
 		})
 	})
 }

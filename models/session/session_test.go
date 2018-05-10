@@ -20,7 +20,7 @@ func TestSession(t *testing.T) {
 		setup.TestBlocklistStore()
 		setup.TestSessionStore()
 		testlist := setup.TestBlocklist()
-		testsess := setup.TestSession(testlist.ID)
+		testsess := setup.TestSession()
 
 		Convey("IsActive", func() {
 			Convey("When session is active", func() {
@@ -70,7 +70,7 @@ func TestSession(t *testing.T) {
 		Convey("Exists", func() {
 			Convey("When session exists", func() {
 				Convey("Should return true", func() {
-					exists, err := session.Exists(testsess.ID.String())
+					exists, err := session.Exists(testsess.ID)
 					So(err, ShouldBeNil)
 					So(exists, ShouldBeTrue)
 				})
@@ -78,7 +78,7 @@ func TestSession(t *testing.T) {
 
 			Convey("When session does not exist", func() {
 				Convey("Should return false", func() {
-					exists, err := session.Exists(uuid.NewV4().String())
+					exists, err := session.Exists(uuid.NewV4())
 					So(err, ShouldBeNil)
 					So(exists, ShouldBeFalse)
 				})
@@ -87,7 +87,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Find", func() {
 			Convey("Should return session", func() {
-				sess, err := session.Find(testsess.ID.String())
+				sess, err := session.Find(testsess.ID)
 
 				So(err, ShouldBeNil)
 				So(sess, ShouldNotBeEmpty)
@@ -96,7 +96,7 @@ func TestSession(t *testing.T) {
 
 		Convey("Remove", func() {
 			Convey("Should not return error", func() {
-				err := session.Remove(testsess.ID.String())
+				err := session.Remove(testsess.ID)
 
 				So(err, ShouldBeNil)
 			})
@@ -132,13 +132,13 @@ func TestSession(t *testing.T) {
 
 		Convey("Save", func() {
 			Convey("Should not return error", func() {
-				sess := setup.NewTestSession(testlist.ID)
+				sess := setup.NewTestSession()
 				sess.Name = "test-2"
 
 				err := sess.Save()
 				So(err, ShouldBeNil)
 
-				err = session.Remove(sess.ID.String())
+				err = session.Remove(sess.ID)
 				So(err, ShouldBeNil)
 			})
 		})
@@ -180,21 +180,11 @@ func TestSession(t *testing.T) {
 					So(valid, ShouldBeFalse)
 				})
 			})
-
-			Convey("When blocklist does not exist", func() {
-				Convey("Should return false", func() {
-					testsess.Blocklists = append(testsess.Blocklists, uuid.NewV4())
-					valid, err := testsess.Validate()
-
-					So(err, ShouldNotBeNil)
-					So(valid, ShouldBeFalse)
-				})
-			})
 		})
 
 		Reset(func() {
-			blocklist.Remove(testlist.ID.String())
-			session.Remove(testsess.ID.String())
+			blocklist.Remove(testlist.ID)
+			session.Remove(testsess.ID)
 			setup.ResetTestDeviceStore()
 		})
 	})

@@ -3,18 +3,13 @@ package main
 import (
 	"io/ioutil"
 	"os"
-	"path"
 	"time"
 
 	"github.com/alecthomas/kingpin"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/digitox/models/blocklist"
-	"github.com/jonathanfoster/digitox/models/device"
-	"github.com/jonathanfoster/digitox/models/session"
 	"github.com/jonathanfoster/digitox/proxy"
 	"github.com/jonathanfoster/digitox/server"
 	"github.com/jonathanfoster/digitox/server/oauth"
@@ -36,16 +31,11 @@ var (
 	verifyingKeyPath = app.Flag("verifying-key", "RSA public key path verifying JWT tokens.").Default("/etc/digitox/verifying-key.pem").String()
 	clientID         = app.Flag("client-id", "OAuth client ID.").String()
 	clientSecret     = app.Flag("client-secret", "OAuth client secret.").String()
-	dataSource       = app.Flag("data-source", "Database data source name.").Default("/etc/digitox/digitox.db").String()
+	dataSource       = app.Flag("data-source", "Database data source name.").Default("/etc/digitox/sessions.db").String()
 )
 
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
-
-	if *verbose {
-		log.SetLevel(log.DebugLevel)
-		log.Debug("debug log messages enabled")
-	}
 
 	status.Current = &status.Status{
 		Version: version,
@@ -54,24 +44,24 @@ func main() {
 	config := server.NewConfig()
 
 	config.Addr = ":" + *port
+	config.DataSource = *dataSource
+	config.Verbose = *verbose
+
+	if config.Verbose {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("debug log messages enabled")
+	}
+
 	initCredentials(config, clientID, clientSecret)
-	initDataSource(config, dataSource)
 	initStores(blocklists, sessions, devices)
 	initTickerDuration(config, tickerDuration)
 	initTokenSigningKey(config, signingKeyPath)
 	initTokenVerifyingKey(config, verifyingKeyPath)
 
 	log.Info("initializing database connection")
-	var err error
-	store.DB, err = gorm.Open("sqlite3", config.DataSourceName)
-	if err != nil {
-		log.Fatal("error initializing database connection: ", err.Error())
+	if err := server.InitDB(config.DataSource, config.Verbose); err != nil {
+		log.Fatal(err.Error())
 	}
-	defer store.DB.Close() // nolint: errcheck
-
-	store.DB.AutoMigrate(&blocklist.Blocklist{})
-	store.DB.AutoMigrate(&device.Device{})
-	store.DB.AutoMigrate(&session.Session{})
 
 	log.Info("starting proxy controller")
 	ctrl := proxy.NewController(*active)
@@ -110,24 +100,6 @@ func initCredentials(config *server.Config, clientID *string, clientSecret *stri
 	} else {
 		config.ClientSecret = *clientSecret
 	}
-}
-
-func initDataSource(config *server.Config, dataSource *string) {
-	if _, err := os.Stat(*dataSource); os.IsNotExist(err) {
-		log.Warnf("data source %s does not exist: initializing empty data source", *dataSource)
-		dirname := path.Dir(*dataSource)
-		if err := os.MkdirAll(dirname, 0700); err != nil {
-			log.Fatal("error initializing data source directory: ", err.Error())
-		}
-
-		f, err := os.OpenFile(*dataSource, os.O_RDONLY|os.O_CREATE, 0600)
-		defer f.Close() // nolint: errcheck, megacheck
-		if err != nil {
-			log.Fatal("error initializing data source file: ", err.Error())
-		}
-	}
-
-	config.DataSourceName = *dataSource
 }
 
 func initStores(blocklists *string, sessions *string, devices *string) {

@@ -1,11 +1,10 @@
 package session
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
 	validator "github.com/asaskevich/govalidator"
+	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
@@ -16,21 +15,21 @@ import (
 
 // Session represents a time frame in which websites are blocked
 type Session struct {
-	ID             uuid.UUID   `json:"id" gorm:"type:text"`
-	Name           string      `json:"name"`
-	Starts         time.Time   `json:"starts" valid:"required"`
-	Ends           time.Time   `json:"ends" valid:"required"`
-	Blocklists     []uuid.UUID `json:"blocklists" valid:"required" gorm:"-"`
-	EverySunday    bool        `json:"every_sunday"`
-	EveryMonday    bool        `json:"every_monday"`
-	EveryTuesday   bool        `json:"every_tuesday"`
-	EveryWednesday bool        `json:"every_wednesday"`
-	EveryThursday  bool        `json:"every_thursday"`
-	EveryFriday    bool        `json:"every_friday"`
-	EverySaturday  bool        `json:"every_saturday"`
-	CreatedAt      time.Time   `json:"created_at"`
-	UpdatedAt      time.Time   `json:"updated_at"`
-	DeletedAt      *time.Time  `json:"deleted_at"`
+	ID             uuid.UUID              `json:"id" gorm:"type:text"`
+	Name           string                 `json:"name"`
+	Starts         time.Time              `json:"starts" valid:"required"`
+	Ends           time.Time              `json:"ends" valid:"required"`
+	Blocklists     []*blocklist.Blocklist `json:"blocklists" valid:"required" gorm:"many2many:session_blocklists"`
+	EverySunday    bool                   `json:"every_sunday"`
+	EveryMonday    bool                   `json:"every_monday"`
+	EveryTuesday   bool                   `json:"every_tuesday"`
+	EveryWednesday bool                   `json:"every_wednesday"`
+	EveryThursday  bool                   `json:"every_thursday"`
+	EveryFriday    bool                   `json:"every_friday"`
+	EverySaturday  bool                   `json:"every_saturday"`
+	CreatedAt      time.Time              `json:"created_at"`
+	UpdatedAt      time.Time              `json:"updated_at"`
+	DeletedAt      *time.Time             `json:"deleted_at"`
 }
 
 // New creates a Session instance.
@@ -40,56 +39,62 @@ func New() *Session {
 	}
 }
 
-// All retrieves all sessions from file system.
+// All retrieves all sessions from session store.
 func All() ([]*Session, error) {
-	ff, err := store.Session.All()
-	if err != nil {
-		return nil, err
+	var sessions []*Session
+
+	if err := store.DB.Preload("Blocklists").Find(&sessions).Error; err != nil {
+		return nil, errors.Wrap(err, "error retrieving all sessions")
 	}
 
-	var ss []*Session
-
-	for _, f := range ff {
-		s, err := Find(f)
-		if err != nil {
-			return nil, err
-		}
-
-		ss = append(ss, s)
-	}
-
-	return ss, nil
+	return sessions, nil
 }
 
 // Exists checks if a session exists by ID.
-func Exists(id string) (bool, error) {
-	exists, err := store.Session.Exists(id)
-	if err != nil {
-		if err == store.ErrNotFound {
+func Exists(id uuid.UUID) (bool, error) {
+	if _, err := Find(id); err != nil {
+		if errors.Cause(err) == store.ErrNotFound {
 			return false, nil
 		}
 
-		return false, errors.Wrapf(err, "error checking if session %s exists", id)
+		return false, errors.Wrap(err, "error checking if session exists")
 	}
 
-	return exists, nil
+	return true, nil
 }
 
 // Find finds a session by ID.
-func Find(id string) (*Session, error) {
+func Find(id uuid.UUID) (*Session, error) {
 	var sess Session
 
-	if err := store.Session.Find(id, &sess); err != nil {
-		return nil, errors.Wrapf(err, "error finding session %s", id)
+	if err := store.DB.Preload("Blocklists").Find(&sess, &Session{ID: id}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return nil, errors.Wrap(err, "error finding session")
 	}
 
 	return &sess, nil
 }
 
 // Remove removes the session from the file system.
-func Remove(id string) error {
-	if err := store.Session.Remove(id); err != nil {
-		return errors.Wrapf(err, "error removing session %s", id)
+func Remove(id uuid.UUID) error {
+	exists, err := Exists(id)
+	if err != nil {
+		return errors.Wrap(err, "error removing session")
+	}
+
+	if !exists {
+		return store.ErrNotFound
+	}
+
+	if err := store.DB.Delete(&Session{ID: id}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return errors.Wrap(err, "error removing session")
 	}
 
 	return nil
@@ -168,10 +173,14 @@ func (s *Session) RepeatsToday() bool { // nolint: gocyclo
 		(weekday == time.Saturday && s.EverySaturday)
 }
 
-// Save writes the session to the file system.
+// Save writes the session to the session store.
 func (s *Session) Save() error {
-	if err := store.Session.Save(s.ID.String(), s); err != nil {
-		return errors.Wrapf(err, "error saving session %s", s.ID)
+	if err := store.DB.Save(s).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = store.ErrNotFound
+		}
+
+		return errors.Wrapf(err, "error saving session")
 	}
 
 	return nil
@@ -179,34 +188,11 @@ func (s *Session) Save() error {
 
 // Validate validates tags for fields and returns false if there are any errors.
 func (s *Session) Validate() (bool, error) {
-	var msgs []string
-
-	listsExist := true
-
-	// Validate blocklists exist
-	for _, id := range s.Blocklists {
-		exists, err := blocklist.Exists(id.String())
-		if err != nil {
-			return false, errors.Wrapf(err, "error validating session blocklist %s", id.String())
-		}
-
-		if !exists {
-			listsExist = false
-			msgs = append(msgs, fmt.Sprintf("blocklist %s does not exist", id.String()))
-		}
+	// TODO: Validate blocklist struct
+	isValid, err := validator.ValidateStruct(s)
+	if err != nil {
+		return isValid, errors.Wrap(err, "error validating session")
 	}
 
-	// Validate session struct
-	structValid, errStructValid := validator.ValidateStruct(s)
-	if errStructValid != nil {
-		msgs = append(msgs, errStructValid.Error())
-	}
-
-	var err error
-
-	if len(msgs) > 0 {
-		err = errors.New(strings.Join(msgs, ": "))
-	}
-
-	return listsExist && structValid, err
+	return isValid, nil
 }

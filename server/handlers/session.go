@@ -37,8 +37,9 @@ func ListSessions(w http.ResponseWriter, r *http.Request) {
 
 // FindSession handles the GET /sessions/{id} route.
 func FindSession(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}
@@ -94,8 +95,9 @@ func CreateSession(w http.ResponseWriter, r *http.Request) {
 
 // RemoveSession handles the DELETE /sessions/{id} route.
 func RemoveSession(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}
@@ -117,8 +119,9 @@ func RemoveSession(w http.ResponseWriter, r *http.Request) {
 
 // UpdateSession handles the PUT /sessions/{id} route.
 func UpdateSession(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
-	if !ok {
+	id, err := ParseID(r)
+	if err != nil {
+		log.Warnf("valid ID not provided: ", err.Error())
 		Error(w, http.StatusBadRequest)
 		return
 	}

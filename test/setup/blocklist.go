@@ -27,6 +27,7 @@ func TestBlocklistStore() {
 	}
 
 	store.Blocklist = store.NewFileStore(dirname)
+	TestDB()
 }
 
 // TestBlocklist creates and saves a test blocklist.

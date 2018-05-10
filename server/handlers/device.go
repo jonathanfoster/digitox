@@ -35,23 +35,23 @@ func ListDevices(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, devices)
 }
 
-// FindDevice handles the GET /devices/{id} route.
+// FindDevice handles the GET /devices/{name} route.
 func FindDevice(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
+	name, ok := ParseName(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	dev, err := device.Find(id)
+	dev, err := device.Find(name)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotFound {
-			log.Warnf("device %s not found: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", name, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error finding device %s: %s", id, err.Error())
+		log.Errorf("error finding device %s: %s", name, err.Error())
 		Error(w, http.StatusInternalServerError)
 		return
 	}
@@ -92,20 +92,20 @@ func CreateDevice(w http.ResponseWriter, r *http.Request) {
 
 // RemoveDevice handles the DELETE /devices/{id} route.
 func RemoveDevice(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
+	name, ok := ParseName(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	if err := device.Remove(id); err != nil {
+	if err := device.Remove(name); err != nil {
 		if errors.Cause(err) == store.ErrNotFound {
-			log.Warnf("device %s not found: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", name, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error removing device %s: %s", id, err.Error())
+		log.Errorf("error removing device %s: %s", name, err.Error())
 		Error(w, http.StatusInternalServerError)
 		return
 	}
@@ -115,21 +115,21 @@ func RemoveDevice(w http.ResponseWriter, r *http.Request) {
 
 // UpdateDevice handles the PUT /devices/{id} route.
 func UpdateDevice(w http.ResponseWriter, r *http.Request) {
-	id, ok := ParseID(r)
+	name, ok := ParseName(r)
 	if !ok {
 		Error(w, http.StatusBadRequest)
 		return
 	}
 
-	dev, err := device.Find(id)
+	dev, err := device.Find(name)
 	if err != nil {
 		if errors.Cause(err) == store.ErrNotFound {
-			log.Warnf("device %s not found: %s", id, err.Error())
+			log.Warnf("device %s not found: %s", name, err.Error())
 			Error(w, http.StatusNotFound)
 			return
 		}
 
-		log.Errorf("error finding device %s: %s", id, err.Error())
+		log.Errorf("error finding device %s: %s", name, err.Error())
 		Error(w, http.StatusInternalServerError)
 		return
 	}

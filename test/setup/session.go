@@ -4,7 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/satori/go.uuid"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/jonathanfoster/digitox/models/blocklist"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/digitox/models/session"
@@ -12,14 +13,14 @@ import (
 )
 
 // NewTestSession creates a test session instance with a specific blocklist ID and device name.
-func NewTestSession(list uuid.UUID) *session.Session {
+func NewTestSession() *session.Session {
 	now := time.Now().UTC()
 	sess := session.New()
 	sess.Name = "test"
 	sess.Starts = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	sess.Ends = time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, now.Location())
 	sess.RepeatEveryDay()
-	sess.Blocklists = []uuid.UUID{list}
+	sess.Blocklists = []*blocklist.Blocklist{NewTestBlocklist()}
 
 	return sess
 }
@@ -33,11 +34,12 @@ func TestSessionStore() {
 	}
 
 	store.Session = store.NewFileStore(dirname)
+	TestDB()
 }
 
 // TestSession creates and saves a test session with a specific blocklist ID.
-func TestSession(list uuid.UUID) *session.Session {
-	sess := NewTestSession(list)
+func TestSession() *session.Session {
+	sess := NewTestSession()
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

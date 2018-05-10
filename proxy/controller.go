@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/jonathanfoster/digitox/models/blocklist"
 	"github.com/jonathanfoster/digitox/models/session"
 	"github.com/jonathanfoster/digitox/store"
 )
@@ -60,19 +59,7 @@ func (c *Controller) ActiveBlocklist() ([]string, error) {
 
 	// Create active blocklist
 	for _, sess := range activeSessions {
-		for _, id := range sess.Blocklists {
-			// Load blocklists
-			list, err := blocklist.Find(id.String())
-			if err != nil {
-				// Be resilient to missing blocklists
-				if err == store.ErrNotFound {
-					log.Warnf("error determining active blocklist: error finding blocklist %s: %s", id, err.Error())
-					continue
-				}
-
-				return nil, err
-			}
-
+		for _, list := range sess.Blocklists {
 			// TODO: Remove duplicate domains
 			// Copy blocked domains to active blocklist
 			domains = append(domains, list.Domains...)

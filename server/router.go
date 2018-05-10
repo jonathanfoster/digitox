@@ -27,10 +27,10 @@ func NewRouter() *Router {
 	router.HandleFunc("/blocklists/{id}", handlers.RemoveBlocklist).Methods("DELETE")
 
 	router.HandleFunc("/devices/", handlers.ListDevices).Methods("GET")
-	router.HandleFunc("/devices/{id}", handlers.FindDevice).Methods("GET")
+	router.HandleFunc("/devices/{name}", handlers.FindDevice).Methods("GET")
 	router.HandleFunc("/devices/", handlers.CreateDevice).Methods("POST")
-	router.HandleFunc("/devices/{id}", handlers.UpdateDevice).Methods("PUT")
-	router.HandleFunc("/devices/{id}", handlers.RemoveDevice).Methods("DELETE")
+	router.HandleFunc("/devices/{name}", handlers.UpdateDevice).Methods("PUT")
+	router.HandleFunc("/devices/{name}", handlers.RemoveDevice).Methods("DELETE")
 
 	router.HandleFunc("/sessions/", handlers.ListSessions).Methods("GET")
 	router.HandleFunc("/sessions/{id}", handlers.FindSession).Methods("GET")
