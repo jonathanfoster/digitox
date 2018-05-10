@@ -4,7 +4,6 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/jonathanfoster/digitox/models/blocklist"
 	log "github.com/sirupsen/logrus"
 

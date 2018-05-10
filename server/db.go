@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // nolint: golint
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
@@ -14,6 +14,7 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
+// InitDB initializes the database.
 func InitDB(dataSource string, verbose bool) error {
 	if _, err := os.Stat(dataSource); os.IsNotExist(err) {
 		log.Warnf("data source %s does not exist: initializing empty data source", dataSource)
