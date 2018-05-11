@@ -15,7 +15,7 @@ import (
 )
 
 // InitDB initializes the database.
-func InitDB(dataSource string, verbose bool) error {
+func InitDB(dataSource string) error {
 	if _, err := os.Stat(dataSource); os.IsNotExist(err) {
 		log.Warnf("data source %s does not exist: initializing empty data source", dataSource)
 		dirname := path.Dir(dataSource)
@@ -37,9 +37,6 @@ func InitDB(dataSource string, verbose bool) error {
 	}
 
 	store.DB.SetLogger(&store.GormLogger{})
-	if verbose {
-		store.DB.LogMode(true)
-	}
 
 	store.DB.AutoMigrate(&blocklist.Blocklist{})
 	store.DB.AutoMigrate(&session.Session{})

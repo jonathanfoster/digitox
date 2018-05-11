@@ -16,25 +16,32 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
+const (
+	defaultActive     = "active"
+	defaultDataSource = "sessions.db"
+	defaultDevices    = "passwd"
+)
+
 var (
 	version          string
 	app              = kingpin.New("digitox-apiserver", "Digitox API server provides a REST API for managing resources.").Version(version)
 	port             = app.Flag("port", "Port to listen on.").Short('p').Default("8080").String()
 	verbose          = app.Flag("verbose", "Output debug log messages.").Short('v').Bool()
-	sessions         = app.Flag("sessions", "Sessions store directory.").Default("/etc/digitox/sessions/").String()
-	blocklists       = app.Flag("blocklists", "Blocklists store directory.").Default("/etc/digitox/blocklists/").String()
-	active           = app.Flag("active", "Active blocklist file name.").Default("/etc/digitox/active").String()
-	devices          = app.Flag("devices", "Devices password file name.").Default("/etc/digitox/passwd").String()
+	dirname          = app.Flag("directory-name", "Configuration directory name.").Short('d').Default("/etc/digitox/").String()
+	dataSource       = app.Flag("data-source", "Database data source name.").Default(defaultDataSource).String()
+	active           = app.Flag("active", "Active blocklist file name.").Default(defaultActive).String()
+	devices          = app.Flag("devices", "Devices password file name.").Default(defaultDevices).String()
 	tickerDuration   = app.Flag("ticker-duration", "Duration of blocklist update ticker.").Short('t').Default("1s").String()
-	signingKeyPath   = app.Flag("signing-key", "RSA private key path for signing JWT tokens.").Default("/etc/digitox/signing-key.pem").String()
-	verifyingKeyPath = app.Flag("verifying-key", "RSA public key path verifying JWT tokens.").Default("/etc/digitox/verifying-key.pem").String()
+	signingKeyPath   = app.Flag("signing-key", "RSA private key path for signing JWT tokens.").Default(*dirname + "signing-key.pem").String()
+	verifyingKeyPath = app.Flag("verifying-key", "RSA public key path verifying JWT tokens.").Default(*dirname + "verifying-key.pem").String()
 	clientID         = app.Flag("client-id", "OAuth client ID.").String()
 	clientSecret     = app.Flag("client-secret", "OAuth client secret.").String()
-	dataSource       = app.Flag("data-source", "Database data source name.").Default("/etc/digitox/sessions.db").String()
 )
 
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
+
+	initDefaultDirname()
 
 	config := server.NewConfig()
 
@@ -48,14 +55,13 @@ func main() {
 		log.Debug("debug log messages enabled")
 	}
 
-	initCredentials(config, clientID, clientSecret)
-	initStores(blocklists, sessions, devices)
-	initTickerDuration(config, tickerDuration)
-	initTokenSigningKey(config, signingKeyPath)
-	initTokenVerifyingKey(config, verifyingKeyPath)
+	initCredentials(config)
+	initDeviceStore()
+	initTickerDuration(config)
+	initTokenKeys(config)
 
 	log.Info("initializing database connection")
-	if err := server.InitDB(config.DataSource, config.Verbose); err != nil {
+	if err := server.InitDB(config.DataSource); err != nil {
 		log.Fatal(err.Error())
 	}
 
@@ -82,7 +88,21 @@ func main() {
 	os.Exit(exitCode)
 }
 
-func initCredentials(config *server.Config, clientID *string, clientSecret *string) {
+func initDefaultDirname() {
+	if *active == defaultActive {
+		*active = *dirname + defaultActive
+	}
+
+	if *dataSource == defaultDataSource {
+		*dataSource = *dirname + defaultDataSource
+	}
+
+	if *devices == defaultDevices {
+		*devices = *dirname + defaultDevices
+	}
+}
+
+func initCredentials(config *server.Config) {
 	if clientID == nil || *clientID == "" {
 		log.Warnf("client ID not provided: using default client ID %s", oauth.DefaultClientID)
 		config.ClientID = oauth.DefaultClientID
@@ -98,19 +118,7 @@ func initCredentials(config *server.Config, clientID *string, clientSecret *stri
 	}
 }
 
-func initStores(blocklists *string, sessions *string, devices *string) {
-	log.Infof("initializing blocklist store %s", *blocklists)
-	store.Blocklist = store.NewFileStore(*blocklists)
-	if err := store.Blocklist.Init(); err != nil {
-		log.Error("error initializing blocklist store: ", err.Error())
-	}
-
-	log.Infof("initializing session store %s", *sessions)
-	store.Session = store.NewFileStore(*sessions)
-	if err := store.Session.Init(); err != nil {
-		log.Error("error initializing session store: ", err.Error())
-	}
-
+func initDeviceStore() {
 	log.Infof("initializing device store %s", *devices)
 	store.Device = store.NewHtpasswdStore(*devices)
 	if err := store.Device.Init(); err != nil {
@@ -118,8 +126,8 @@ func initStores(blocklists *string, sessions *string, devices *string) {
 	}
 }
 
-func initTickerDuration(config *server.Config, tick *string) {
-	d, err := time.ParseDuration(*tick)
+func initTickerDuration(config *server.Config) {
+	d, err := time.ParseDuration(*tickerDuration)
 	if err != nil {
 		log.Warnf("error parsing duration %s: using default value 1s: %s", err.Error())
 		d = time.Second * 1
@@ -128,7 +136,7 @@ func initTickerDuration(config *server.Config, tick *string) {
 	config.TickerDuration = d
 }
 
-func initTokenSigningKey(config *server.Config, signingKeyPath *string) {
+func initTokenKeys(config *server.Config) {
 	if signingKeyPath != nil && *signingKeyPath != "" {
 		signingKeyBytes, err := ioutil.ReadFile(*signingKeyPath)
 		if err != nil {
@@ -147,9 +155,7 @@ func initTokenSigningKey(config *server.Config, signingKeyPath *string) {
 		log.Warnf("signing key not provided: using default signing key")
 		config.TokenSigningKey = oauth.DefaultSigningKey
 	}
-}
 
-func initTokenVerifyingKey(config *server.Config, verifyingKeyPath *string) {
 	if verifyingKeyPath != nil && *verifyingKeyPath != "" {
 		verifyingKeyBytes, err := ioutil.ReadFile(*verifyingKeyPath)
 		if err != nil {
@@ -168,4 +174,5 @@ func initTokenVerifyingKey(config *server.Config, verifyingKeyPath *string) {
 		log.Warnf("verifying key not provided: using default verifying key")
 		config.TokenVerifyingKey = oauth.DefaultVerifyingKey
 	}
+
 }
