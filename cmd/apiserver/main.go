@@ -58,7 +58,8 @@ func main() {
 	initCredentials(config)
 	initDeviceStore()
 	initTickerDuration(config)
-	initTokenKeys(config)
+	initTokenSigningKey(config)
+	initTokenVerifyingKey(config)
 
 	log.Info("initializing database connection")
 	if err := server.InitDB(config.DataSource); err != nil {
@@ -137,7 +138,7 @@ func initTickerDuration(config *server.Config) {
 	config.TickerDuration = d
 }
 
-func initTokenKeys(config *server.Config) {
+func initTokenSigningKey(config *server.Config) {
 	if signingKeyPath != nil && *signingKeyPath != "" {
 		signingKeyBytes, err := ioutil.ReadFile(*signingKeyPath)
 		if err != nil {
@@ -156,7 +157,9 @@ func initTokenKeys(config *server.Config) {
 		log.Warnf("signing key not provided: using default signing key")
 		config.TokenSigningKey = oauth.DefaultSigningKey
 	}
+}
 
+func initTokenVerifyingKey(config *server.Config) {
 	if verifyingKeyPath != nil && *verifyingKeyPath != "" {
 		verifyingKeyBytes, err := ioutil.ReadFile(*verifyingKeyPath)
 		if err != nil {
@@ -175,5 +178,4 @@ func initTokenKeys(config *server.Config) {
 		log.Warnf("verifying key not provided: using default verifying key")
 		config.TokenVerifyingKey = oauth.DefaultVerifyingKey
 	}
-
 }
