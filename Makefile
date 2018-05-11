@@ -64,7 +64,7 @@ precommit: fmt-check imports-check lint test
 .PHONY: run
 run: build
 	mkdir -p bin/test/
-	./bin/digitox-apiserver -v --directory-name bin/test/ --ticker-duration 30s \
+	./bin/digitox-apiserver -v --directory-name bin/test/ --ticker-duration 30s
 
 .PHONY: test
 test: clean

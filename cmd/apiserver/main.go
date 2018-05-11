@@ -64,6 +64,7 @@ func main() {
 	if err := server.InitDB(config.DataSource); err != nil {
 		log.Fatal(err.Error())
 	}
+	defer store.DB.Close() // nolint: errcheck
 
 	log.Info("starting proxy controller")
 	ctrl := proxy.NewController(*active)
