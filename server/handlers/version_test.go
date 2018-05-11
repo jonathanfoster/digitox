@@ -9,8 +9,8 @@ import (
 	"github.com/jonathanfoster/digitox/server"
 )
 
-func TestStatusHandler(t *testing.T) {
-	Convey("Status Handler", t, func() {
+func TestVersionHandler(t *testing.T) {
+	Convey("Version Handler", t, func() {
 		router := server.NewRouter()
 
 		Convey("Status", func() {

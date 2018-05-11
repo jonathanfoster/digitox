@@ -15,6 +15,7 @@ type Config struct {
 	TokenSigningKey   *rsa.PrivateKey
 	TokenVerifyingKey *rsa.PublicKey
 	Verbose           bool
+	Version           string
 }
 
 // NewConfig creates a Config instance

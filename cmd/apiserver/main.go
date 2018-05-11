@@ -13,7 +13,6 @@ import (
 	"github.com/jonathanfoster/digitox/proxy"
 	"github.com/jonathanfoster/digitox/server"
 	"github.com/jonathanfoster/digitox/server/oauth"
-	"github.com/jonathanfoster/digitox/server/status"
 	"github.com/jonathanfoster/digitox/store"
 )
 
@@ -37,15 +36,12 @@ var (
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
-	status.Current = &status.Status{
-		Version: version,
-	}
-
 	config := server.NewConfig()
 
 	config.Addr = ":" + *port
 	config.DataSource = *dataSource
 	config.Verbose = *verbose
+	config.Version = version
 
 	if config.Verbose {
 		log.SetLevel(log.DebugLevel)

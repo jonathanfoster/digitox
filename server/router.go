@@ -17,7 +17,7 @@ type Router struct {
 func NewRouter() *Router {
 	router := mux.NewRouter().StrictSlash(true)
 
-	router.HandleFunc("/", handlers.Status).Methods("GET")
+	router.HandleFunc("/", handlers.Version).Methods("GET")
 	router.HandleFunc("/oauth/token", handlers.Token).Methods("GET", "POST")
 
 	router.HandleFunc("/blocklists/", handlers.ListBlocklists).Methods("GET")

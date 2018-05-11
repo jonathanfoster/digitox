@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/negroni"
 
+	"github.com/jonathanfoster/digitox/server/handlers"
 	"github.com/jonathanfoster/digitox/server/middleware"
 	"github.com/jonathanfoster/digitox/server/oauth"
 )
@@ -18,6 +19,7 @@ type Server struct {
 
 // New creates a Server instance.
 func New(config *Config) *Server {
+	handlers.ServerVersion = config.Version
 	return &Server{config: config}
 }
 
