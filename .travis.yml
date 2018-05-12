@@ -11,7 +11,7 @@ script:
   - make dep
   - make lint
   - make test-codecov
-  - make
+  - make docker-build
   - make docker-hub-build
 
 after_success:
