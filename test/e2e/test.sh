@@ -42,6 +42,7 @@ echo "New test device password: $DEVICE_PASSWORD"
 echo ""
 
 echo "Asserting all domains not blocked before test session created"
+$DIR/proxy/proxy-deny.sh $DEVICE_NAME $DEVICE_PASSWORD
 echo ""
 
 #########################
