@@ -79,3 +79,7 @@ test-codecov: test
 .PHONY: test-cover-html
 test-cover-html:
 	go tool cover -html=./bin/coverage.out
+
+.PHONY: test-e2e
+test-e2e:
+	./test/e2e/test.sh

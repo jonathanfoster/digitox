@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-curl -i http://localhost:8080/devices/
+curl -s "http://localhost:8080/devices/?access_token=$DIGITOX_ACCESS_TOKEN"

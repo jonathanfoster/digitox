@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-curl -i http://localhost:8080/blocklists/
+curl -s "http://localhost:8080/blocklists/?access_token=$DIGITOX_ACCESS_TOKEN"
