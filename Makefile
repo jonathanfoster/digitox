@@ -31,7 +31,7 @@ docker-build:
 
 .PHONY: docker-hub-build
 docker-hub-build:
-	curl -H "Content-Type: application/json" \
+	curl -s -H "Content-Type: application/json" \
 		--data '{"source_type": "Branch", "source_name": "master"}' \
 		-X POST \
 		https://registry.hub.docker.com/u/jonathanfoster/digitox/trigger/${DOCKER_HUB_TOKEN}/
