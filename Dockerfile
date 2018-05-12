@@ -1,7 +1,8 @@
-FROM golang:latest as build
+FROM golang:alpine as build
+RUN apk add --no-cache make bash git sqlite-libs sqlite-dev build-base
 WORKDIR /go/src/github.com/jonathanfoster/digitox/
 COPY . .
-RUN make dep-build && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 make build
+RUN make dep-build && GOOS=linux GOARCH=amd64 make build
 
 FROM alpine:latest
 

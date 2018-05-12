@@ -8,6 +8,7 @@ branches:
   - master
 
 script:
+  - set -e
   - make dep
   - make lint
   - make test-codecov
