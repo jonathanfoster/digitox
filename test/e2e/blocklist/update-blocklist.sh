@@ -3,14 +3,26 @@ set -e
 
 if [ -z "$1" ]
 then
-    echo "blocklist not provided" 1>&2
+    echo "blocklist id not provided" 1>&2
     exit 1
 fi
 
-curl -i -X POST -d \
-'{
-  "name": "test-update",
-  "domains": ["www.reddit.com"]
-}' \
-http://localhost:8080/blocklists/${1}
+if [ -z "$2" ]
+then
+    echo "blocklist name not provided" 1>&2
+    exit 1
+fi
+
+if [ -z "$3" ]
+then
+    echo "blocklist domain not provided" 1>&2
+    exit 1
+fi
+
+curl -s -X PUT -d \
+"{
+  \"name\": \"${2}\",
+  \"domains\": [\"${3}\"]
+}" \
+"http://localhost:8080/blocklists/${1}?access_token=$DIGITOX_ACCESS_TOKEN"
 

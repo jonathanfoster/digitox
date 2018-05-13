@@ -7,4 +7,4 @@ then
     exit 1
 fi
 
-curl -i -X DELETE http://localhost:8080/blocklists/${1}
+curl -s -i -X DELETE "http://localhost:8080/blocklists/${1}?access_token=$DIGITOX_ACCESS_TOKEN"

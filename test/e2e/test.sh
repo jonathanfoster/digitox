@@ -22,8 +22,6 @@ DEVICE=$($DIR/device/create-device.sh $(uuidgen) $(uuidgen))
 echo $DEVICE | jq
 DEVICE_NAME=$(echo $DEVICE | jq -r '.name')
 DEVICE_PASSWORD=$(echo $DEVICE | jq -r '.password')
-echo "Test device name: $DEVICE_NAME"
-echo "Test device password: $DEVICE_PASSWORD"
 echo ""
 
 echo "Listing test devices"
@@ -38,7 +36,6 @@ echo "Updating test device"
 DEVICE=$($DIR/device/create-device.sh ${DEVICE_NAME} $(uuidgen))
 echo $DEVICE | jq
 DEVICE_PASSWORD=$(echo $DEVICE | jq -r '.password')
-echo "New test device password: $DEVICE_PASSWORD"
 echo ""
 
 echo "Asserting all domains not blocked before test session created"
@@ -49,10 +46,23 @@ echo ""
 #    Blocklist Tests    #
 #########################
 
-# Creating test blocklist
-# Listing test blocklists
-# Finding test blocklist
-# Updating test blocklist
+echo "Creating test blocklist"
+BLOCKLIST=$($DIR/blocklist/create-blocklist.sh $(uuidgen) www.reddit.com)
+echo $BLOCKLIST | jq
+BLOCKLIST_ID=$(echo $BLOCKLIST | jq -r '.id')
+echo ""
+
+echo "Listing test blocklists"
+$DIR/blocklist/list-blocklists.sh | jq
+echo ""
+
+echo "Finding test blocklist"
+$DIR/blocklist/find-blocklist.sh $BLOCKLIST_ID | jq
+echo ""
+
+echo "Updating test blocklist"
+$DIR/blocklist/update-blocklist.sh $BLOCKLIST_ID $(uuidgen) www.reddit.com | jq
+echo ""
 
 #######################
 #    Session Tests    #
@@ -70,9 +80,13 @@ echo ""
 #    Removal Tests    #
 #######################
 
-# Removing test blocklist
+echo "Removing test blocklist"
+$DIR/blocklist/remove-blocklist.sh ${BLOCKLIST_ID}
+echo ""
+
 # Removing test session
 # Asserting all domains not blocked after session expires
 
 echo "Removing test device"
 $DIR/device/remove-device.sh ${DEVICE_NAME}
+echo ""
