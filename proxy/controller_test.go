@@ -19,8 +19,7 @@ func TestController(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Proxy Controller", t, func() {
-		setup.TestBlocklistStore()
-		setup.TestSessionStore()
+		setup.TestDB()
 		testsess := setup.TestSession()
 
 		var testDomains []string

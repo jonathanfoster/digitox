@@ -20,7 +20,7 @@ func TestBlocklistHandler(t *testing.T) {
 
 	Convey("Blocklist Handler", t, func() {
 		router := server.NewRouter()
-		setup.TestBlocklistStore()
+		setup.TestDB()
 		testlist := setup.TestBlocklist()
 
 		Convey("ListBlocklists", func() {

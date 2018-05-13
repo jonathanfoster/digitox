@@ -1,12 +1,9 @@
 package setup
 
 import (
-	"os"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/digitox/models/blocklist"
-	"github.com/jonathanfoster/digitox/store"
 )
 
 // NewTestBlocklist creates a test blocklist instance.
@@ -16,18 +13,6 @@ func NewTestBlocklist() *blocklist.Blocklist {
 	list.Domains = []string{"www.reddit.com", "news.ycombinator.com"}
 
 	return list
-}
-
-// TestBlocklistStore creates the test blocklist directory and initializes the blocklist store.
-func TestBlocklistStore() {
-	var dirname = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/blocklists/"
-
-	if err := os.MkdirAll(dirname, 0700); err != nil {
-		log.Panicf("error creating test blocklist directory %s: %s", dirname, err.Error())
-	}
-
-	store.Blocklist = store.NewFileStore(dirname)
-	TestDB()
 }
 
 // TestBlocklist creates and saves a test blocklist.

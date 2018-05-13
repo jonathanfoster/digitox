@@ -1,14 +1,12 @@
 package setup
 
 import (
-	"os"
 	"time"
 
 	"github.com/jonathanfoster/digitox/models/blocklist"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jonathanfoster/digitox/models/session"
-	"github.com/jonathanfoster/digitox/store"
 )
 
 // NewTestSession creates a test session instance with a specific blocklist ID and device name.
@@ -24,21 +22,14 @@ func NewTestSession() *session.Session {
 	return sess
 }
 
-// TestSessionStore creates the test session directory and initializes the session store.
-func TestSessionStore() {
-	var dirname = os.Getenv("GOPATH") + "/src/github.com/jonathanfoster/digitox/bin/test/sessions/"
-
-	if err := os.MkdirAll(dirname, 0700); err != nil {
-		log.Panicf("error creating test session directory %s: %s", dirname, err.Error())
-	}
-
-	store.Session = store.NewFileStore(dirname)
-	TestDB()
-}
-
 // TestSession creates and saves a test session with a specific blocklist ID.
 func TestSession() *session.Session {
 	sess := NewTestSession()
+	list := sess.Blocklists[0]
+
+	if err := list.Save(); err != nil {
+		log.Panicf("error saving test blocklist %s: %s", list.ID.String(), err.Error())
+	}
 
 	if err := sess.Save(); err != nil {
 		log.Panicf("error saving test session %s: %s", sess.ID.String(), err.Error())

@@ -17,8 +17,7 @@ func TestSession(t *testing.T) {
 	log.SetLevel(log.FatalLevel)
 
 	Convey("Session", t, func() {
-		setup.TestBlocklistStore()
-		setup.TestSessionStore()
+		setup.TestDB()
 		testlist := setup.TestBlocklist()
 		testsess := setup.TestSession()
 

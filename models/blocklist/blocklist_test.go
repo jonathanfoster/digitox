@@ -15,7 +15,7 @@ func TestBlocklist(t *testing.T) {
 	log.SetLevel(log.ErrorLevel)
 
 	Convey("Blocklist", t, func() {
-		setup.TestBlocklistStore()
+		setup.TestDB()
 		testlist := setup.TestBlocklist()
 
 		Convey("All", func() {
