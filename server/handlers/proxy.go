@@ -46,7 +46,7 @@ func ReconfigureProxy(w http.ResponseWriter, r *http.Request) {
 	// Reload Squid proxy config by calling `/usr/sbin/squid -k reconfigure`
 	// This operation will have negative  side effects like ports closing
 	// and loss of information on in-transit requests (https://wiki.squid-cache.org/Features/HotConf)
-	cmd := exec.Command("/usr/sbin/squid", "-k", "reconfigure")
+	cmd := exec.Command("/usr/sbin/squid", "-k", "reconfigure") // nolint: gas
 	if err := cmd.Run(); err != nil {
 		log.Error("error reconfiguring proxy: ", err.Error())
 		Error(w, http.StatusInternalServerError)

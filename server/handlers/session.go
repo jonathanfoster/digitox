@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/jonathanfoster/digitox/models/blocklist"
 	"github.com/pkg/errors"
@@ -14,38 +13,6 @@ import (
 	"github.com/jonathanfoster/digitox/models/session"
 	"github.com/jonathanfoster/digitox/store"
 )
-
-type SessionPayload struct {
-	ID             uuid.UUID   `json:"id"`
-	Name           string      `json:"name"`
-	Starts         time.Time   `json:"starts"`
-	Ends           time.Time   `json:"ends"`
-	Blocklists     []uuid.UUID `json:"blocklists"`
-	EverySunday    bool        `json:"every_sunday"`
-	EveryMonday    bool        `json:"every_monday"`
-	EveryTuesday   bool        `json:"every_tuesday"`
-	EveryWednesday bool        `json:"every_wednesday"`
-	EveryThursday  bool        `json:"every_thursday"`
-	EveryFriday    bool        `json:"every_friday"`
-	EverySaturday  bool        `json:"every_saturday"`
-}
-
-func (p *SessionPayload) Session() *session.Session {
-	s := session.New()
-	s.ID = p.ID
-	s.Name = p.Name
-	s.Starts = p.Starts
-	s.Ends = p.Ends
-	// TODO: Map blocklists
-	s.EveryMonday = p.EveryMonday
-	s.EveryTuesday = p.EveryTuesday
-	s.EveryWednesday = p.EveryWednesday
-	s.EveryThursday = p.EveryThursday
-	s.EveryFriday = p.EveryFriday
-	s.EverySaturday = p.EverySaturday
-	s.EverySunday = p.EverySunday
-	return s
-}
 
 // ListSessions handles the GET /sessions/ route.
 func ListSessions(w http.ResponseWriter, r *http.Request) {
