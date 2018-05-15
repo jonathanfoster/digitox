@@ -14,6 +14,9 @@ import (
 	"github.com/jonathanfoster/digitox/store"
 )
 
+// ProxyController is the global controller instance.
+var ProxyController *Controller
+
 // Controller represents a structure responsible for controlling the state of
 // the proxy blocklist in relation to active sessions.
 type Controller struct {

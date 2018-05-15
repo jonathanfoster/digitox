@@ -19,7 +19,7 @@ type Session struct {
 	Name           string                 `json:"name"`
 	Starts         time.Time              `json:"starts" valid:"required"`
 	Ends           time.Time              `json:"ends" valid:"required"`
-	Blocklists     []*blocklist.Blocklist `json:"blocklists" valid:"required" gorm:"many2many:session_blocklists"`
+	Blocklists     []*blocklist.Blocklist `json:"blocklists" valid:"required" gorm:"many2many:session_blocklists;association_autoupdate:false;association_autocreate:false"`
 	EverySunday    bool                   `json:"every_sunday"`
 	EveryMonday    bool                   `json:"every_monday"`
 	EveryTuesday   bool                   `json:"every_tuesday"`

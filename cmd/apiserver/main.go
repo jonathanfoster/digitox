@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	defaultActive     = "active"
+	defaultBlocklist  = "blocklist"
 	defaultDataSource = "sessions.db"
 	defaultDevices    = "passwd"
 )
@@ -29,7 +29,7 @@ var (
 	verbose          = app.Flag("verbose", "Output debug log messages.").Short('v').Bool()
 	dirname          = app.Flag("directory-name", "Configuration directory name.").Short('d').Default("/etc/digitox/").String()
 	dataSource       = app.Flag("data-source", "Database data source name.").Default(defaultDataSource).String()
-	active           = app.Flag("active", "Active blocklist file name.").Default(defaultActive).String()
+	blocklist        = app.Flag("blocklist", "Proxy blocklist file name.").Default(defaultBlocklist).String()
 	devices          = app.Flag("devices", "Devices password file name.").Default(defaultDevices).String()
 	tickerDuration   = app.Flag("ticker-duration", "Duration of blocklist update ticker.").Short('t').Default("1s").String()
 	signingKeyPath   = app.Flag("signing-key", "RSA private key path for signing JWT tokens.").Default(*dirname + "signing-key.pem").String()
@@ -68,9 +68,9 @@ func main() {
 	defer store.DB.Close() // nolint: errcheck
 
 	log.Info("starting proxy controller")
-	ctrl := proxy.NewController(*active)
-	ctrl.TickerDuration = config.TickerDuration
-	ctrl.Run()
+	proxy.ProxyController = proxy.NewController(*blocklist)
+	proxy.ProxyController.TickerDuration = config.TickerDuration
+	proxy.ProxyController.Run()
 
 	exitCode := 0
 
@@ -82,7 +82,7 @@ func main() {
 	}
 
 	log.Info("stopping proxy controller")
-	if err := ctrl.Stop(); err != nil {
+	if err := proxy.ProxyController.Stop(); err != nil {
 		log.Error("error stopping proxy controller: ", err.Error())
 		exitCode = 1
 	}
@@ -91,8 +91,8 @@ func main() {
 }
 
 func initDefaultDirname() {
-	if *active == defaultActive {
-		*active = *dirname + defaultActive
+	if *blocklist == defaultBlocklist {
+		*blocklist = *dirname + defaultBlocklist
 	}
 
 	if *dataSource == defaultDataSource {

@@ -3,7 +3,7 @@ set -e
 
 if [ -z "$1" ]
 then
-    echo "blocklist not provided" 1>&2
+    echo "blocklist not provided" >&2
     exit 1
 fi
 

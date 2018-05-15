@@ -68,6 +68,7 @@ func TestSessionHandler(t *testing.T) {
 			Convey("Status code should be 201", func() {
 				sess := setup.NewTestSession()
 				sess.Name = "test"
+				sess.Blocklists[0] = testsess.Blocklists[0]
 
 				buf, err := json.Marshal(sess)
 				buffer := bytes.NewBuffer(buf)

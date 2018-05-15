@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' -x ${1}:${2}@localhost:3128 https://www.google.com)
+HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' -x ${1}:${2}@localhost:3128 https://news.ycombinator.com)
 RETURN_CODE=$?
 if [ $RETURN_CODE -ne 0 ]; then
    echo "error: curl exited with return code $RETURN_CODE" >&2

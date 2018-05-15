@@ -7,7 +7,7 @@ import (
 // ServerVersion is the API server version.
 var ServerVersion string
 
-// VersionPayload is the payload returned from the GET / route.
+// VersionPayload is the payload returned from the Version handler.
 type VersionPayload struct {
 	Version string `json:"version"`
 }

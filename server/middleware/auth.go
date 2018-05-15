@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
@@ -20,14 +21,14 @@ var noAuthRegexp = []*regexp.Regexp{
 
 // Auth represents authorization middleware.
 type Auth struct {
-	jwtMiddleware *jwtmiddleware.JWTMiddleware
+	authorizer *jwtmiddleware.JWTMiddleware
 }
 
 // NewAuth creates a Auth instance.
 func NewAuth(verifyingKey *rsa.PublicKey) *Auth {
-	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
+	authorizer := jwtmiddleware.New(jwtmiddleware.Options{
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			log.Error("error handling auth token: ", err)
+			log.Error("error handling auth token: ", strings.ToLower(err))
 			handlers.Error(w, http.StatusUnauthorized)
 		},
 		Extractor: jwtmiddleware.FromFirst(jwtmiddleware.FromAuthHeader, jwtmiddleware.FromParameter("access_token")),
@@ -39,7 +40,7 @@ func NewAuth(verifyingKey *rsa.PublicKey) *Auth {
 	})
 
 	return &Auth{
-		jwtMiddleware: jwtMiddleware,
+		authorizer: authorizer,
 	}
 }
 
@@ -52,5 +53,5 @@ func (a *Auth) ServeHTTP(w http.ResponseWriter, r *http.Request, next http.Handl
 		}
 	}
 
-	a.jwtMiddleware.HandlerWithNext(w, r, next)
+	a.authorizer.HandlerWithNext(w, r, next)
 }

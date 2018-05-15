@@ -8,9 +8,9 @@ FROM alpine:latest
 
 RUN apk add --no-cache squid incron && \
     mkdir -p /etc/digitox && \
-    echo "" > /etc/digitox/active && \
+    echo "" > /etc/digitox/blocklist && \
     echo "root" > /etc/incron.allow && \
-    echo "/etc/digitox/active IN_MODIFY /usr/sbin/squid -k reconfigure" > /var/spool/incron/root && \
+    echo "/etc/digitox/blocklist IN_MODIFY /usr/sbin/squid -k reconfigure" > /var/spool/incron/root && \
     echo "/etc/digitox/passwd IN_MODIFY /usr/sbin/squid -k reconfigure" >> /var/spool/incron/root
 
 COPY --from=build /go/src/github.com/jonathanfoster/digitox/bin/digitox-apiserver /usr/local/bin/

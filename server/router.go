@@ -32,6 +32,10 @@ func NewRouter() *Router {
 	router.HandleFunc("/devices/{name}", handlers.UpdateDevice).Methods("PUT")
 	router.HandleFunc("/devices/{name}", handlers.RemoveDevice).Methods("DELETE")
 
+	router.HandleFunc("/proxy/active", handlers.ProxyActive).Methods("GET")
+	router.HandleFunc("/proxy/blocklist", handlers.ProxyBlocklist).Methods("GET")
+	router.HandleFunc("/proxy/reconfigure", handlers.ReconfigureProxy).Methods("POST")
+
 	router.HandleFunc("/sessions/", handlers.ListSessions).Methods("GET")
 	router.HandleFunc("/sessions/{id}", handlers.FindSession).Methods("GET")
 	router.HandleFunc("/sessions/", handlers.CreateSession).Methods("POST")
