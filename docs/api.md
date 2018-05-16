@@ -8,6 +8,14 @@
 
 ## Endpoints
 
+### OAuth
+
+TODO: Complete documentation
+
+```bash
+
+```
+
 ### Sessions
 
 ```bash
@@ -63,4 +71,11 @@ PUT /devices/{id}
 
 # Remove device
 DELETE /devices/{id}
+```
+
+### Proxy
+
+TODO: Complete documentation
+
+```bash
 ```

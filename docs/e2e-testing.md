@@ -1,6 +1,6 @@
 # End-to-End Testing
 
-End-to-end testing can be performed using the E2E shell scripts in `test/e2e/`.
+End-to-end testing can be performed using the shell scripts in `test/e2e/`.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ End-to-end testing can be performed using the E2E shell scripts in `test/e2e/`.
 Before getting started, you'll need to grant execute permissions to all E2E test scripts.
 
 ```bash
-chmod +x ./test/e2e/**
+find ./test/e2e/ -name "*.sh" -exec chmod +x {} \;
 ```
 
 ## Full End-to-End Test

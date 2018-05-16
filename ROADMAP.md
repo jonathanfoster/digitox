@@ -61,7 +61,9 @@ This document provides a high-level roadmap for Digitox development.
 * [ ] Misc: Switch to Ginkgo for testing
 * [ ] Misc: Generate OpenAPI spec for API
 * [X] Misc: Use SQLite as data store
-* [ ] Misc: Update README with Docker instructions
+* [X] Misc: Update README with Docker instructions
+* [ ] Misc: Update API documentation
+* [ ] Misc: Update security documentation
 
 ## Someday Maybe
 

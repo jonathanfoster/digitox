@@ -25,7 +25,7 @@ const (
 var (
 	version          string
 	app              = kingpin.New("digitox-apiserver", "Digitox API server provides a REST API for managing resources.").Version(version)
-	port             = app.Flag("port", "Port to listen on.").Short('p').Default("8080").String()
+	port             = app.Flag("port", "Port to listen on.").Short('p').Default("8080").Envar("DIGITOX_PORT").String()
 	verbose          = app.Flag("verbose", "Output debug log messages.").Short('v').Bool()
 	dirname          = app.Flag("directory-name", "Configuration directory name.").Short('d').Default("/etc/digitox/").String()
 	dataSource       = app.Flag("data-source", "Database data source name.").Default(defaultDataSource).String()
@@ -34,8 +34,8 @@ var (
 	tickerDuration   = app.Flag("ticker-duration", "Duration of blocklist update ticker.").Short('t').Default("1s").String()
 	signingKeyPath   = app.Flag("signing-key", "RSA private key path for signing JWT tokens.").Default(*dirname + "signing-key.pem").String()
 	verifyingKeyPath = app.Flag("verifying-key", "RSA public key path verifying JWT tokens.").Default(*dirname + "verifying-key.pem").String()
-	clientID         = app.Flag("client-id", "OAuth client ID.").String()
-	clientSecret     = app.Flag("client-secret", "OAuth client secret.").String()
+	clientID         = app.Flag("client-id", "OAuth client ID.").Envar("DIGITOX_CLIENT_ID").String()
+	clientSecret     = app.Flag("client-secret", "OAuth client secret.").Envar("DIGITOX_CLIENT_SECRET").String()
 )
 
 func main() {

@@ -1,5 +1,7 @@
 # Security
 
+TODO: Complete documentation
+
 ## Authorization
 
 * [OAuth 2.0 Client Credentials Grant flow](https://tools.ietf.org/html/rfc6749#section-4.4)
