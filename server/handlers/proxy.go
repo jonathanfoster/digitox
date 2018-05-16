@@ -9,7 +9,7 @@ import (
 	"github.com/jonathanfoster/digitox/proxy"
 )
 
-// ProxyActive handles the GET /proxy/session route.
+// ProxyActive handles the GET /proxy/active route.
 func ProxyActive(w http.ResponseWriter, r *http.Request) {
 	list, err := proxy.ProxyController.ActiveBlocklist()
 	if err != nil {
