@@ -67,7 +67,8 @@ DELETE /blocklists/{id}
 
 ### Devices
 
-Device endpoints provide CRUD operations on device resources.
+Device endpoints provide CRUD operations on device resources. Devices map to credentials that are used to authentcate
+with the proxy server.
 
 ```bash
 # List devices

@@ -63,7 +63,7 @@ This document provides a high-level roadmap for Digitox development.
 * [X] Misc: Use SQLite as data store
 * [X] Misc: Update README with Docker instructions
 * [X] Misc: Update API documentation
-* [ ] Misc: Update security documentation
+* [X] Misc: Update security documentation
 
 ## Someday Maybe
 
